@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Irsina — Objektliste",
+  "description": "Vorlage fuer objekte.json. Editoren wie VS Code lesen sie und bieten damit Vervollstaendigung und sofortige Fehlermeldungen beim Tippen. Massgeblich bleibt src/data/schema.ts — beide muessen zusammenpassen; die Tests pruefen das.",
+  "type": "object",
+  "required": ["objekte"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "_hinweis": { "type": "string" },
+    "objekte": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/objekt" }
+    }
+  },
+  "definitions": {
+    "telefon": {
+      "type": ["string", "null"],
+      "pattern": "^\\+\\d{8,15}$",
+      "description": "International, z. B. +393331234567."
+    },
+    "objekt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "foto", "strasse", "civico", "typ", "angebot", "zustand", "preis",
+        "mq", "vani", "extras", "telefon", "telefon_unsicher", "lat", "lng",
+        "gesehen", "adresse_unklar", "pruefstand", "text"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^IR-\\d{3}$", "description": "Eindeutige Kennung, steht in der Adresse der Detailseite." },
+        "foto": {
+          "type": "array", "minItems": 1,
+          "items": { "type": "string", "pattern": "^IR-\\d{3}[a-z]?\\.jpe?g$" },
+          "description": "Dateinamen aus src/fotos/. Ab dem zweiten Bild erscheint eine Galerie."
+        },
+        "strasse": { "type": "string", "minLength": 1, "description": "Ueberschrift der Kachel." },
+        "civico": { "type": ["string", "null"], "description": "Hausnummer." },
+        "typ": { "enum": ["casa", "palazzo", "appartamento", "rudere", "locale"] },
+        "angebot": { "enum": ["vendita", "affitto", "entrambi"] },
+        "zustand": { "enum": ["abitabile", "da-ristrutturare", "ristrutturato", "sconosciuto"] },
+        "preis": { "type": ["integer", "null"], "minimum": 1, "description": "Ganze Euro ohne Punkte. null bedeutet 'auf Anfrage'." },
+        "mq": { "type": ["integer", "null"], "minimum": 1, "description": "Quadratmeter." },
+        "vani": { "type": ["integer", "null"], "minimum": 1, "description": "Zimmer." },
+        "extras": {
+          "type": "array",
+          "items": { "enum": ["garage", "cantina", "balcone", "giardino", "terrazzo", "portone carrabile"] }
+        },
+        "telefon": { "$ref": "#/definitions/telefon" },
+        "telefon2": { "$ref": "#/definitions/telefon" },
+        "telefon_unsicher": { "type": "boolean", "description": "Nummer wurde vom Foto abgelesen und ist nicht bestaetigt." },
+        "freigabe": {
+          "type": "boolean",
+          "default": false,
+          "description": "Nur true, wenn der Eigentuemer der Veroeffentlichung der Nummer zugestimmt hat. Solange false, verlaesst keine Nummer den Build."
+        },
+        "lat": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
+        "lng": { "type": ["number", "null"], "minimum": -180, "maximum": 180 },
+        "gesehen": { "type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$", "description": "Monat der Erfassung, z. B. 2026-09." },
+        "adresse_unklar": { "type": "boolean" },
+        "pruefstand": {
+          "enum": ["unbesichtigt", "eigentuemer", "vermittler"],
+          "default": "unbesichtigt",
+          "description": "Wer die Angaben bestaetigt hat. 'unbesichtigt' = nur vom Schild abgelesen, niemand hat sie geprueft."
+        },
+        "text": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["it", "en", "de", "nl", "fr"],
+          "properties": {
+            "it": { "type": "string", "minLength": 1 },
+            "en": { "type": "string", "minLength": 1 },
+            "de": { "type": "string", "minLength": 1 },
+            "nl": { "type": "string", "minLength": 1 },
+            "fr": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

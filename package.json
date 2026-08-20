@@ -1,0 +1,40 @@
+{
+  "name": "irsina-immobili",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Case nel centro storico di Irsina — mehrsprachige statische Seite fuer die VENDESI-Angebote der Altstadt",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/daten-pruefen.mjs && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "daten:pruefen": "node scripts/daten-pruefen.mjs",
+    "kontakt:freigeben": "node scripts/kontakt-freigeben.mjs",
+    "build:pruefen": "node scripts/build-pruefen.mjs",
+    "prototyp": "node scripts/prototyp-bauen.mjs",
+    "prototyp:uebernehmen": "node scripts/prototyp-uebernehmen.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run daten:pruefen && npm run fotos:pruefen && npm run build && npm run build:pruefen && npm run test && npm run check",
+    "fotos:pruefen": "node scripts/fotos-anonymisieren.mjs --pruefen",
+    "fotos:anonymisieren": "node scripts/fotos-anonymisieren.mjs",
+    "koordinaten": "node scripts/koordinaten-aus-fotos.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.2.4",
+    "leaflet": "^1.9.4",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^26.2.0",
+    "exifr": "^7.1.3",
+    "typescript": "^5.9.0",
+    "vitest": "^4.1.9"
+  }
+}

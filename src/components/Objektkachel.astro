@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import type { OeffentlichesObjekt } from '../data/objekte';
+import { adresse, beschreibung } from '../data/objekte';
+import { foto } from '../data/fotos';
+import { kennzeichen, typText, zustandText, pruefstandText, ungeprueft } from '../data/anzeige';
+import { uebersetzer } from '../i18n/texte';
+import { objektPfad } from '../i18n/routen';
+import type { Sprache } from '../i18n/sprachen';
+
+interface Props { objekt: OeffentlichesObjekt; lang: Sprache; eager?: boolean }
+const { objekt: o, lang, eager = false } = Astro.props;
+const t = uebersetzer(lang);
+const bild = foto(o.foto[0]!);
+const text = beschreibung(o, lang);
+---
+<li
+  class="objekt"
+  data-id={o.id}
+  data-typ={o.typ}
+  data-zustand={o.zustand}
+  data-angebot={o.angebot}
+  data-preis={o.preis ?? ''}
+  data-strasse={o.strasse}
+  data-suche={`${o.id} ${o.strasse} ${o.civico ?? ''} ${text}`.toLowerCase()}
+>
+  <a class="card" href={objektPfad(lang, o.id)}>
+    <div class="ph">
+      <Image
+        src={bild}
+        alt={t('photoOf', { ref: o.id, via: o.strasse })}
+        widths={[320, 480, 640, 960]}
+        sizes="(max-width: 640px) 92vw, (max-width: 1180px) 44vw, 290px"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+        format="webp"
+        quality={72}
+      />
+      <span class="ref">{o.id}</span>
+      <span class={`badge b-${o.zustand}`}>{zustandText(o, lang)}</span>
+      {/* Kein Haus wurde besichtigt — das gehoert auf jede Kachel, nicht nur
+          in die Detailansicht. */}
+      <span class={`pruef ${ungeprueft(o) ? 'offen' : 'bestaetigt'}`}>
+        {ungeprueft(o) ? '?' : '✓'} {pruefstandText(o, lang)}
+      </span>
+    </div>
+    <div class="body">
+      <h3>{o.strasse}</h3>
+      {/* Ohne Hausnummer waere die Adresse Wort fuer Wort die Ueberschrift
+          darueber — dann bleibt die Zeile weg. */}
+      {(o.civico || o.adresse_unklar) && (
+        <p class="addr">
+          {o.civico ? adresse(o, lang) : ''}
+          {o.adresse_unklar && <span class="tbd" style={o.civico ? undefined : 'margin-left:0'}>{t('addrTbd')}</span>}
+        </p>
+      )}
+      <p class="txt">{text}</p>
+      <ul class="metas">
+        <li class="meta">{typText(o, lang)}</li>
+        {kennzeichen(o, lang).map((k) => (
+          <li class={k.preis ? 'meta pr' : 'meta'}>{k.text}</li>
+        ))}
+      </ul>
+    </div>
+  </a>
+</li>

@@ -1,0 +1,57 @@
+name: Seite prüfen
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Abhängigkeiten installieren
+        run: npm ci
+
+      - name: Daten prüfen
+        run: npm run daten:pruefen
+
+      # Schlägt fehl, wenn ein als kritisch erfasster Bildbereich noch nicht
+      # unkenntlich gemacht wurde.
+      - name: Fotos prüfen
+        run: npm run fotos:pruefen
+
+      - name: Typen prüfen
+        run: npm run check
+
+      - name: Tests
+        run: npm test
+
+      - name: Seite bauen
+        run: npx astro build
+
+      # Die entscheidende Kontrolle: keine ungeschützte Telefonnummer, keine
+      # fehlende Seite, Prüfhinweis überall, Sichtbarkeit konsistent.
+      - name: Build prüfen
+        run: npm run build:pruefen
+
+      # Der Prototyp entsteht aus denselben Daten — er darf nicht kaputtgehen,
+      # ohne dass es auffällt.
+      - name: Prototyp bauen
+        run: npm run prototyp
+
+      - name: Tests erneut (mit gebautem Prototyp)
+        run: npm test
+
+      - name: Ergebnis sichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: irsina-seite
+          path: dist
+          retention-days: 7

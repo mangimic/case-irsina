@@ -1,0 +1,40 @@
+---
+import '../styles/global.css';
+import { SPRACHEN, SPRACH_NAME, HREFLANG } from '../i18n/sprachen';
+import { startPfad } from '../i18n/routen';
+import { TEXTE } from '../i18n/texte';
+
+/* Eine einzige 404-Seite fuer alle Sprachen: welche Sprache die Besucherin
+   erwartet, weiss der Server bei einer unbekannten Adresse nicht. Deshalb
+   stehen hier alle fuenf nebeneinander. */
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 — Irsina · Case nel centro storico</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <main id="inhalt">
+      <section>
+        <div class="wrap legal">
+          <p class="eyebrow">404</p>
+          {SPRACHEN.map((l) => (
+            <div lang={HREFLANG[l]} style="margin-bottom:34px">
+              <h2 style="margin-top:0">{TEXTE[l].e404h}</h2>
+              <p>{TEXTE[l].e404p}</p>
+              <p>
+                <a class="btn btn-o" href={startPfad(l)}>
+                  {TEXTE[l].e404btn} — {SPRACH_NAME[l]}
+                </a>
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

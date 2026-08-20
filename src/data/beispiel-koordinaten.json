@@ -1,0 +1,70 @@
+{
+  "_hinweis": "BEISPIELWERTE — KEINE ECHTEN DATEN. Diese Koordinaten sind frei im centro storico von Irsina verteilt und zeigen NICHT, wo die Objekte tatsaechlich stehen. Sie dienen einzig dazu, im Prototyp vorzufuehren, wie die Karte spaeter aussieht. Die echten Werte gehoeren nach lat/lng in objekte.json — erhoben per 'npm run koordinaten' aus den Originalfotos oder im Editor ueber 'Standort uebernehmen'. Diese Datei wird von der veroeffentlichten Seite NIEMALS gelesen; nur scripts/prototyp-bauen.mjs verwendet sie, und die Karte kennzeichnet die Punkte dort als Beispiel.",
+  "zentrum": {
+    "lat": 40.7466,
+    "lng": 16.2417,
+    "zoom": 17
+  },
+  "koordinaten": {
+    "IR-001": {
+      "lat": 40.74705,
+      "lng": 16.24095
+    },
+    "IR-002": {
+      "lat": 40.74662,
+      "lng": 16.24048
+    },
+    "IR-003": {
+      "lat": 40.74598,
+      "lng": 16.24172
+    },
+    "IR-004": {
+      "lat": 40.74731,
+      "lng": 16.24218
+    },
+    "IR-005": {
+      "lat": 40.74645,
+      "lng": 16.24285
+    },
+    "IR-006": {
+      "lat": 40.7458,
+      "lng": 16.24031
+    },
+    "IR-007": {
+      "lat": 40.74688,
+      "lng": 16.24312
+    },
+    "IR-008": {
+      "lat": 40.74555,
+      "lng": 16.24118
+    },
+    "IR-009": {
+      "lat": 40.7462,
+      "lng": 16.23975
+    },
+    "IR-010": {
+      "lat": 40.74538,
+      "lng": 16.24186
+    },
+    "IR-011": {
+      "lat": 40.74744,
+      "lng": 16.23988
+    },
+    "IR-012": {
+      "lat": 40.74672,
+      "lng": 16.24242
+    },
+    "IR-013": {
+      "lat": 40.74612,
+      "lng": 16.24308
+    },
+    "IR-014": {
+      "lat": 40.74758,
+      "lng": 16.24156
+    },
+    "IR-015": {
+      "lat": 40.74521,
+      "lng": 16.24072
+    }
+  }
+}

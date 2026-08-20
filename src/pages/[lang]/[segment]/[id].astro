@@ -1,0 +1,306 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Basis from '../../../layouts/Basis.astro';
+import Teilen from '../../../components/Teilen.astro';
+import Objektkachel from '../../../components/Objektkachel.astro';
+import { OBJEKTE, adresse, beschreibung } from '../../../data/objekte';
+import { fotos } from '../../../data/fotos';
+import {
+  angebotText, flaecheText, gesehenText, preisText, raeumeText, typText, zustandText, extraText,
+  pruefstandText, ungeprueft,
+} from '../../../data/anzeige';
+import { uebersetzer } from '../../../i18n/texte';
+import { SPRACHEN, type Sprache } from '../../../i18n/sprachen';
+import { SEGMENT, objektPfad, startPfad } from '../../../i18n/routen';
+import { MAIL, SITE_URL } from '../../../config';
+
+export function getStaticPaths() {
+  return SPRACHEN.flatMap((lang) =>
+    OBJEKTE.map((objekt) => ({
+      params: { lang, segment: SEGMENT[lang].objekt, id: objekt.id },
+      props: { objekt },
+    })),
+  );
+}
+
+const lang = Astro.params.lang as Sprache;
+const { objekt: o } = Astro.props;
+const t = uebersetzer(lang);
+
+const bilder = fotos(o);
+const text = beschreibung(o, lang);
+const anschrift = adresse(o, lang);
+const titel = `${o.strasse} · ${o.id} — ${t('detailAt')}`;
+
+/* Vorschaubild fuer geteilte Links: das erste Foto des Objekts, in fester
+   Groesse gerendert, damit WhatsApp und Facebook es sicher anzeigen. */
+const vorschau = await getImage({ src: bilder[0]!, width: 1200, height: 630, fit: 'cover', format: 'jpeg', quality: 78 });
+
+const weitere = OBJEKTE.filter((x) => x.id !== o.id).slice(0, 3);
+
+/* Fuer den Bildwechsel: jedes Foto einmal in Buehnengroesse. Ohne das
+   wuerde ein Klick auf ein Vorschaubild die 148px-Fassung gross anzeigen. */
+const grosseFassungen = await Promise.all(
+  bilder.map((b) => getImage({ src: b, widths: [1400], format: 'webp', quality: 78 })),
+);
+
+/* Immobilien beschreibt schema.org als RealEstateListing mit einem
+   Gebaeude darunter — nicht als Product. Das ist die Form, die Suchmaschinen
+   fuer Wohnungsangebote erwarten. */
+const SCHEMA_TYP = {
+  casa: 'House', palazzo: 'House', appartamento: 'Apartment', rudere: 'House', locale: 'Place',
+} as const;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateListing',
+  '@id': new URL(objektPfad(lang, o.id), SITE_URL).href,
+  url: new URL(objektPfad(lang, o.id), SITE_URL).href,
+  name: `${o.id} · ${o.strasse}, Irsina`,
+  description: text,
+  inLanguage: lang,
+  datePosted: `${o.gesehen}-01`,
+  image: new URL(vorschau.src, SITE_URL).href,
+  about: {
+    '@type': SCHEMA_TYP[o.typ],
+    name: `${o.strasse}, Irsina`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: anschrift,
+      addressLocality: 'Irsina',
+      addressRegion: 'Basilicata',
+      postalCode: '75022',
+      addressCountry: 'IT',
+    },
+    ...(o.mq !== null
+      ? { floorSize: { '@type': 'QuantitativeValue', value: o.mq, unitCode: 'MTK' } }
+      : {}),
+    ...(o.vani !== null ? { numberOfRooms: o.vani } : {}),
+    ...(o.lat !== null && o.lng !== null
+      ? { geo: { '@type': 'GeoCoordinates', latitude: o.lat, longitude: o.lng } }
+      : {}),
+  },
+  ...(o.preis !== null
+    ? {
+        offers: {
+          '@type': 'Offer',
+          price: o.preis,
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+          url: new URL(objektPfad(lang, o.id), SITE_URL).href,
+        },
+      }
+    : {}),
+};
+
+const anfrageBetreff = `${t('shSubject')} — ${o.id} (${o.strasse})`;
+const anfrageText = `${o.id} · ${anschrift}\n${new URL(objektPfad(lang, o.id), SITE_URL).href}\n\n`;
+
+const angaben = [
+  { dt: t('dRef'), dd: o.id },
+  { dt: t('dType'), dd: typText(o, lang) },
+  { dt: t('dCond'), dd: zustandText(o, lang) },
+  { dt: t('dPrice'), dd: preisText(o, lang) },
+  /* Flaeche und Raeume nur, wenn sie erhoben sind — "auf Anfrage" waere hier
+     eine Behauptung: erfragen kann man sie beim Eigentuemer, nicht bei uns. */
+  ...(o.mq !== null ? [{ dt: t('dSize'), dd: flaecheText(o, lang) }] : []),
+  ...(o.vani !== null ? [{ dt: t('dRooms'), dd: raeumeText(o, lang) }] : []),
+  { dt: t('dSeen'), dd: gesehenText(o, lang) },
+  { dt: t('pvH'), dd: pruefstandText(o, lang) },
+];
+
+const bestaetigungsMail =
+  `mailto:${MAIL}?subject=${encodeURIComponent(`${t('pvBitteBtn')} — ${o.id} (${o.strasse})`)}` +
+  `&body=${encodeURIComponent(`${o.id} · ${anschrift}\n${new URL(objektPfad(lang, o.id), SITE_URL).href}\n\n`)}`;
+
+const kartenLink =
+  o.lat !== null && o.lng !== null
+    ? `https://www.google.com/maps/search/?api=1&query=${o.lat},${o.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${o.strasse}, Irsina, Matera, Italia`)}`;
+---
+<Basis
+  lang={lang}
+  seite={{ art: 'objekt', id: o.id }}
+  titel={titel}
+  beschreibung={`${anschrift} · ${typText(o, lang)} · ${zustandText(o, lang)} — ${text}`.slice(0, 300)}
+  ogBild={new URL(vorschau.src, SITE_URL).href}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href={startPfad(lang)}>{t('home')}</a></li>
+        <li><a href={`${startPfad(lang)}#immobili`}>{t('navlist')}</a></li>
+        <li aria-current="page">{o.id}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <article class="wrap detail">
+    <header class="detail-head">
+      <p class="eyebrow">{angebotText(o, lang)} · {o.id}</p>
+      <h1>{o.strasse}</h1>
+      {(o.civico || o.adresse_unklar) && (
+        <p class="addr">
+          {o.civico ? anschrift : ''}
+          {o.adresse_unklar && <span class="tbd" style={o.civico ? undefined : 'margin-left:0'}>{t('addrTbd')}</span>}
+        </p>
+      )}
+    </header>
+
+    <div class="detail-grid">
+      <div>
+        <figure class="buehne" style="margin:0">
+          <Image
+            src={bilder[0]!}
+            alt={t('photoOf', { ref: o.id, via: o.strasse })}
+            widths={[480, 768, 1100, 1400]}
+            sizes="(max-width: 860px) 92vw, 62vw"
+            loading="eager"
+            fetchpriority="high"
+            format="webp"
+            quality={78}
+            id="buehne-bild"
+          />
+        </figure>
+
+        {bilder.length > 1 && (
+          <>
+            <h2 class="ui" style="font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-2);margin:16px 0 8px">
+              {t('photoMore')}
+            </h2>
+            <ul class="thumbs">
+              {bilder.map((b, i) => (
+                <li>
+                  <a
+                    href={`#foto-${i + 1}`}
+                    data-thumb={i}
+                    data-gross={grosseFassungen[i]!.src}
+                    aria-current={i === 0 ? 'true' : 'false'}
+                  >
+                    <Image src={b} alt={`${o.id} — ${i + 1}/${bilder.length}`} width={148} height={116} format="webp" quality={65} loading="lazy" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {/* Ohne JavaScript sind alle Bilder trotzdem erreichbar. */}
+            <noscript>
+              <ul class="thumbs" style="margin-top:14px">
+                {bilder.slice(1).map((b, i) => (
+                  <li id={`foto-${i + 2}`} style="width:100%">
+                    <Image src={b} alt={`${o.id} — ${i + 2}/${bilder.length}`} widths={[480, 900]} sizes="92vw" format="webp" quality={75} loading="lazy" />
+                  </li>
+                ))}
+              </ul>
+            </noscript>
+          </>
+        )}
+
+        <div class="prose" style="margin-top:26px">
+          <p>{text}</p>
+        </div>
+
+        {/* Der wichtigste Satz der ganzen Seite: niemand war drin. */}
+        <aside class={`pruefhinweis ${ungeprueft(o) ? 'offen' : 'bestaetigt'}`}>
+          <h2>{ungeprueft(o) ? t('pvH') : pruefstandText(o, lang)}</h2>
+          <p>{ungeprueft(o) ? t('pvText') : t('pvTextOk')}</p>
+          {ungeprueft(o) && (
+            <>
+              <p class="bitte">{t('pvBitte')}</p>
+              <p><a class="btn btn-o" href={bestaetigungsMail}>{t('pvBitteBtn')}</a></p>
+            </>
+          )}
+        </aside>
+      </div>
+
+      <aside>
+        <dl class="dl">
+          {angaben.map((a) => (
+            <div>
+              <dt>{a.dt}</dt>
+              <dd>{a.dd}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {o.extras.length > 0 && (
+          <dl class="dl">
+            <div style="grid-column:1/-1">
+              <dt>{t('dExtras')}</dt>
+              <dd>{o.extras.map((e) => extraText(e, lang)).join(' · ')}</dd>
+            </div>
+          </dl>
+        )}
+
+        <section aria-labelledby="anfrage-h" style="padding:0">
+          <h2 id="anfrage-h" style="font-size:19px;margin-top:6px">{t('askH')}</h2>
+          <p style="color:var(--ink-2);font-size:15.5px">{t('askP')}</p>
+
+          {o.telefon === null ? (
+            <p class="note">{t('phoneHidden')}</p>
+          ) : (
+            <>
+              {o.telefon_unsicher && <p class="note">{t('warnPhone')}</p>}
+              <div class="acts">
+                <a class="btn btn-p" href={`tel:${o.telefon}`}>{t('aCall')}</a>
+                <a class="btn btn-o" href={`https://wa.me/${o.telefon.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                  {t('aWa')}
+                </a>
+              </div>
+            </>
+          )}
+
+          <div class="acts">
+            <a
+              class={o.telefon === null ? 'btn btn-p' : 'btn btn-o'}
+              href={`mailto:${MAIL}?subject=${encodeURIComponent(anfrageBetreff)}&body=${encodeURIComponent(anfrageText)}`}
+            >
+              {t('askBtn')}
+            </a>
+            <a class="btn btn-o" href={kartenLink} target="_blank" rel="noopener noreferrer">{t('aMap')}</a>
+          </div>
+        </section>
+
+        <Teilen lang={lang} seite={{ art: 'objekt', id: o.id }} text={`${o.strasse} · ${o.id} — ${t('ftitle')}`} />
+
+        <p style="margin-top:24px">
+          <a href={`${startPfad(lang)}#immobili`}>← {t('backToList')}</a>
+        </p>
+      </aside>
+    </div>
+  </article>
+
+  <section class="tinted">
+    <div class="wrap">
+      <div class="sec-head"><h2>{t('otherH')}</h2></div>
+      <ul class="grid">
+        {weitere.map((x) => <Objektkachel objekt={x} lang={lang} />)}
+      </ul>
+    </div>
+  </section>
+</Basis>
+
+<script>
+  /* Bildwechsel ueber die Vorschaubilder — ohne JavaScript bleiben die
+     Bilder ueber die noscript-Liste erreichbar. */
+  const buehne = document.getElementById('buehne-bild');
+  const thumbs = Array.from(document.querySelectorAll<HTMLAnchorElement>('.thumbs a[data-thumb]'));
+  if (buehne instanceof HTMLImageElement && thumbs.length > 1) {
+    const quellen = thumbs.map((a) => ({
+      src: a.dataset.gross ?? '',
+      alt: a.querySelector('img')?.alt ?? '',
+    }));
+    thumbs.forEach((a, i) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        buehne.removeAttribute('srcset');
+        buehne.removeAttribute('sizes');
+        buehne.src = quellen[i]!.src;
+        buehne.alt = quellen[i]!.alt;
+        for (const [j, andere] of thumbs.entries()) {
+          andere.setAttribute('aria-current', String(j === i));
+        }
+      });
+    });
+  }
+</script>

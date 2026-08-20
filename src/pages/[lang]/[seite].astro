@@ -1,0 +1,71 @@
+---
+import Basis from '../../layouts/Basis.astro';
+import { IMPRESSUM, DATENSCHUTZ, ANSCHRIFT, type Rechtstext } from '../../i18n/rechtliches';
+import { uebersetzer } from '../../i18n/texte';
+import { SPRACHEN, type Sprache } from '../../i18n/sprachen';
+import { SEGMENT, type SeitenArt } from '../../i18n/routen';
+import { MAIL, BETREIBER, SITE_URL } from '../../config';
+
+export function getStaticPaths() {
+  return SPRACHEN.flatMap((lang) => [
+    {
+      params: { lang, seite: SEGMENT[lang].impressum },
+      props: { art: 'impressum' as const, inhalt: IMPRESSUM[lang] },
+    },
+    {
+      params: { lang, seite: SEGMENT[lang].datenschutz },
+      props: { art: 'datenschutz' as const, inhalt: DATENSCHUTZ[lang] },
+    },
+  ]);
+}
+
+interface Props { art: 'impressum' | 'datenschutz'; inhalt: Rechtstext }
+
+const lang = Astro.params.lang as Sprache;
+const { art, inhalt } = Astro.props as Props;
+const t = uebersetzer(lang);
+const seite: SeitenArt = { art };
+const anschriftFehlt = ANSCHRIFT === 'ANSCHRIFT_FEHLT';
+---
+<Basis
+  lang={lang}
+  seite={seite}
+  titel={`${inhalt.titel} — ${t('ftitle')}`}
+  beschreibung={inhalt.beschreibung}
+>
+  <section>
+    <div class="wrap legal">
+      <h1>{inhalt.titel}</h1>
+
+      {art === 'impressum' && (
+        <dl>
+          <dt>{BETREIBER}</dt>
+          <dd>
+            {anschriftFehlt ? (
+              <span class="tbd" style="margin-left:0">
+                ANSCHRIFT_FEHLT — bitte in src/i18n/rechtliches.ts eintragen
+              </span>
+            ) : (
+              <span set:html={ANSCHRIFT.replaceAll('\n', '<br />')} />
+            )}
+          </dd>
+          <dt>E-Mail</dt>
+          <dd><a href={`mailto:${MAIL}`}>{MAIL}</a></dd>
+          <dt>Web</dt>
+          <dd><a href={SITE_URL}>{SITE_URL.replace(/^https?:\/\//, '')}</a></dd>
+        </dl>
+      )}
+
+      {inhalt.abschnitte.map((a) => (
+        <>
+          <h2>{a.h}</h2>
+          {a.p.map((p) => <p>{p}</p>)}
+        </>
+      ))}
+
+      <p style="margin-top:2.6em;font-size:14px;color:var(--ink-2)">
+        {t('updated')}: {inhalt.stand}
+      </p>
+    </div>
+  </section>
+</Basis>

@@ -1,0 +1,35 @@
+---
+import { uebersetzer } from '../i18n/texte';
+import { MAIL, BETREIBER } from '../config';
+import { type Sprache } from '../i18n/sprachen';
+import { startPfad, impressumPfad, datenschutzPfad, type SeitenArt } from '../i18n/routen';
+import Teilen from './Teilen.astro';
+
+interface Props { lang: Sprache; seite: SeitenArt }
+const { lang, seite } = Astro.props;
+const t = uebersetzer(lang);
+const jahr = new Date().getFullYear();
+---
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>{t('ftitle')}</h2>
+        <p style="max-width:34em;color:#c9bcaa;margin:0">{t('ftext')}</p>
+      </div>
+      <div>
+        <Teilen lang={lang} seite={seite} titelSchluessel="shareAllT" hell />
+        <ul class="foot-links" style="margin-top:22px">
+          <li><a href={startPfad(lang)}>{t('home')}</a></li>
+          <li><a href={impressumPfad(lang)}>{t('navlegal')}</a></li>
+          <li><a href={datenschutzPfad(lang)}>{t('navprivacy')}</a></li>
+          <li><a href={`mailto:${MAIL}`}>{t('ownbtn')}</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="disclaimer">{t('fdisc')}</p>
+    <p class="disclaimer" style="border:0;padding-top:8px;margin-top:0">
+      © {jahr} {BETREIBER} · <a href="/sitemap.xml">sitemap.xml</a>
+    </p>
+  </div>
+</footer>

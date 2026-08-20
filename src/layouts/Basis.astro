@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+import Kopf from '../components/Kopf.astro';
+import Fuss from '../components/Fuss.astro';
+import { SITE_URL, OG_IMAGE, SUCHMASCHINEN_ERLAUBT } from '../config';
+import { HREFLANG, OG_LOCALE, STANDARD_SPRACHE, type Sprache } from '../i18n/sprachen';
+import { alleSprachPfade, pfadFuer, type SeitenArt } from '../i18n/routen';
+
+interface Props {
+  lang: Sprache;
+  titel: string;
+  beschreibung: string;
+  seite: SeitenArt;
+  /** Vorschaubild fuer geteilte Links. Volle URL. */
+  ogBild?: string;
+  /** true bei Seiten, die nicht in den Index gehoeren (404). */
+  nichtIndexieren?: boolean;
+  /** Strukturierte Daten als JSON-LD. */
+  jsonLd?: unknown;
+}
+
+const { lang, titel, beschreibung, seite, ogBild, nichtIndexieren = false, jsonLd } = Astro.props;
+
+const kanonisch = new URL(pfadFuer(lang, seite), SITE_URL).href;
+const alternates = alleSprachPfade(seite);
+const bild = ogBild ?? new URL(OG_IMAGE, SITE_URL).href;
+---
+<!doctype html>
+<html lang={HREFLANG[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titel}</title>
+    <meta name="description" content={beschreibung} />
+    <link rel="canonical" href={kanonisch} />
+
+    {/* Dieselbe Seite in den anderen Sprachen. Ohne diese Angaben liefert
+        Google Interessenten aus den Niederlanden die italienische Fassung. */}
+    {alternates.map(({ lang: l, pfad }) => (
+      <link rel="alternate" hreflang={HREFLANG[l]} href={new URL(pfad, SITE_URL).href} />
+    ))}
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(pfadFuer(STANDARD_SPRACHE, seite), SITE_URL).href}
+    />
+
+    {/* Solange die Seite noch nicht gefunden werden soll, traegt jede Seite
+        noindex — nicht nur die, die ohnehin nie in den Index gehoeren. */}
+    {(!SUCHMASCHINEN_ERLAUBT || nichtIndexieren) && (
+      <meta
+        name="robots"
+        content={SUCHMASCHINEN_ERLAUBT ? 'noindex, follow' : 'noindex, nofollow'}
+      />
+    )}
+
+    <meta property="og:type" content={seite.art === 'objekt' ? 'article' : 'website'} />
+    <meta property="og:site_name" content="Irsina · Case nel centro storico" />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta property="og:title" content={titel} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:url" content={kanonisch} />
+    <meta property="og:image" content={bild} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#faf6f0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    {jsonLd && (
+      <script
+        type="application/ld+json"
+        is:inline
+        set:html={JSON.stringify(jsonLd)}
+      />
+    )}
+
+    {/* Markiert das Dokument, sobald JavaScript laeuft. Filter und Karte
+        erscheinen nur dann — ohne JS bleibt die vollstaendige Liste stehen. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <Kopf lang={lang} seite={seite} />
+    <main id="inhalt">
+      <slot />
+    </main>
+    <Fuss lang={lang} seite={seite} />
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

@@ -1,0 +1,175 @@
+---
+import { Image } from 'astro:assets';
+import Basis from '../../layouts/Basis.astro';
+import Objektkachel from '../../components/Objektkachel.astro';
+import Filter from '../../components/Filter.astro';
+import Karte from '../../components/Karte.astro';
+import { OBJEKTE } from '../../data/objekte';
+import { foto } from '../../data/fotos';
+import { uebersetzer } from '../../i18n/texte';
+import { SPRACHEN, type Sprache } from '../../i18n/sprachen';
+import { objektPfad } from '../../i18n/routen';
+import { MAIL, SITE_URL, FAKTEN } from '../../config';
+
+export function getStaticPaths() {
+  return SPRACHEN.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Sprache;
+const t = uebersetzer(lang);
+
+const heroBild = foto(OBJEKTE[0]!.foto[0]!);
+
+/* Strukturierte Daten: erst dadurch erscheinen die Objekte als Liste in den
+   Suchergebnissen statt nur als eine einzelne Seite. */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: t('ftitle'),
+      description: t('lede'),
+      inLanguage: lang,
+    },
+    {
+      '@type': 'ItemList',
+      name: t('listh'),
+      numberOfItems: OBJEKTE.length,
+      itemListElement: OBJEKTE.map((o, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: new URL(objektPfad(lang, o.id), SITE_URL).href,
+        name: `${o.id} · ${o.strasse}`,
+      })),
+    },
+  ],
+};
+
+const gruende = [
+  { ico: '🏛', h: t('w1h'), p: t('w1p') },
+  { ico: '🚗', h: t('w2h'), p: t('w2p') },
+  { ico: '💶', h: t('w3h'), p: t('w3p') },
+  { ico: '🌍', h: t('w4h'), p: t('w4p') },
+];
+
+const fakten = [
+  { b: String(OBJEKTE.length), s: t('f1') },
+  { b: `${FAKTEN.minutenMatera} min`, s: t('f2') },
+  { b: `${FAKTEN.minutenBari} min`, s: t('f3') },
+  { b: FAKTEN.einwohner, s: t('f4') },
+];
+---
+<Basis
+  lang={lang}
+  seite={{ art: 'start' }}
+  titel={`${t('ftitle')} — ${t('listh')}`}
+  beschreibung={t('lede')}
+  jsonLd={jsonLd}
+>
+  <div class="hero">
+    <div class="bg" aria-hidden="true">
+      <Image src={heroBild} alt="" widths={[640, 1024, 1600]} sizes="100vw" loading="eager" fetchpriority="high" format="webp" quality={62} />
+    </div>
+    <div class="wrap">
+      <p class="eyebrow">{t('eyebrow')}</p>
+      <h1>{t('h1')}</h1>
+      <p class="lede">{t('lede')}</p>
+      <div class="cta">
+        <a class="btn btn-p" href="#immobili">{t('cta1')}</a>
+        <a class="btn btn-g" href="#proprietari">{t('cta2')}</a>
+      </div>
+    </div>
+    <div class="facts">
+      <div class="wrap">
+        {fakten.map((f) => (
+          <div class="fact"><b>{f.b}</b><span>{f.s}</span></div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <section id="perche" class="tinted">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">{t('whyeye')}</p>
+        <h2>{t('whyh')}</h2>
+        <p>{t('whyp')}</p>
+      </div>
+      <div class="why-grid">
+        {gruende.map((g) => (
+          <article class="why-card">
+            <div class="ico" aria-hidden="true">{g.ico}</div>
+            <h3>{g.h}</h3>
+            <p>{g.p}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="immobili">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">{t('listeye')}</p>
+        <h2>{t('listh')}</h2>
+        <p>{t('listp')}</p>
+      </div>
+
+      <p class="pruefhinweis offen sammel">{t('pvListe')}</p>
+
+      <Filter lang={lang} anzahl={OBJEKTE.length} />
+
+      <ul class="grid" id="objektliste">
+        {OBJEKTE.map((o, i) => (
+          <Objektkachel objekt={o} lang={lang} eager={i < 3} />
+        ))}
+      </ul>
+      <p class="empty" id="keine-treffer" hidden>{t('noresult')}</p>
+    </div>
+  </section>
+
+  <section id="mappa" class="tinted">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">{t('mapeye')}</p>
+        <h2>{t('maph')}</h2>
+        <p>{t('mapp')}</p>
+      </div>
+      <Karte lang={lang} />
+    </div>
+  </section>
+
+  <section id="proprietari">
+    <div class="wrap owner-grid">
+      <div>
+        <p class="eyebrow">{t('owneye')}</p>
+        <h2>{t('ownh')}</h2>
+        <p style="color:var(--ink-2)">{t('ownp')}</p>
+        <p>
+          <a class="btn btn-p" href={`mailto:${MAIL}?subject=${encodeURIComponent(t('shSubject'))}`}>
+            {t('ownbtn')}
+          </a>
+        </p>
+      </div>
+      <ol class="steps">
+        <li>{t('s1')}</li>
+        <li>{t('s2')}</li>
+        <li>{t('s3')}</li>
+      </ol>
+    </div>
+  </section>
+</Basis>
+
+<script is:inline>
+  /* Die frueheren Einzeldatei-Links hatten die Form …/irsina-immobili.html#IR-004.
+     Wer so einen Link noch irgendwo liegen hat, landet jetzt direkt auf der
+     zugehoerigen Detailseite statt nur irgendwo auf der Startseite. */
+  (function () {
+    const treffer = /^#(IR-\d{3})$/.exec(location.hash);
+    if (!treffer) return;
+    const ziel = document.querySelector('.objekt[data-id="' + treffer[1] + '"] a.card');
+    if (ziel) location.replace(ziel.getAttribute('href'));
+  })();
+</script>

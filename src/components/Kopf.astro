@@ -1,0 +1,63 @@
+---
+import { uebersetzer } from '../i18n/texte';
+import { SPRACHEN, SPRACH_KUERZEL, SPRACH_NAME, HREFLANG, type Sprache } from '../i18n/sprachen';
+import { startPfad, pfadFuer, type SeitenArt } from '../i18n/routen';
+
+interface Props { lang: Sprache; seite: SeitenArt }
+const { lang, seite } = Astro.props;
+const t = uebersetzer(lang);
+const start = startPfad(lang);
+const aufStartseite = seite.art === 'start';
+/** Anker funktionieren nur auf der Startseite — sonst dorthin verlinken. */
+const anker = (id: string) => (aufStartseite ? `#${id}` : `${start}#${id}`);
+---
+<a class="skip" href="#inhalt">{t('skip')}</a>
+<header class="site">
+  <div class="wrap hd">
+    <a class="brand" href={start}>
+      <span class="mark" aria-hidden="true">IR</span>
+      <span class="txt">
+        <b>Irsina</b>
+        <span>{t('brandsub')}</span>
+      </span>
+    </a>
+
+    <nav class="main" id="hauptmenue" aria-label={t('menu')}>
+      <a href={anker('perche')}>{t('navwhy')}</a>
+      <a href={anker('immobili')}>{t('navlist')}</a>
+      <a href={anker('mappa')}>{t('navmap')}</a>
+      <a href={anker('proprietari')}>{t('navowner')}</a>
+    </nav>
+
+    <nav class="langs" aria-label={t('langLabel')}>
+      {SPRACHEN.map((l) => (
+        <a
+          href={pfadFuer(l, seite)}
+          hreflang={HREFLANG[l]}
+          lang={HREFLANG[l]}
+          aria-current={l === lang ? 'true' : undefined}
+          title={SPRACH_NAME[l]}
+        >
+          {SPRACH_KUERZEL[l]}
+        </a>
+      ))}
+    </nav>
+
+    <button
+      class="burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="hauptmenue"
+      aria-label={t('menu')}
+    >☰</button>
+  </div>
+</header>
+
+<script>
+  const knopf = document.querySelector<HTMLButtonElement>('.burger');
+  const menue = document.getElementById('hauptmenue');
+  knopf?.addEventListener('click', () => {
+    const offen = menue?.classList.toggle('on') ?? false;
+    knopf.setAttribute('aria-expanded', String(offen));
+  });
+</script>

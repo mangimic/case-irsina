@@ -1,0 +1,147 @@
+---
+import { uebersetzer } from '../i18n/texte';
+import { TYPEN, ZUSTAENDE } from '../data/schema';
+import type { Sprache } from '../i18n/sprachen';
+
+interface Props { lang: Sprache; anzahl: number }
+const { lang, anzahl } = Astro.props;
+const t = uebersetzer(lang);
+
+const TYP_TEXT = { casa: 'tCasa', palazzo: 'tPalazzo', appartamento: 'tApp', rudere: 'tRudere', locale: 'tLocale' } as const;
+const ZUSTAND_TEXT = { abitabile: 'cAbit', 'da-ristrutturare': 'cRistr', ristrutturato: 'cRis', sconosciuto: 'cUnk' } as const;
+
+const chips = [
+  { wert: 'alle', label: t('qall') },
+  { wert: 'preis', label: t('qprice') },
+  { wert: 'vendita', label: t('aVend') },
+  { wert: 'affitto', label: t('aAff') },
+];
+---
+{/* Die Filter arbeiten ausschliesslich im Browser auf der bereits
+    ausgelieferten Liste. Ohne JavaScript werden sie ausgeblendet und alle
+    Objekte bleiben sichtbar — Suchmaschinen sehen immer den vollen Bestand. */}
+<form class="filters js-only" id="filter" role="search" aria-label={t('filterH')}>
+  <div class="field search">
+    <label for="f-suche">{t('phsearch')}</label>
+    <input type="search" id="f-suche" name="suche" placeholder={t('phsearch')} autocomplete="off" />
+  </div>
+  <div class="field sel">
+    <label for="f-typ">{t('dType')}</label>
+    <select id="f-typ" name="typ">
+      <option value="">{t('tAll')}</option>
+      {TYPEN.map((typ) => <option value={typ}>{t(TYP_TEXT[typ])}</option>)}
+    </select>
+  </div>
+  <div class="field sel">
+    <label for="f-zustand">{t('dCond')}</label>
+    <select id="f-zustand" name="zustand">
+      <option value="">{t('cAll')}</option>
+      {ZUSTAENDE.map((z) => <option value={z}>{t(ZUSTAND_TEXT[z])}</option>)}
+    </select>
+  </div>
+  <div class="field sel">
+    <label for="f-sortierung">{t('sRef')}</label>
+    <select id="f-sortierung" name="sortierung">
+      <option value="ref">{t('sRef')}</option>
+      <option value="preis">{t('sPrice')}</option>
+      <option value="strasse">{t('sStreet')}</option>
+    </select>
+  </div>
+</form>
+
+<div class="chip-row js-only">
+  {chips.map((c, i) => (
+    <button class="chip" type="button" data-chip={c.wert} aria-pressed={i === 0 ? 'true' : 'false'}>
+      {c.label}
+    </button>
+  ))}
+  <button class="chip" type="button" id="filter-reset">{t('filterReset')}</button>
+  <output class="count" id="anzahl" for="filter">{anzahl} {t('cnt')}</output>
+</div>
+
+<script is:inline define:vars={{ einzahl: t('cntOne'), mehrzahl: t('cnt') }}>
+  function filterStarten() {
+    const liste = document.getElementById('objektliste');
+    const form = document.getElementById('filter');
+    if (!liste || !form) return;
+
+    const objekte = Array.from(liste.querySelectorAll('.objekt'));
+    const anzahlAusgabe = document.getElementById('anzahl');
+    const leer = document.getElementById('keine-treffer');
+    const chips = Array.from(document.querySelectorAll('[data-chip]'));
+    let chip = 'alle';
+
+    function passt(el) {
+      const suche = form.suche.value.trim().toLowerCase();
+      if (suche && !(el.dataset.suche || '').includes(suche)) return false;
+      if (form.typ.value && el.dataset.typ !== form.typ.value) return false;
+      if (form.zustand.value && el.dataset.zustand !== form.zustand.value) return false;
+      if (chip === 'preis' && !el.dataset.preis) return false;
+      if (chip === 'vendita' && !['vendita', 'entrambi'].includes(el.dataset.angebot)) return false;
+      if (chip === 'affitto' && !['affitto', 'entrambi'].includes(el.dataset.angebot)) return false;
+      return true;
+    }
+
+    function sortieren() {
+      const art = form.sortierung.value;
+      const sortiert = objekte.slice().sort((a, b) => {
+        if (art === 'preis') {
+          // Objekte ohne Preis ans Ende, nicht an den Anfang.
+          const pa = a.dataset.preis ? Number(a.dataset.preis) : Infinity;
+          const pb = b.dataset.preis ? Number(b.dataset.preis) : Infinity;
+          if (pa !== pb) return pa - pb;
+        }
+        if (art === 'strasse') {
+          const s = (a.dataset.strasse || '').localeCompare(b.dataset.strasse || '');
+          if (s !== 0) return s;
+        }
+        return (a.dataset.id || '').localeCompare(b.dataset.id || '');
+      });
+      for (const el of sortiert) liste.appendChild(el);
+    }
+
+    function anwenden() {
+      let treffer = 0;
+      for (const el of objekte) {
+        const sichtbar = passt(el);
+        el.hidden = !sichtbar;
+        if (sichtbar) treffer++;
+      }
+      sortieren();
+      if (anzahlAusgabe) {
+        anzahlAusgabe.textContent = treffer + ' ' + (treffer === 1 ? einzahl : mehrzahl);
+      }
+      if (leer) leer.hidden = treffer !== 0;
+    }
+
+    form.addEventListener('input', anwenden);
+    form.addEventListener('submit', (e) => e.preventDefault());
+
+    for (const knopf of chips) {
+      knopf.addEventListener('click', () => {
+        chip = knopf.dataset.chip;
+        for (const anderer of chips) {
+          anderer.setAttribute('aria-pressed', String(anderer === knopf));
+        }
+        anwenden();
+      });
+    }
+
+    document.getElementById('filter-reset')?.addEventListener('click', () => {
+      form.reset();
+      chip = 'alle';
+      for (const k of chips) k.setAttribute('aria-pressed', String(k.dataset.chip === 'alle'));
+      anwenden();
+    });
+
+    anwenden();
+  }
+
+  /* Dieses Skript steht im Dokument vor der Objektliste — beim Ausfuehren
+     gaebe es sie also noch gar nicht. Deshalb erst, wenn das Dokument steht. */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', filterStarten);
+  } else {
+    filterStarten();
+  }
+</script>

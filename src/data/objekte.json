@@ -1,0 +1,496 @@
+{
+  "$schema": "./objekte.schema.json",
+  "_hinweis": "Datenquelle der Seite. Pflege siehe ANLEITUNG.md. Nach jeder Aenderung 'npm run daten:pruefen' ausfuehren — der Build tut das ohnehin. WICHTIG: Dieses Repository ist oeffentlich. Eine Telefonnummer darf hier nur stehen, wenn 'freigabe' true ist — also der Eigentuemer der Veroeffentlichung zugestimmt hat. Das Schema erzwingt es. Abgelesene, aber nicht freigegebene Nummern gehoeren nach daten-intern/kontakte.json; dieser Ordner wird nicht eingecheckt. 'pruefstand' sagt, wer die Angaben bestaetigt hat: 'unbesichtigt' (Vorgabe, nur vom Schild abgelesen), 'eigentuemer' oder 'vermittler'.",
+  "objekte": [
+    {
+      "id": "IR-001",
+      "foto": [
+        "IR-001.jpg"
+      ],
+      "strasse": "Centro storico",
+      "civico": "5",
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "abitabile",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "garage",
+        "cantina"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": true,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa d'epoca con portone ad arco, balconcino in ferro battuto e facciata gialla. Il cartello indica casa + garage + cantina.",
+        "en": "Period townhouse with arched front door, wrought-iron balcony and yellow façade. The sign states house + garage + cellar.",
+        "de": "Altstadthaus mit Rundbogentür, schmiedeeisernem Balkon und gelber Fassade. Laut Schild: Haus + Garage + Keller.",
+        "nl": "Karakteristiek dorpshuis met boogdeur, smeedijzeren balkon en gele gevel. Het bord vermeldt huis + garage + kelder.",
+        "fr": "Maison de village avec porte cintrée, balcon en fer forgé et façade jaune. Le panneau indique maison + garage + cave."
+      }
+    },
+    {
+      "id": "IR-002",
+      "foto": [
+        "IR-002.jpg"
+      ],
+      "strasse": "Centro storico",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "da-ristrutturare",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Piccola casa d'angolo su due livelli, muratura in pietra a vista al piano terra, portoncino in legno. Cartello VENDESI senza recapito.",
+        "en": "Small corner house on two levels, exposed stonework at street level, wooden door. VENDESI sign without a phone number.",
+        "de": "Kleines Eckhaus auf zwei Ebenen, Natursteinsockel im Erdgeschoss, Holztür. VENDESI-Schild ohne Telefonnummer.",
+        "nl": "Klein hoekhuis op twee niveaus, natuursteen op de begane grond, houten deur. VENDESI-bord zonder telefoonnummer.",
+        "fr": "Petite maison d'angle sur deux niveaux, soubassement en pierre apparente, porte en bois. Panneau VENDESI sans numéro."
+      }
+    },
+    {
+      "id": "IR-003",
+      "foto": [
+        "IR-003.jpg"
+      ],
+      "strasse": "Largo Domenico Mangieri",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "da-ristrutturare",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": false,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa d'angolo affacciata sul Largo Domenico Mangieri, ampio balcone su colonna e affaccio libero sulla piazzetta.",
+        "en": "Corner house facing Largo Domenico Mangieri, with a generous balcony on a stone column and an open outlook over the little square.",
+        "de": "Eckhaus am Largo Domenico Mangieri mit großzügigem Balkon auf Steinsäule und freiem Blick auf den kleinen Platz.",
+        "nl": "Hoekhuis aan Largo Domenico Mangieri, met een ruim balkon op een stenen zuil en vrij uitzicht over het pleintje.",
+        "fr": "Maison d'angle donnant sur le Largo Domenico Mangieri, large balcon sur colonne et vue dégagée sur la placette."
+      }
+    },
+    {
+      "id": "IR-004",
+      "foto": [
+        "IR-004.jpg"
+      ],
+      "strasse": "Borgo Antico · vicolo",
+      "civico": "8/9",
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "da-ristrutturare",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Due civici (8/9) su un vicolo a gradoni del borgo antico, sotto un arco coperto. Immobile da ristrutturare, forte carattere storico.",
+        "en": "Two civic numbers (8/9) on a stepped alley in the old borgo, under a covered arch. To be renovated, strong historic character.",
+        "de": "Zwei Hausnummern (8/9) an einer Treppengasse im Borgo Antico, unter einem überdachten Bogen. Sanierungsbedürftig, starker historischer Charakter.",
+        "nl": "Twee huisnummers (8/9) aan een trapsteegje in de oude borgo, onder een overdekte boog. Te renoveren, sterk historisch karakter.",
+        "fr": "Deux numéros (8/9) dans une ruelle à degrés du vieux bourg, sous une arche couverte. À rénover, fort caractère historique."
+      }
+    },
+    {
+      "id": "IR-005",
+      "foto": [
+        "IR-005.jpg"
+      ],
+      "strasse": "Angolo Via Zara",
+      "civico": null,
+      "typ": "palazzo",
+      "angebot": "vendita",
+      "zustand": "abitabile",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone",
+        "portone carrabile"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Palazzotto d'epoca su tre livelli con grande portone carrabile ad arco, lungo balcone su mensole in pietra e cornici lavorate.",
+        "en": "Period townhouse over three levels with a large arched carriage door, a long balcony on carved stone corbels and moulded window frames.",
+        "de": "Herrschaftliches Stadthaus über drei Ebenen mit großem Rundbogen-Einfahrtstor, langem Balkon auf Steinkonsolen und profilierten Fenstergewänden.",
+        "nl": "Statig herenhuis over drie niveaus met grote poort met rondboog, lang balkon op stenen consoles en geprofileerde raamomlijstingen.",
+        "fr": "Maison de maître sur trois niveaux avec grand portail cintré, long balcon sur corbeaux de pierre et encadrements moulurés."
+      }
+    },
+    {
+      "id": "IR-006",
+      "foto": [
+        "IR-006.jpg"
+      ],
+      "strasse": "Vicolo nel centro storico",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa su un vicolo stretto e silenzioso del centro storico, con piccolo balcone in ferro. Cartello dipinto a mano con il recapito del proprietario.",
+        "en": "House on a narrow, quiet alley in the historic centre, with a small iron balcony. Hand-painted sign with the owner's phone number.",
+        "de": "Haus in einer schmalen, ruhigen Gasse der Altstadt, mit kleinem Eisenbalkon. Handgemaltes Schild mit der Telefonnummer des Eigentümers.",
+        "nl": "Huis in een smal, rustig steegje in het historische centrum, met klein ijzeren balkon. Handgeschilderd bord met het telefoonnummer van de eigenaar.",
+        "fr": "Maison dans une ruelle étroite et calme du centre historique, avec petit balcon en fer. Panneau peint à la main avec le numéro du propriétaire."
+      }
+    },
+    {
+      "id": "IR-007",
+      "foto": [
+        "IR-007.jpg"
+      ],
+      "strasse": "Centro storico",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Edificio alto a intonaco grezzo, finestra con avvolgibile e persiane in legno. Sul cartello due recapiti telefonici.",
+        "en": "Tall building with bare render, window with roller blind and wooden shutters. The sign carries two phone numbers.",
+        "de": "Hohes Gebäude mit rohem Putz, Fenster mit Rollladen und Holzläden. Auf dem Schild stehen zwei Telefonnummern.",
+        "nl": "Hoog gebouw met ruw pleisterwerk, raam met rolluik en houten luiken. Op het bord staan twee telefoonnummers.",
+        "fr": "Bâtiment haut à enduit brut, fenêtre avec volet roulant et persiennes en bois. Le panneau porte deux numéros."
+      }
+    },
+    {
+      "id": "IR-008",
+      "foto": [
+        "IR-008.jpg"
+      ],
+      "strasse": "Largo San Martino",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "da-ristrutturare",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone",
+        "portone carrabile"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": false,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa d'angolo su due livelli affacciata sul Largo San Martino, con ampio portone carrabile, balcone in ferro e cornici in pietra alle finestre. Cartello VENDESI sul portone.",
+        "en": "Two-storey corner house facing Largo San Martino, with a wide carriage door, iron balcony and stone window surrounds. VENDESI sign on the door.",
+        "de": "Zweigeschossiges Eckhaus am Largo San Martino, mit breitem Einfahrtstor, Eisenbalkon und steinernen Fenstergewänden. VENDESI-Schild am Tor.",
+        "nl": "Hoekhuis van twee lagen aan Largo San Martino, met brede inrijpoort, ijzeren balkon en stenen raamomlijstingen. VENDESI-bord op de poort.",
+        "fr": "Maison d'angle sur deux niveaux donnant sur le Largo San Martino, large portail cochère, balcon en fer et encadrements en pierre. Panneau VENDESI sur le portail."
+      }
+    },
+    {
+      "id": "IR-009",
+      "foto": [
+        "IR-009.jpg"
+      ],
+      "strasse": "Centro storico",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "da-ristrutturare",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa con portone in legno intagliato e scalinata d'ingresso, balcone in ferro battuto al primo piano. Cartello VENDESI sul portone, recapito non leggibile in foto.",
+        "en": "House with a carved wooden door and entrance steps, wrought-iron balcony on the first floor. VENDESI sign on the door; the phone number is not legible in the photo.",
+        "de": "Haus mit geschnitzter Holztür und Eingangstreppe, schmiedeeiserner Balkon im ersten Stock. VENDESI-Schild an der Tür; die Nummer ist auf dem Foto nicht lesbar.",
+        "nl": "Huis met gesneden houten deur en toegangstrap, smeedijzeren balkon op de eerste verdieping. VENDESI-bord op de deur; het nummer is op de foto onleesbaar.",
+        "fr": "Maison avec porte en bois sculpté et perron, balcon en fer forgé au premier étage. Panneau VENDESI sur la porte ; le numéro n'est pas lisible sur la photo."
+      }
+    },
+    {
+      "id": "IR-010",
+      "foto": [
+        "IR-010a.jpg",
+        "IR-010b.jpg"
+      ],
+      "strasse": "II Vico San Martino",
+      "civico": null,
+      "typ": "locale",
+      "angebot": "entrambi",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": false,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Locale commerciale con serranda e porta a vetri nel II Vico San Martino, accanto al murale del vecchio panificio. Il cartello indica AFFITTASI / VENDESI — locali per attività commerciali.",
+        "en": "Commercial unit with roller shutter and glazed door in II Vico San Martino, beside the mural of the old bakery. The sign reads AFFITTASI / VENDESI — premises for commercial use.",
+        "de": "Gewerbeeinheit mit Rollladen und Glastür im II Vico San Martino, neben dem Wandbild der alten Bäckerei. Das Schild nennt AFFITTASI / VENDESI — Räume für gewerbliche Nutzung.",
+        "nl": "Bedrijfsruimte met rolluik en glazen deur in II Vico San Martino, naast de muurschildering van de oude bakkerij. Het bord vermeldt AFFITTASI / VENDESI — ruimte voor commerciële activiteit.",
+        "fr": "Local commercial avec rideau métallique et porte vitrée au II Vico San Martino, à côté de la fresque de l'ancienne boulangerie. Le panneau indique AFFITTASI / VENDESI — locaux pour activité commerciale."
+      }
+    },
+    {
+      "id": "IR-011",
+      "foto": [
+        "IR-011.jpg"
+      ],
+      "strasse": "Largo San Nicola",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa su tre livelli affacciata sul Largo San Nicola, sotto un arco in pietra del borgo. Cartello VENDESI appeso alla ringhiera del balcone; il numero non è leggibile in foto.",
+        "en": "Three-level house facing Largo San Nicola, under one of the old stone arches of the borgo. VENDESI sign hanging from the balcony railing; the number is not legible in the photo.",
+        "de": "Haus über drei Ebenen am Largo San Nicola, unter einem der alten Steinbögen des Borgo. VENDESI-Schild am Balkongeländer; die Nummer ist auf dem Foto nicht lesbar.",
+        "nl": "Huis van drie niveaus aan Largo San Nicola, onder een van de oude stenen bogen van de borgo. VENDESI-bord aan de balkonreling; het nummer is op de foto onleesbaar.",
+        "fr": "Maison sur trois niveaux donnant sur le Largo San Nicola, sous l'une des vieilles arches en pierre du bourg. Panneau VENDESI accroché au garde-corps ; le numéro n'est pas lisible."
+      }
+    },
+    {
+      "id": "IR-012",
+      "foto": [
+        "IR-012.jpg"
+      ],
+      "strasse": "Vicolo nel centro storico",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Ingresso murato con assi di legno in una facciata intonacata color ocra. Sulle assi la scritta VENDESI a mano con un numero di telefono, ormai leggibile solo in parte. Sopra, una portafinestra con ringhiera in ferro battuto.",
+        "en": "Doorway boarded up with wooden planks in an ochre rendered façade. VENDESI is painted on the boards by hand together with a phone number, now only partly legible. Above it, a French window with a wrought-iron railing.",
+        "de": "Mit Holzbrettern zugenagelter Eingang in einer ockerfarben verputzten Fassade. Auf den Brettern steht handgemalt VENDESI mit einer Telefonnummer, die nur noch teilweise lesbar ist. Darüber eine Fenstertür mit schmiedeeisernem Geländer.",
+        "nl": "Met houten planken dichtgetimmerde ingang in een okerkleurige gestucte gevel. Op de planken staat met de hand VENDESI geschilderd met een telefoonnummer dat nog maar deels leesbaar is. Daarboven een balkondeur met smeedijzeren hek.",
+        "fr": "Entrée condamnée par des planches de bois dans une façade enduite de couleur ocre. Sur les planches, VENDESI peint à la main avec un numéro de téléphone désormais lisible en partie seulement. Au-dessus, une porte-fenêtre à garde-corps en fer forgé."
+      }
+    },
+    {
+      "id": "IR-013",
+      "foto": [
+        "IR-013.jpg"
+      ],
+      "strasse": "Centro storico · ex falegnameria",
+      "civico": null,
+      "typ": "palazzo",
+      "angebot": "vendita",
+      "zustand": "da-ristrutturare",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Grande edificio d'epoca su due livelli con intonaco molto ammalorato, persiane verdi e portale ad arco. Al piano terra l'insegna di una vecchia bottega di arredamenti e falegnameria. Grande cartello VENDESI con recapito telefonico. Affaccia su una terrazza pavimentata con panchina.",
+        "en": "Large period building on two levels with badly deteriorated render, green shutters and an arched portal. On the ground floor, the sign of a former furniture shop and joinery. A large VENDESI banner with a phone number. It faces a paved terrace with a bench.",
+        "de": "Großes Altbaugebäude auf zwei Ebenen mit stark beschädigtem Putz, grünen Fensterläden und Rundbogenportal. Im Erdgeschoss das Schild einer ehemaligen Möbelwerkstatt und Schreinerei. Großes VENDESI-Banner mit Telefonnummer. Es liegt an einer gepflasterten Terrasse mit Bank.",
+        "nl": "Groot historisch pand op twee niveaus met sterk aangetast stucwerk, groene luiken en een boogportaal. Op de begane grond het uithangbord van een voormalige meubelzaak en timmerwerkplaats. Groot VENDESI-spandoek met telefoonnummer. Het ligt aan een bestraat terras met bank.",
+        "fr": "Grand bâtiment ancien sur deux niveaux, enduit très dégradé, persiennes vertes et portail en arc. Au rez-de-chaussée, l'enseigne d'un ancien magasin de meubles et d'une menuiserie. Grande banderole VENDESI avec un numéro de téléphone. Il donne sur une terrasse pavée avec un banc."
+      }
+    },
+    {
+      "id": "IR-014",
+      "foto": [
+        "IR-014a.jpg",
+        "IR-014b.jpg"
+      ],
+      "strasse": "Centro storico",
+      "civico": "13",
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "ristrutturato",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa in pietra a vista su due livelli, muratura ristilata di recente, contorni delle aperture in mattoni. Balcone con ringhiera in ferro e cartello VENDESI; il campo per il numero è rimasto in bianco. Civico 13 inciso nella pietra. Accanto, un grande edificio antico con oculo tondo.",
+        "en": "Two-storey house in exposed stone, recently repointed, with brick surrounds to the openings. Balcony with an iron railing and a VENDESI sign whose number field has been left blank. House number 13 carved in stone. Next to it, a large old building with a round oculus.",
+        "de": "Zweigeschossiges Haus aus Naturstein, erst kürzlich neu verfugt, mit Ziegeleinfassungen an den Öffnungen. Balkon mit Eisengeländer und VENDESI-Schild, dessen Nummernfeld leer geblieben ist. Hausnummer 13 in Stein gehauen. Daneben ein großes altes Gebäude mit rundem Ochsenauge.",
+        "nl": "Huis van twee lagen in zichtbaar natuursteen, recent opnieuw gevoegd, met bakstenen omlijstingen rond de openingen. Balkon met ijzeren hek en een VENDESI-bord waarvan het nummerveld leeg is gebleven. Huisnummer 13 in steen gehouwen. Ernaast een groot oud gebouw met een rond oculus.",
+        "fr": "Maison de deux niveaux en pierre apparente, rejointoyée récemment, encadrements des ouvertures en brique. Balcon à garde-corps en fer et panneau VENDESI dont le champ réservé au numéro est resté vide. Numéro 13 gravé dans la pierre. À côté, un grand édifice ancien percé d'un oculus."
+      }
+    },
+    {
+      "id": "IR-015",
+      "foto": [
+        "IR-015.jpg"
+      ],
+      "strasse": "Centro storico · presso la frutteria",
+      "civico": "53",
+      "typ": "palazzo",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Palazzo signorile con tre balconi in ferro battuto lavorato e cornici in pietra sopra le finestre. Portale ad arco con raggiera in ferro e portone in legno a due ante; sulla raggiera è applicato un adesivo VENDESI, i recapiti non sono leggibili in fotografia. Civico 53. Accanto una frutteria, a sinistra l'insegna di un vecchio negozio di tessuti.",
+        "en": "Manor house with three finely worked wrought-iron balconies and carved stone lintels above the windows. Arched portal with an iron fanlight and a wooden double door; a VENDESI sticker is fixed to the fanlight, its contact details are not legible in the photograph. House number 53. A greengrocer next door, and to the left the sign of an old fabric shop.",
+        "de": "Herrschaftshaus mit drei fein gearbeiteten schmiedeeisernen Balkonen und steinernen Fensterbekrönungen. Rundbogenportal mit eisernem Oberlichtgitter und zweiflügeliger Holztür; auf dem Gitter klebt ein VENDESI-Aufkleber, dessen Kontaktangaben auf dem Foto nicht lesbar sind. Hausnummer 53. Nebenan ein Obst- und Gemüseladen, links das Schild eines alten Stoffgeschäfts.",
+        "nl": "Herenhuis met drie fijn bewerkte smeedijzeren balkons en stenen omlijstingen boven de ramen. Boogportaal met ijzeren bovenlicht en houten dubbele deur; op het bovenlicht zit een VENDESI-sticker waarvan de contactgegevens op de foto niet leesbaar zijn. Huisnummer 53. Ernaast een groentewinkel, links het uithangbord van een oude stoffenwinkel.",
+        "fr": "Maison de maître aux trois balcons en fer forgé finement ouvragés et aux encadrements de pierre au-dessus des fenêtres. Portail cintré à imposte en fer et porte en bois à deux vantaux ; un autocollant VENDESI est apposé sur l'imposte, ses coordonnées ne sont pas lisibles sur la photographie. Numéro 53. Une primeurerie voisine et, à gauche, l'enseigne d'un ancien magasin de tissus."
+      }
+    }
+  ]
+}

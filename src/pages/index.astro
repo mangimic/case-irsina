@@ -1,0 +1,41 @@
+---
+import { SPRACHEN, STANDARD_SPRACHE, HREFLANG } from '../i18n/sprachen';
+import { startPfad } from '../i18n/routen';
+import { SITE_URL, SUCHMASCHINEN_ERLAUBT } from '../config';
+import { TEXTE } from '../i18n/texte';
+
+const ziel = startPfad(STANDARD_SPRACHE);
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Irsina · Case nel centro storico</title>
+    <meta http-equiv="refresh" content={`0; url=${ziel}`} />
+    {!SUCHMASCHINEN_ERLAUBT && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={new URL(ziel, SITE_URL).href} />
+    {SPRACHEN.map((l) => (
+      <link rel="alternate" hreflang={HREFLANG[l]} href={new URL(startPfad(l), SITE_URL).href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(ziel, SITE_URL).href} />
+    <script is:inline define:vars={{ sprachen: SPRACHEN, standard: ziel }}>
+      /* Die Besucherin bekommt die Sprache, die ihr Browser bevorzugt —
+         mit Italienisch als Rueckfall. */
+      const gewuenscht = (navigator.languages || [navigator.language || 'it'])
+        .map((l) => String(l).slice(0, 2).toLowerCase())
+        .find((l) => sprachen.includes(l));
+      location.replace(gewuenscht ? '/' + gewuenscht + '/' : standard);
+    </script>
+  </head>
+  <body>
+    <p style="font-family:system-ui,sans-serif;padding:40px">
+      {SPRACHEN.map((l, i) => (
+        <>
+          {i > 0 && ' · '}
+          <a href={startPfad(l)}>{TEXTE[l].home} ({l.toUpperCase()})</a>
+        </>
+      ))}
+    </p>
+  </body>
+</html>

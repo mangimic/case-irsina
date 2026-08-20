@@ -1,0 +1,10 @@
+{
+  "_hinweis": "NICHT EINCHECKEN. Von den Schildern abgelesene Telefonnummern, fuer die noch keine Einwilligung des Eigentuemers vorliegt. Sie duerfen nicht nach src/data/objekte.json und damit nicht in dieses oeffentliche Repository. Sobald jemand der Veroeffentlichung zustimmt: 'npm run kontakt:freigeben -- IR-013' traegt die Nummer ein und setzt die Freigabe. Diese Datei ist die einzige Stelle, an der die uebrigen Nummern stehen — eine Sicherung lohnt sich.",
+  "kontakte": {
+    "IR-001": {
+      "telefon": "+393331234567",
+      "unsicher": true,
+      "notiz": "Beispieleintrag — handschriftlich auf dem Schild, schwer lesbar."
+    }
+  }
+}

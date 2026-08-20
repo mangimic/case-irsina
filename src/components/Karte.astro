@@ -1,0 +1,144 @@
+---
+import 'leaflet/dist/leaflet.css';
+import { uebersetzer } from '../i18n/texte';
+import { MIT_KOORDINATEN, OBJEKTE, adresse } from '../data/objekte';
+import { objektPfad } from '../i18n/routen';
+import { KARTE_ZENTRUM } from '../config';
+import { zustandText } from '../data/anzeige';
+import type { Sprache } from '../i18n/sprachen';
+
+interface Props { lang: Sprache }
+const { lang } = Astro.props;
+const t = uebersetzer(lang);
+
+const offen = OBJEKTE.length - MIT_KOORDINATEN.length;
+
+const marker = MIT_KOORDINATEN.map((o) => ({
+  id: o.id,
+  lat: o.lat!,
+  lng: o.lng!,
+  titel: o.strasse,
+  adresse: adresse(o, lang),
+  zustand: zustandText(o, lang),
+  pfad: objektPfad(lang, o.id),
+}));
+---
+<div class="karte-rahmen">
+  <div id="karte" role="application" aria-label={t('maph')}></div>
+
+  {/* Die Kartenkacheln kommen von openstreetmap.org. Sie werden erst geladen,
+      wenn die Besucherin zustimmt — vorher verlaesst keine Anfrage den Browser. */}
+  <div class="karte-hinweis" id="karte-hinweis">
+    <div class="inner">
+      <h3>{t('mapConsentH')}</h3>
+      <p>{t('mapConsentP')}</p>
+      <button class="btn btn-p" type="button" id="karte-laden">{t('mapConsentBtn')}</button>
+      <p style="margin-top:14px">
+        <label style="font-size:13.5px;display:inline-flex;gap:7px;align-items:center;cursor:pointer">
+          <input type="checkbox" id="karte-merken" />
+          {t('mapConsentKeep')}
+        </label>
+      </p>
+    </div>
+  </div>
+</div>
+
+{offen > 0 && <p class="karte-fuss">{t('mapPending', { n: offen })}</p>}
+
+{/* Die Kartendaten als JSON im Dokument. Ueber define:vars wuerde Astro das
+    folgende Skript als is:inline behandeln — dann waere Leaflet nicht
+    mitgebuendelt und der Import im Browser nicht aufloesbar. */}
+<script
+  type="application/json"
+  id="karte-daten"
+  is:inline
+  set:html={JSON.stringify({
+    marker,
+    zentrum: KARTE_ZENTRUM,
+    beschriftung: { detail: t('openDetail'), offline: t('mapOffline') },
+  })}
+/>
+
+<script>
+  interface Marker {
+    id: string; lat: number; lng: number;
+    titel: string; adresse: string; zustand: string; pfad: string;
+  }
+  interface Kartendaten {
+    marker: Marker[];
+    zentrum: { lat: number; lng: number; zoom: number };
+    beschriftung: { detail: string; offline: string };
+  }
+
+  const datenElement = document.getElementById('karte-daten');
+  const { marker, zentrum, beschriftung } = JSON.parse(
+    datenElement?.textContent || '{"marker":[],"zentrum":{"lat":0,"lng":0,"zoom":2},"beschriftung":{}}',
+  ) as Kartendaten;
+
+  const hinweis = document.getElementById('karte-hinweis');
+  const knopf = document.getElementById('karte-laden');
+  const merken = document.getElementById('karte-merken');
+  const SCHLUESSEL = 'irsina-karte-erlaubt';
+
+  let geladen = false;
+
+  async function kartLaden() {
+    if (geladen) return;
+    geladen = true;
+    if (hinweis) hinweis.hidden = true;
+
+    try {
+      const L = (await import('leaflet')).default;
+      const karte = L.map('karte', { scrollWheelZoom: false }).setView(
+        [zentrum.lat, zentrum.lng],
+        zentrum.zoom,
+      );
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(karte);
+
+      // Eigene Markierung statt der Leaflet-Standardgrafik: kein zusaetzliches
+      // Bild, und die Kennung ist direkt auf der Karte lesbar.
+      const gruppe: [number, number][] = [];
+      for (const m of marker) {
+        const symbol = L.divIcon({
+          className: 'irsina-marker',
+          html:
+            '<span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;' +
+            'background:#a8462c;color:#fff;font:700 10px/1 ui-sans-serif,system-ui,sans-serif;' +
+            'border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)">' +
+            m.id.replace('IR-', '') +
+            '</span>',
+          iconSize: [34, 34],
+          iconAnchor: [17, 17],
+        });
+        const stift = L.marker([m.lat, m.lng], { icon: symbol, title: m.titel }).addTo(karte);
+        stift.bindPopup(
+          '<b>' + m.titel + '</b>' + m.adresse + '<br>' + m.zustand +
+            '<br><a href="' + m.pfad + '">' + beschriftung.detail + ' →</a>',
+        );
+        gruppe.push([m.lat, m.lng]);
+      }
+      if (gruppe.length > 1) karte.fitBounds(gruppe, { padding: [40, 40] });
+    } catch {
+      if (hinweis) {
+        hinweis.hidden = false;
+        const p = hinweis.querySelector('p');
+        if (p) p.textContent = beschriftung.offline;
+      }
+      geladen = false;
+    }
+  }
+
+  knopf?.addEventListener('click', () => {
+    if (merken instanceof HTMLInputElement && merken.checked) {
+      try { localStorage.setItem(SCHLUESSEL, '1'); } catch { /* Speicher gesperrt */ }
+    }
+    kartLaden();
+  });
+
+  try {
+    if (localStorage.getItem(SCHLUESSEL) === '1') kartLaden();
+  } catch { /* Speicher gesperrt — dann bleibt der Hinweis stehen */ }
+</script>

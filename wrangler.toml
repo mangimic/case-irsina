@@ -1,0 +1,22 @@
+# ── Cloudflare Pages: Irsina · Case nel centro storico ──
+#
+# Das Projekt liegt in der Wurzel dieses Repositorys — ein Root directory muss
+# im Dashboard NICHT gesetzt werden. Beim Anlegen genuegt:
+#
+#   Build command:              npm run build && npm run build:pruefen
+#   Build output directory:     dist
+#
+# Der Build-Befehl enthaelt bewusst die Kontrolle: findet sie eine ungeschuetzte
+# Telefonnummer, eine fehlende Seite oder einen fehlenden Pruefhinweis, schlaegt
+# das Deployment fehl, statt etwas Falsches zu veroeffentlichen.
+#
+# Zusaetzlich unter Settings -> Environment variables setzen:
+#   SITE_URL = https://<projektname>.pages.dev
+# Ohne sie zeigen die Teilen-Knoepfe auf die noch nicht existierende Domain.
+#
+# Cloudflare liest dann diese Datei. Die Sicherheits-Header und die
+# Weiterleitungen stehen in public/_headers und public/_redirects und werden
+# beim Build nach dist/ kopiert.
+name = "irsina-immobili"
+compatibility_date = "2026-08-01"
+pages_build_output_dir = "dist"
