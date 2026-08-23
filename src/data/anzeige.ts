@@ -15,6 +15,10 @@ const ANGEBOT_TEXT = {
   vendita: 'aVend', affitto: 'aAff', entrambi: 'aBoth',
 } as const satisfies Record<string, TextSchluessel>;
 
+const AUFWAND_TEXT = {
+  S: 'aufS', M: 'aufM', L: 'aufL', XL: 'aufXL',
+} as const satisfies Record<string, TextSchluessel>;
+
 const PRUEFSTAND_TEXT = {
   unbesichtigt: 'pvKurz', eigentuemer: 'pvOwner', vermittler: 'pvAgent',
 } as const satisfies Record<string, TextSchluessel>;
@@ -33,6 +37,10 @@ export const zustandText = (o: OeffentlichesObjekt, lang: Sprache) => t(lang, ZU
 export const angebotText = (o: OeffentlichesObjekt, lang: Sprache) => t(lang, ANGEBOT_TEXT[o.angebot]);
 export const pruefstandText = (o: OeffentlichesObjekt, lang: Sprache) =>
   t(lang, PRUEFSTAND_TEXT[o.pruefstand]);
+
+/** Volltext der Aufwandsstufe, oder der Hinweis, dass noch keine vorliegt. */
+export const aufwandText = (o: OeffentlichesObjekt, lang: Sprache) =>
+  o.aufwand === null ? t(lang, 'aufNd') : t(lang, AUFWAND_TEXT[o.aufwand]);
 
 /** true, solange die Angaben von niemandem bestaetigt wurden. */
 export const ungeprueft = (o: OeffentlichesObjekt) => o.pruefstand === 'unbesichtigt';

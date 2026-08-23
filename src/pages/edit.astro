@@ -1,0 +1,422 @@
+---
+import Intern from '../layouts/Intern.astro';
+import { TYPEN, ANGEBOTE, ZUSTAENDE, EXTRAS, PRUEFSTAND, AUFWAND } from '../data/schema';
+import { SPRACHEN, SPRACH_NAME } from '../i18n/sprachen';
+
+/**
+ * Editor auf der veroeffentlichten Seite.
+ *
+ * Der Unterschied zum Editor im Prototyp: dort bleibt eine Aenderung im
+ * Browser und muss spaeter von Hand uebernommen werden. Hier geht sie ueber
+ * den Worker als Commit ins Repository — die Seite baut neu, und nach ein bis
+ * zwei Minuten steht die Korrektur online.
+ *
+ * Die Auswahlwerte kommen aus demselben Schema wie die Seite. Damit kann im
+ * Editor nichts stehen, was der Datencheck spaeter ablehnt.
+ */
+const auswahl = {
+  typ: [...TYPEN],
+  angebot: [...ANGEBOTE],
+  zustand: [...ZUSTAENDE],
+  extras: [...EXTRAS],
+  pruefstand: [...PRUEFSTAND],
+  aufwand: [...AUFWAND],
+  sprachen: SPRACHEN.map((l) => ({ code: l, name: SPRACH_NAME[l] })),
+};
+---
+<Intern titel="Objekte bearbeiten" unterzeile="Änderungen gehen als Commit ins Repository. Die Seite baut danach neu.">
+  <form class="anmeldung" id="anmeldung" hidden>
+    <h2>Anmelden</h2>
+    <label class="anfrage-feld">
+      <span>Passwort</span>
+      <input type="password" name="passwort" autocomplete="current-password" required />
+    </label>
+    <button class="btn btn-p" type="submit">Anmelden</button>
+    <p class="anfrage-stand schlecht" id="anmelde-fehler" hidden></p>
+  </form>
+
+  <div id="bereich" hidden>
+    <div class="ed-werkzeug">
+      <button class="btn btn-p" type="button" id="neu">+ Neues Objekt</button>
+      <button class="btn btn-o" type="button" id="neu-laden">Neu laden</button>
+      <span class="intern-stand" id="stand"></span>
+    </div>
+    <ul class="ed-liste" id="liste"></ul>
+  </div>
+
+  <div class="ed-form" id="formular" hidden>
+    <div class="ed-box" id="box"></div>
+  </div>
+</Intern>
+
+<script type="application/json" id="auswahl" is:inline set:html={JSON.stringify(auswahl)} />
+
+<script is:inline>
+  (function () {
+    var A = JSON.parse(document.getElementById('auswahl').textContent);
+    var anmeldung = document.getElementById('anmeldung');
+    var bereich = document.getElementById('bereich');
+    var liste = document.getElementById('liste');
+    var stand = document.getElementById('stand');
+    var formular = document.getElementById('formular');
+    var box = document.getElementById('box');
+    var abmelden = document.getElementById('abmelden');
+
+    var objekte = [];
+    var sha = null;
+    var bearbeitet = null;
+    var alteKennung = null;
+
+    function esc(w) {
+      return String(w == null ? '' : w).replace(/[&<>"]/g, function (z) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[z];
+      });
+    }
+    function melden(text, art) {
+      stand.textContent = text;
+      stand.className = 'intern-stand' + (art ? ' ' + art : '');
+    }
+
+    /* ---- Laden ---------------------------------------------------------- */
+    async function laden() {
+      var antwort = await fetch('/api/objekte');
+      if (antwort.status === 401) {
+        anmeldung.hidden = false; bereich.hidden = true;
+        if (abmelden) abmelden.hidden = true;
+        return;
+      }
+      anmeldung.hidden = true; bereich.hidden = false;
+      if (abmelden) abmelden.hidden = false;
+
+      var daten = await antwort.json();
+      if (!antwort.ok) { melden(daten.fehler || 'Nicht abrufbar.', 'schlecht'); return; }
+
+      objekte = daten.objekte || [];
+      sha = daten.sha;
+      melden(objekte.length + ' Objekte, Stand ' + String(sha).slice(0, 7));
+      zeichnen();
+    }
+
+    function zeichnen() {
+      liste.innerHTML = objekte.map(function (o) {
+        return '<li class="ed-zeile" data-id="' + esc(o.id) + '">' +
+          '<span class="kennung">' + esc(o.id) + '</span>' +
+          '<span class="wer"><b>' + esc(o.strasse) + (o.civico ? ' ' + esc(o.civico) : '') + '</b>' +
+          '<span>' + esc(o.typ) + ' · ' + esc(o.zustand) +
+          (o.aufwand ? ' · Aufwand ' + esc(o.aufwand) : '') +
+          (o.lat == null ? ' · ohne Koordinaten' : '') + '</span></span>' +
+          '<button class="btn btn-o" type="button" data-bearbeiten="' + esc(o.id) + '">Bearbeiten</button>' +
+        '</li>';
+      }).join('');
+    }
+
+    /* ---- Formular ------------------------------------------------------- */
+    function feld(name, beschriftung, wert, art) {
+      return '<label class="anfrage-feld"><span>' + esc(beschriftung) + '</span>' +
+        '<input name="' + name + '" type="' + (art || 'text') + '" value="' + esc(wert == null ? '' : wert) + '"></label>';
+    }
+    function auswahlFeld(name, beschriftung, werte, gewaehlt, texte) {
+      return '<label class="anfrage-feld"><span>' + esc(beschriftung) + '</span><select name="' + name + '">' +
+        werte.map(function (w) {
+          return '<option value="' + esc(w) + '"' + (w === gewaehlt ? ' selected' : '') + '>' +
+            esc(texte && texte[w] !== undefined ? texte[w] : (w === '' ? '—' : w)) + '</option>';
+        }).join('') + '</select></label>';
+    }
+
+    function leeresObjekt() {
+      var hoechste = 0;
+      objekte.forEach(function (o) {
+        var m = /^IR-(\d{3})$/.exec(o.id);
+        if (m) hoechste = Math.max(hoechste, Number(m[1]));
+      });
+      var heute = new Date();
+      var text = {};
+      A.sprachen.forEach(function (s) { text[s.code] = ''; });
+      return {
+        id: 'IR-' + String(hoechste + 1).padStart(3, '0'),
+        foto: [], strasse: '', civico: null, typ: 'casa', angebot: 'vendita',
+        zustand: 'sconosciuto', preis: null, mq: null, vani: null, extras: [],
+        aufwand: null, telefon: null, telefon2: null, telefon_unsicher: false,
+        freigabe: false, lat: null, lng: null,
+        gesehen: heute.getFullYear() + '-' + String(heute.getMonth() + 1).padStart(2, '0'),
+        adresse_unklar: true, pruefstand: 'unbesichtigt', text: text,
+      };
+    }
+
+    function oeffnen(id) {
+      var neu = !id;
+      bearbeitet = neu
+        ? leeresObjekt()
+        : JSON.parse(JSON.stringify(objekte.filter(function (o) { return o.id === id; })[0]));
+      if (!bearbeitet) return;
+      alteKennung = neu ? null : id;
+      var o = bearbeitet;
+
+      box.innerHTML =
+        '<form id="ed-eingabe" action="javascript:void 0" novalidate>' +
+        '<div class="ed-kopf"><h2>' + (neu ? 'Neues Objekt' : 'Bearbeiten · ' + esc(o.id)) + '</h2>' +
+          '<button type="button" class="x" data-zu aria-label="Schließen">✕</button></div>' +
+
+        '<div class="ed-raster">' +
+          feld('kennung', 'Kennung', o.id) +
+          feld('strasse', 'Straße', o.strasse) +
+          feld('civico', 'Hausnummer', o.civico) +
+          auswahlFeld('typ', 'Objektart', A.typ, o.typ) +
+          auswahlFeld('zustand', 'Zustand', A.zustand, o.zustand) +
+          auswahlFeld('angebot', 'Angebot', A.angebot, o.angebot) +
+          feld('preis', 'Preis (€)', o.preis, 'number') +
+          feld('mq', 'Fläche (m²)', o.mq, 'number') +
+          feld('vani', 'Räume', o.vani, 'number') +
+          feld('gesehen', 'Erfasst (JJJJ-MM)', o.gesehen) +
+        '</div>' +
+
+        '<fieldset class="ed-gruppe"><legend>Ausstattung</legend>' +
+          A.extras.map(function (x) {
+            return '<label class="ed-haken"><input type="checkbox" name="extra" value="' + esc(x) + '"' +
+              (o.extras.indexOf(x) !== -1 ? ' checked' : '') + '> ' + esc(x) + '</label>';
+          }).join('') +
+        '</fieldset>' +
+
+        '<fieldset class="ed-gruppe"><legend>Prüfstand</legend>' +
+          auswahlFeld('pruefstand', 'Bestätigt von', A.pruefstand, o.pruefstand) +
+          auswahlFeld('aufwand', 'Aufwand', [''].concat(A.aufwand), o.aufwand || '',
+            { '': 'Noch nicht eingeschätzt' }) +
+          '<p class="ed-notiz">Eine Aufwandsstufe setzt voraus, dass jemand das Haus gesehen hat — ' +
+            'sonst weist der Datencheck sie ab.</p>' +
+          '<label class="ed-haken"><input type="checkbox" name="adresse_unklar"' +
+            (o.adresse_unklar ? ' checked' : '') + '> Adresse noch zu bestätigen</label>' +
+        '</fieldset>' +
+
+        '<fieldset class="ed-gruppe"><legend>Telefon</legend>' +
+          '<p class="ed-notiz">Ohne Freigabe darf hier keine Nummer stehen — das Repository ist ' +
+            'öffentlich. Ungefragte Nummern gehören in daten-intern/kontakte.json.</p>' +
+          '<div class="ed-raster">' +
+            feld('telefon', 'Telefon', o.telefon) +
+            feld('telefon2', 'Telefon 2', o.telefon2) +
+          '</div>' +
+          '<label class="ed-haken"><input type="checkbox" name="freigabe"' +
+            (o.freigabe ? ' checked' : '') + '> Eigentümer hat der Veröffentlichung zugestimmt</label>' +
+          '<label class="ed-haken"><input type="checkbox" name="telefon_unsicher"' +
+            (o.telefon_unsicher ? ' checked' : '') + '> Nummer noch zu prüfen</label>' +
+        '</fieldset>' +
+
+        '<fieldset class="ed-gruppe"><legend>Lage</legend>' +
+          '<div class="ed-raster">' + feld('lat', 'Lat', o.lat) + feld('lng', 'Lng', o.lng) + '</div>' +
+          '<button type="button" class="btn btn-o" data-standort>Aktuellen Standort übernehmen</button>' +
+          '<span class="ed-notiz" id="standort-stand"></span>' +
+        '</fieldset>' +
+
+        '<fieldset class="ed-gruppe"><legend>Fotos</legend>' +
+          '<div class="ed-fotos" id="fotos"></div>' +
+          '<label class="btn btn-o ed-dateiwahl">+ Foto hinzufügen' +
+            '<input type="file" accept="image/*" capture="environment" id="datei" hidden></label>' +
+          '<span class="ed-notiz" id="foto-stand"></span>' +
+        '</fieldset>' +
+
+        '<fieldset class="ed-gruppe"><legend>Beschreibung</legend>' +
+          A.sprachen.map(function (s) {
+            return '<label class="anfrage-feld"><span>' + esc(s.name) + '</span>' +
+              '<textarea name="text-' + s.code + '" rows="3">' + esc(o.text[s.code] || '') + '</textarea></label>';
+          }).join('') +
+        '</fieldset>' +
+
+        feld('notiz', 'Was wurde geändert? (steht später im Commit)', '') +
+
+        '<div class="ed-aktionen">' +
+          '<button type="submit" class="btn btn-p">Speichern und veröffentlichen</button>' +
+          '<button type="button" class="btn btn-o" data-zu>Abbrechen</button>' +
+          (neu ? '' : '<button type="button" class="btn ed-loeschen" data-loeschen>Objekt löschen</button>') +
+        '</div>' +
+        '<p class="anfrage-stand" id="form-stand" hidden></p>' +
+        '</form>';
+
+      fotosZeichnen();
+      formular.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    function schliessen() {
+      formular.hidden = true;
+      document.body.style.overflow = '';
+      bearbeitet = null;
+      alteKennung = null;
+    }
+
+    function fotosZeichnen() {
+      var behaelter = document.getElementById('fotos');
+      if (!behaelter || !bearbeitet) return;
+      behaelter.innerHTML = bearbeitet.foto.map(function (name, i) {
+        return '<figure class="ed-foto"><img src="/api/foto?name=' + encodeURIComponent(name) +
+          '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
+          '<button type="button" data-foto-weg="' + i + '" aria-label="Entfernen">✕</button>' +
+          '<figcaption>' + esc(name) + '</figcaption></figure>';
+      }).join('') || '<p class="ed-notiz">Noch kein Foto. Ohne Foto lässt sich der Eintrag nicht speichern.</p>';
+    }
+
+    /* ---- Speichern ------------------------------------------------------ */
+    function zahl(v) { if (v === '' || v == null) return null; var n = Number(v); return isNaN(n) ? null : n; }
+    function text(v) { v = (v || '').trim(); return v === '' ? null : v; }
+
+    async function speichern(form) {
+      var e = form.elements;
+      var w = function (n) { return e[n] ? e[n].value : ''; };
+      var h = function (n) { return Boolean(e[n] && e[n].checked); };
+      var o = bearbeitet;
+
+      o.id = (w('kennung') || '').trim().toUpperCase();
+      o.strasse = (w('strasse') || '').trim();
+      o.civico = text(w('civico'));
+      o.typ = w('typ'); o.zustand = w('zustand'); o.angebot = w('angebot');
+      o.preis = zahl(w('preis')); o.mq = zahl(w('mq')); o.vani = zahl(w('vani'));
+      o.gesehen = (w('gesehen') || '').trim();
+      o.pruefstand = w('pruefstand');
+      o.aufwand = w('aufwand') || null;
+      o.adresse_unklar = h('adresse_unklar');
+      o.freigabe = h('freigabe');
+      o.telefon = text(w('telefon'));
+      o.telefon2 = text(w('telefon2'));
+      o.telefon_unsicher = h('telefon_unsicher');
+      o.lat = zahl(w('lat')); o.lng = zahl(w('lng'));
+      o.extras = Array.prototype.slice.call(form.querySelectorAll('input[name="extra"]:checked'))
+        .map(function (k) { return k.value; });
+      A.sprachen.forEach(function (s) { o.text[s.code] = (w('text-' + s.code) || '').trim(); });
+
+      var liste2 = objekte.slice();
+      if (alteKennung && alteKennung !== o.id) {
+        liste2 = liste2.filter(function (x) { return x.id !== alteKennung; });
+      }
+      var stelle = -1;
+      liste2.forEach(function (x, i) { if (x.id === o.id) stelle = i; });
+      if (stelle === -1) liste2.push(o); else liste2[stelle] = o;
+      liste2.sort(function (a, c) { return a.id.localeCompare(c.id); });
+
+      var meldung = document.getElementById('form-stand');
+      meldung.hidden = false;
+      meldung.className = 'anfrage-stand';
+      meldung.textContent = 'Wird gespeichert…';
+
+      var antwort = await fetch('/api/objekte', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ objekte: liste2, sha: sha, notiz: w('notiz') }),
+      });
+      var daten = await antwort.json().catch(function () { return {}; });
+
+      if (!antwort.ok) {
+        meldung.className = 'anfrage-stand schlecht';
+        meldung.textContent = daten.fehler || 'Nicht gespeichert.';
+        return;
+      }
+      meldung.className = 'anfrage-stand gut';
+      meldung.textContent = 'Gespeichert als ' + String(daten.commit).slice(0, 7) +
+        '. Die Seite baut jetzt neu — in ein bis zwei Minuten ist es online.';
+      objekte = liste2;
+      await laden();
+      window.setTimeout(schliessen, 2200);
+    }
+
+    /* ---- Verdrahtung ---------------------------------------------------- */
+    anmeldung.addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+      var m = document.getElementById('anmelde-fehler');
+      m.hidden = true;
+      var antwort = await fetch('/api/anmelden', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ passwort: anmeldung.elements.passwort.value }),
+      });
+      if (antwort.ok) { anmeldung.reset(); laden(); return; }
+      var daten = await antwort.json().catch(function () { return {}; });
+      m.hidden = false;
+      m.textContent = daten.fehler || 'Anmeldung fehlgeschlagen.';
+    });
+
+    document.addEventListener('click', async function (ev) {
+      var el = ev.target;
+      if (el.closest && el.closest('[data-bearbeiten]')) {
+        oeffnen(el.closest('[data-bearbeiten]').dataset.bearbeiten); return;
+      }
+      if (el.closest && el.closest('[data-zu]')) { schliessen(); return; }
+      if (el.id === 'neu') { oeffnen(null); return; }
+      if (el.id === 'neu-laden') { laden(); return; }
+
+      var weg = el.closest && el.closest('[data-foto-weg]');
+      if (weg) { bearbeitet.foto.splice(Number(weg.dataset.fotoWeg), 1); fotosZeichnen(); return; }
+
+      if (el.closest && el.closest('[data-standort]')) {
+        var s = document.getElementById('standort-stand');
+        if (!navigator.geolocation) { s.textContent = 'Dieses Gerät gibt den Standort nicht her.'; return; }
+        s.textContent = 'Wird ermittelt…';
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var f = document.getElementById('ed-eingabe').elements;
+          f.lat.value = pos.coords.latitude.toFixed(6);
+          f.lng.value = pos.coords.longitude.toFixed(6);
+          s.textContent = 'Übernommen, ±' + Math.round(pos.coords.accuracy || 0) + ' m.';
+        }, function () { s.textContent = 'Standort nicht verfügbar.'; },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+        return;
+      }
+
+      if (el.closest && el.closest('[data-loeschen]')) {
+        if (!window.confirm('Dieses Objekt aus der Seite entfernen?')) return;
+        var uebrig = objekte.filter(function (x) { return x.id !== bearbeitet.id; });
+        var antwort = await fetch('/api/objekte', {
+          method: 'PUT', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ objekte: uebrig, sha: sha, notiz: bearbeitet.id + ' entfernt' }),
+        });
+        var daten = await antwort.json().catch(function () { return {}; });
+        if (!antwort.ok) { window.alert(daten.fehler || 'Nicht gelöscht.'); return; }
+        schliessen();
+        laden();
+      }
+    });
+
+    document.addEventListener('submit', function (ev) {
+      if (!ev.target.matches || !ev.target.matches('#ed-eingabe')) return;
+      ev.preventDefault();
+      speichern(ev.target);
+    });
+
+    /* Fotos werden vor dem Hochladen verkleinert: ein Handybild hat schnell
+       4 MB, und im Repository liegen die anderen bei 1400 px. */
+    document.addEventListener('change', function (ev) {
+      if (ev.target.id !== 'datei' || !bearbeitet) return;
+      var datei = ev.target.files && ev.target.files[0];
+      ev.target.value = '';
+      if (!datei) return;
+      var s = document.getElementById('foto-stand');
+      s.textContent = 'Wird verkleinert…';
+
+      var leser = new FileReader();
+      leser.onload = function () {
+        var bild = new Image();
+        bild.onload = async function () {
+          var max = 1400;
+          var b = bild.width, h = bild.height;
+          if (b > max || h > max) { var f = Math.min(max / b, max / h); b = Math.round(b * f); h = Math.round(h * f); }
+          var flaeche = document.createElement('canvas');
+          flaeche.width = b; flaeche.height = h;
+          flaeche.getContext('2d').drawImage(bild, 0, 0, b, h);
+          var datenUrl = flaeche.toDataURL('image/jpeg', 0.82);
+
+          var buchstabe = bearbeitet.foto.length ? String.fromCharCode(96 + bearbeitet.foto.length + 1) : '';
+          var name = bearbeitet.id + buchstabe + '.jpg';
+          s.textContent = 'Wird hochgeladen…';
+          var antwort = await fetch('/api/foto', {
+            method: 'PUT', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ name: name, inhalt: datenUrl.split(',')[1] }),
+          });
+          var daten = await antwort.json().catch(function () { return {}; });
+          if (!antwort.ok) { s.textContent = daten.fehler || 'Nicht hochgeladen.'; return; }
+          bearbeitet.foto.push(name);
+          fotosZeichnen();
+          s.textContent = name + ' liegt jetzt im Repository. Zum Übernehmen unten speichern.';
+        };
+        bild.onerror = function () { s.textContent = 'Das Bild ließ sich nicht lesen.'; };
+        bild.src = leser.result;
+      };
+      leser.readAsDataURL(datei);
+    });
+
+    laden();
+  })();
+</script>

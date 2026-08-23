@@ -512,21 +512,150 @@ Teilen-Knöpfe ziehen alle daraus.
 
 ---
 
+## Nachrichten und Editor auf der Seite
+
+Zwei Seiten sind nur für dich da. Beide hängen an **einem** Passwort und stehen in
+keiner Suchmaschine (`noindex`, dazu ein Eintrag in `robots.txt`).
+
+| Adresse | Wofür |
+|---|---|
+| `/admin` | Was über das Kontaktformular hereinkam: lesen, beantworten, als gelesen markieren, löschen. |
+| `/edit` | Die Objekte bearbeiten. Speichern legt einen **Commit im Repository** an; die Seite baut neu und ist nach ein bis zwei Minuten aktuell. |
+
+Der Editor ist damit etwas anderes als der im Prototyp: dort bleibt eine Änderung im
+Browser und muss später von Hand übernommen werden. Hier geht sie direkt in die Seite.
+Vor dem Haus stehen, korrigieren, **Aktuellen Standort übernehmen**, speichern — fertig.
+
+Er kann auch **Fotos hinzufügen**: das Bild wird im Browser auf 1400 px verkleinert und
+als eigene Datei ins Repository gelegt. Und er lässt nichts durch, was der Datencheck
+später ablehnen würde — es ist dasselbe Zod-Schema. Eine Telefonnummer ohne Freigabe
+oder eine Aufwandsstufe ohne Besichtigung wird mit Begründung abgewiesen, **bevor**
+etwas geschrieben wird.
+
+#### Einmalig einrichten
+
+**1. Datenbank für die Nachrichten anlegen**
+
+```
+npx wrangler d1 create irsina
+npx wrangler d1 execute irsina --remote --file migrations/0001_nachrichten.sql
+```
+
+Der erste Befehl gibt eine `database_id` aus. Die gehört in `wrangler.toml` — dort steht
+der Block auskommentiert bereit:
+
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "irsina"
+database_id = "hier-die-ausgegebene-id"
+```
+
+Solange das nicht geschehen ist, **verliert das Formular keine Nachricht**: es sagt der
+Besucherin, dass der Speicher fehlt, und verweist auf die E-Mail-Adresse.
+
+**2. Passwort setzen**
+
+```
+npx wrangler secret put ADMIN_PASSWORT
+```
+
+Ein langes, eigenes Passwort. Es gilt für `/admin` und `/edit` und ist zugleich der
+Schlüssel, mit dem die Sitzung unterschrieben wird — änderst du es, sind alle offenen
+Sitzungen zu Recht ungültig.
+
+**3. Zugang zum Repository für den Editor**
+
+Auf github.com unter *Settings → Developer settings → Personal access tokens → Fine-grained*
+ein Token anlegen:
+
+- *Repository access*: nur `mangimic/case-irsina`
+- *Permissions → Contents*: **Read and write** — mehr nicht
+- Laufzeit: so kurz, wie es dir passt; danach neu anlegen
+
+```
+npx wrangler secret put GITHUB_TOKEN
+```
+
+Ohne dieses Token zeigt `/edit` die Objekte trotzdem an (das Repository ist öffentlich),
+sagt beim Speichern aber, dass der Zugang fehlt.
+
+> **Wer den Token hat, kann in das Repository schreiben.** Deshalb nur *Contents* und
+> nur dieses eine Repository. Er liegt als Cloudflare-Secret und ist danach auch im
+> Dashboard nicht mehr lesbar.
+
+#### Auf dem eigenen Rechner ausprobieren
+
+```
+npm run build
+npx wrangler d1 execute irsina --local -c wrangler.lokal.toml --file migrations/0001_nachrichten.sql
+npx wrangler dev -c wrangler.lokal.toml
+```
+
+`wrangler.lokal.toml` hat die D1-Bindung schon drin; im lokalen Betrieb legt wrangler
+dafür eine SQLite-Datei unter `.wrangler/` an und fasst nichts in der Cloud an. Passwort
+und Token gehören in `.dev.vars` (nicht eingecheckt):
+
+```
+ADMIN_PASSWORT = "probe"
+GITHUB_TOKEN = "..."
+```
+
+---
+
+## Aufwand: S, M, L, XL
+
+Neben dem Zustand trägt jedes Objekt eine Stufe, wie viel Arbeit es braucht:
+
+| | |
+|---|---|
+| **S** | einzugsbereit bis geringer Aufwand |
+| **M** | überschaubare Arbeiten |
+| **L** | größere Arbeiten |
+| **XL** | aufwendige Sanierung |
+
+Sie erscheint als farbige Plakette auf der Kachel und als eigene Zeile auf der
+Detailseite, und es lässt sich danach filtern.
+
+**Bei allen zwanzig Objekten ist sie leer** — und das bleibt so, bis jemand drin war.
+Eine Aufwandsstufe ist eine Aussage über den Innenraum; sie vom Foto abzulesen wäre
+geraten. Das Schema hält sich daran: **eine Stufe ohne `pruefstand` lässt sich gar nicht
+speichern**, weder über den Editor noch von Hand. Erst bestätigen, dann einschätzen.
+
+---
+
+## Teilen über Instagram und TikTok
+
+Beide nehmen — anders als WhatsApp, Facebook oder Telegram — **keinen vorbereiteten Link
+entgegen**. Es gibt dafür schlicht keine Adresse; was danach aussieht, wäre eine
+Attrappe. Der Weg ist deshalb:
+
+- **Auf dem Handy** ist der erste Knopf der **systemweite Teilen-Dialog**. Er führt in
+  jede App, die auf dem Gerät liegt — Instagram und TikTok eingeschlossen. Das ist der
+  bequemste Weg und er funktioniert überall.
+- **Die Knöpfe „Instagram" und „TikTok"** kopieren den Link, sagen in einem Satz, dass er
+  eingefügt werden muss (Story-Sticker, Bio oder Beschreibung), und öffnen die App.
+
+---
+
 ## Was noch offen ist
 
 1. **Anschrift im Impressum.** In `src/i18n/rechtliches.ts` steht `ANSCHRIFT_FEHLT`.
    Eine Anbieterkennzeichnung braucht eine ladungsfähige Anschrift; die kann nur der
    Betreiber selbst eintragen. `npm run build:pruefen` erinnert bei jedem Build daran.
-2. **Koordinaten** für alle zwanzig Objekte, damit die Karte trägt. Die vorliegenden
+2. **D1-Datenbank anlegen und die Secrets setzen**, sonst nimmt das Formular keine
+   Nachricht an und der Editor speichert nicht — siehe *Nachrichten und Editor auf der
+   Seite*.
+3. **Koordinaten** für alle zwanzig Objekte, damit die Karte trägt. Die vorliegenden
    Fotos haben ihre Metadaten unterwegs verloren — mit den Originalen vom Handy geht es
    in einem Schritt, siehe *Koordinaten holen*.
-3. **Hausnummer von IR-016** klären: die Foto-Info nennt *Corso Canio Musacchio 46*,
+4. **Hausnummer von IR-016** klären: die Foto-Info nennt *Corso Canio Musacchio 46*,
    am Gebäude selbst steht die **13** als Relief unter dem Gesims. Siehe unten.
-4. **Preise, Flächen, Zustand** erheben — die Felder sind angelegt und bleiben leer,
-   bis sie gefüllt werden.
-5. **Eigentümer ansprechen.** Das schafft Kontakt im Ort, klärt die Angaben und
+5. **Preise, Flächen und Aufwandsstufen** erheben — die Felder sind angelegt und bleiben leer,
+   bis sie gefüllt werden. Die Aufwandsstufe setzt eine Besichtigung voraus.
+6. **Eigentümer ansprechen.** Das schafft Kontakt im Ort, klärt die Angaben und
    ermöglicht es, Nummern mit Zustimmung freizuschalten.
-6. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
+7. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
    (siehe oben).
 
 ---

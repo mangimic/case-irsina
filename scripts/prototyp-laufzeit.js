@@ -64,11 +64,13 @@
 
     return {
       id: o.id, foto: o.foto, typ: o.typ, zustand: o.zustand, angebot: o.angebot,
+      aufwand: o.aufwand == null ? null : o.aufwand,
       preis: o.preis, strasse: o.strasse, civico: o.civico,
       adresseUnklar: o.adresse_unklar, pruefstand: o.pruefstand,
       telefon: o.telefon, telefonUnsicher: o.telefon_unsicher,
       anschrift: anschrift, text: beschreibung,
       typText: b.typ[o.typ], zustandText: b.zustand[o.zustand],
+      aufwandText: o.aufwand == null ? tx.aufNd : b.aufwand[o.aufwand],
       angebotText: b.angebot[o.angebot], pruefstandText: b.pruefstand[o.pruefstand],
       preisText: preisFormat(o.preis, lang),
       flaecheText: o.mq == null ? null : o.mq + ' m²',
@@ -165,7 +167,8 @@
           esc(t('addrTbd')) + '</span>' : '') + '</p>';
     }
     return '<li class="objekt" data-id="' + o.id + '" data-typ="' + o.typ +
-      '" data-zustand="' + o.zustand + '" data-angebot="' + o.angebot +
+      '" data-zustand="' + o.zustand + '" data-aufwand="' + (o.aufwand || '') +
+      '" data-angebot="' + o.angebot +
       '" data-preis="' + (o.preis == null ? '' : o.preis) +
       '" data-strasse="' + esc(o.strasse) + '" data-suche="' + esc(o.suche) + '">' +
       '<a class="card" href="#' + o.id + '">' +
@@ -174,6 +177,8 @@
           (eifrig ? 'eager' : 'lazy') + '" decoding="async">' +
           '<span class="ref">' + o.id + '</span>' +
           '<span class="badge b-' + o.zustand + '">' + esc(o.zustandText) + '</span>' +
+          (o.aufwand ? '<span class="aufwand a-' + o.aufwand + '" title="' +
+            esc(o.aufwandText) + '">' + esc(o.aufwand) + '</span>' : '') +
           '<span class="pruef ' + (o.pruefstand === 'unbesichtigt' ? 'offen' : 'bestaetigt') + '">' +
             (o.pruefstand === 'unbesichtigt' ? '?' : '✓') + ' ' + esc(o.pruefstandText) + '</span>' +
         '</div>' +
@@ -210,6 +215,7 @@
                  ['rudere', 'tRudere'], ['locale', 'tLocale']];
     var zustaende = [['abitabile', 'cAbit'], ['da-ristrutturare', 'cRistr'],
                      ['ristrutturato', 'cRis'], ['sconosciuto', 'cUnk']];
+    var aufwaende = [['S', 'aufS'], ['M', 'aufM'], ['L', 'aufL'], ['XL', 'aufXL']];
     var chips = [['alle', t('qall')], ['preis', t('qprice')],
                  ['vendita', t('aVend')], ['affitto', t('aAff')]];
 
@@ -255,6 +261,10 @@
           '<div class="field sel"><label for="f-zustand">' + esc(t('dCond')) + '</label><select id="f-zustand" name="zustand">' +
             '<option value="">' + esc(t('cAll')) + '</option>' +
             zustaende.map(function (x) { return '<option value="' + x[0] + '">' + esc(t(x[1])) + '</option>'; }).join('') +
+          '</select></div>' +
+          '<div class="field sel"><label for="f-aufwand">' + esc(t('aufH')) + '</label><select id="f-aufwand" name="aufwand">' +
+            '<option value="">' + esc(t('aufAll')) + '</option>' +
+            aufwaende.map(function (x) { return '<option value="' + x[0] + '">' + esc(t(x[1])) + '</option>'; }).join('') +
           '</select></div>' +
           '<div class="field sel"><label for="f-sortierung">' + esc(t('sRef')) + '</label><select id="f-sortierung" name="sortierung">' +
             '<option value="ref">' + esc(t('sRef')) + '</option>' +
@@ -467,6 +477,7 @@
     aktuellesObjekt = id;
 
     var angaben = [[t('dRef'), o.id], [t('dType'), o.typText], [t('dCond'), o.zustandText],
+                   [t('aufH'), o.aufwandText],
                    [t('dPrice'), o.preisText]];
     if (o.flaecheText) angaben.push([t('dSize'), o.flaecheText]);
     if (o.raeumeText) angaben.push([t('dRooms'), o.raeumeText]);
@@ -598,6 +609,7 @@
       if (suche && el.dataset.suche.indexOf(suche) === -1) ok = false;
       if (form.typ.value && el.dataset.typ !== form.typ.value) ok = false;
       if (form.zustand.value && el.dataset.zustand !== form.zustand.value) ok = false;
+      if (form.aufwand.value && el.dataset.aufwand !== form.aufwand.value) ok = false;
       if (chip === 'preis' && !el.dataset.preis) ok = false;
       if (chip === 'vendita' && ['vendita', 'entrambi'].indexOf(el.dataset.angebot) === -1) ok = false;
       if (chip === 'affitto' && ['affitto', 'entrambi'].indexOf(el.dataset.angebot) === -1) ok = false;

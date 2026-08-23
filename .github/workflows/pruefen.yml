@@ -41,6 +41,12 @@ jobs:
       - name: Build prüfen
         run: npm run build:pruefen
 
+      # Die Angaben in wrangler.toml zeigen sich sonst erst beim Deployment —
+      # und dort kostet ein Fehler einen fehlgeschlagenen Build. Der Trockenlauf
+      # bündelt den Worker und prüft die Konfiguration, ohne etwas zu ändern.
+      - name: Deploy-Konfiguration prüfen
+        run: npx --yes wrangler@4 deploy --dry-run
+
       # Der Prototyp entsteht aus denselben Daten — er darf nicht kaputtgehen,
       # ohne dass es auffällt.
       - name: Prototyp bauen

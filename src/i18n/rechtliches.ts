@@ -157,7 +157,7 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
         'Questo sito è composto da pagine statiche. Non usa cookie, non contiene strumenti di analisi o di tracciamento e non trasmette dati a reti pubblicitarie.',
       ]},
       { h: 'File di log del server', p: [
-        'Il sito è ospitato da Cloudflare Pages (Cloudflare, Inc.). Come ogni server web, l\'infrastruttura registra tecnicamente le richieste, compreso l\'indirizzo IP abbreviato, per garantire il funzionamento e la sicurezza del servizio. Base giuridica: art. 6, par. 1, lett. f GDPR (interesse legittimo a un funzionamento sicuro).',
+        'Il sito è ospitato da Cloudflare Workers (Cloudflare, Inc.). Come ogni server web, l\'infrastruttura registra tecnicamente le richieste, compreso l\'indirizzo IP abbreviato, per garantire il funzionamento e la sicurezza del servizio. Base giuridica: art. 6, par. 1, lett. f GDPR (interesse legittimo a un funzionamento sicuro).',
       ]},
       { h: 'Mappa', p: [
         'La mappa del paese viene caricata da openstreetmap.org solo dopo un vostro clic esplicito. Fino a quel momento non viene inviata alcuna richiesta a quel servizio. Se attivate la mappa, il vostro indirizzo IP viene trasmesso alla OpenStreetMap Foundation. Se scegliete di memorizzare la decisione, questa resta nel vostro browser (localStorage) e non raggiunge alcun server.',
@@ -169,8 +169,11 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
       { h: 'Fotografie degli immobili', p: [
         'Le fotografie mostrano facciate visibili dalla via pubblica. Non vengono pubblicate immagini di persone, targhe di veicoli o interni privati. Se una fotografia vi riguarda e desiderate la rimozione, è sufficiente scriverci.',
       ]},
-      { h: 'Contatto via e-mail', p: [
-        'Se ci scrivete, il vostro messaggio e il vostro indirizzo e-mail vengono conservati per il tempo necessario a trattare la richiesta e a rispondere a eventuali domande successive. Base giuridica: art. 6, par. 1, lett. b e f GDPR.',
+      { h: 'Modulo di contatto ed e-mail', p: [
+        'Il modulo trasmette quello che ci scrivete: nome (facoltativo), indirizzo e-mail, testo del messaggio, l\'immobile a cui si riferisce e la lingua in cui avete scritto, con la data di arrivo. Nient\'altro — nessun indirizzo IP, nessun identificativo del browser.',
+        'I messaggi sono conservati in una banca dati Cloudflare D1 (Cloudflare, Inc.), sulla stessa infrastruttura che ospita il sito, e sono leggibili soltanto dal titolare con una password. Base giuridica: art. 6, par. 1, lett. b e f GDPR.',
+        'Vengono conservati per il tempo necessario a rispondere e a trattare le domande successive, poi cancellati. Se ci scrivete direttamente per e-mail vale lo stesso.',
+        'Il modulo non usa captcha e non carica nulla da servizi terzi. Contro l\'invio automatico contano soltanto un campo invisibile e il tempo trascorso sulla pagina.',
       ]},
       { h: 'I vostri diritti', p: [
         'Avete diritto di accesso, rettifica, cancellazione, limitazione del trattamento, portabilità dei dati e opposizione. Per esercitarli è sufficiente una e-mail all\'indirizzo indicato nelle note legali.',
@@ -187,7 +190,7 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
         'This site consists of static pages. It sets no cookies, contains no analytics or tracking tools and passes no data to advertising networks.',
       ]},
       { h: 'Server logs', p: [
-        'The site is hosted on Cloudflare Pages (Cloudflare, Inc.). Like any web server, the infrastructure technically records requests, including a shortened IP address, in order to keep the service running and secure. Legal basis: Art. 6(1)(f) GDPR (legitimate interest in secure operation).',
+        'The site is hosted on Cloudflare Workers (Cloudflare, Inc.). Like any web server, the infrastructure technically records requests, including a shortened IP address, in order to keep the service running and secure. Legal basis: Art. 6(1)(f) GDPR (legitimate interest in secure operation).',
       ]},
       { h: 'Map', p: [
         'The map of the village is loaded from openstreetmap.org only after you explicitly click to enable it. Until then, no request whatsoever is sent to that service. If you enable the map, your IP address is transmitted to the OpenStreetMap Foundation. If you choose to remember that decision, it stays in your browser (localStorage) and reaches no server.',
@@ -199,8 +202,11 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
       { h: 'Photographs of the properties', p: [
         'The photographs show façades visible from the public street. No images of people, vehicle number plates or private interiors are published. If a photograph concerns you and you would like it removed, simply write to us.',
       ]},
-      { h: 'Contact by e-mail', p: [
-        'If you write to us, your message and e-mail address are kept for as long as is needed to handle your enquiry and any follow-up questions. Legal basis: Art. 6(1)(b) and (f) GDPR.',
+      { h: 'Contact form and e-mail', p: [
+        'The form sends what you type into it: name (optional), e-mail address, the text of your message, the property it refers to and the language you wrote in, together with the time it arrived. Nothing else — no IP address, no browser fingerprint.',
+        'Messages are stored in a Cloudflare D1 database (Cloudflare, Inc.), on the same infrastructure that serves the site, and can only be read by the site owner with a password. Legal basis: Art. 6(1)(b) and (f) GDPR.',
+        'They are kept for as long as is needed to reply and to handle follow-up questions, then deleted. The same applies if you write to us by e-mail directly.',
+        'The form uses no captcha and loads nothing from third-party services. Against automated submissions it relies only on a hidden field and the time spent on the page.',
       ]},
       { h: 'Your rights', p: [
         'You have the right of access, rectification, erasure, restriction of processing, data portability and objection. An e-mail to the address in the legal notice is enough to exercise them.',
@@ -217,7 +223,7 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
         'Diese Seite besteht aus statischen Dateien. Sie setzt keine Cookies, enthält keine Analyse- oder Trackingwerkzeuge und gibt keine Daten an Werbenetzwerke weiter.',
       ]},
       { h: 'Server-Protokolle', p: [
-        'Die Seite wird bei Cloudflare Pages (Cloudflare, Inc.) betrieben. Wie jeder Webserver protokolliert die Infrastruktur technisch bedingt die Abrufe, einschließlich einer gekürzten IP-Adresse, um Betrieb und Sicherheit zu gewährleisten. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an sicherem Betrieb).',
+        'Die Seite wird bei Cloudflare Workers (Cloudflare, Inc.) betrieben. Wie jeder Webserver protokolliert die Infrastruktur technisch bedingt die Abrufe, einschließlich einer gekürzten IP-Adresse, um Betrieb und Sicherheit zu gewährleisten. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an sicherem Betrieb).',
       ]},
       { h: 'Karte', p: [
         'Die Ortskarte wird erst nach einem ausdrücklichen Klick von openstreetmap.org geladen. Vorher geht keinerlei Anfrage an diesen Dienst. Wenn Sie die Karte aktivieren, wird Ihre IP-Adresse an die OpenStreetMap Foundation übertragen. Merken Sie sich die Entscheidung, bleibt sie in Ihrem Browser (localStorage) und erreicht keinen Server.',
@@ -229,8 +235,11 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
       { h: 'Fotos der Objekte', p: [
         'Die Fotos zeigen Fassaden, die von der öffentlichen Straße aus sichtbar sind. Abbildungen von Personen, Kfz-Kennzeichen oder privaten Innenräumen werden nicht veröffentlicht. Betrifft Sie ein Foto und wünschen Sie die Entfernung, genügt eine Nachricht.',
       ]},
-      { h: 'Kontakt per E-Mail', p: [
-        'Wenn Sie uns schreiben, werden Ihre Nachricht und Ihre E-Mail-Adresse so lange aufbewahrt, wie es zur Bearbeitung der Anfrage und für Anschlussfragen nötig ist. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und f DSGVO.',
+      { h: 'Kontaktformular und E-Mail', p: [
+        'Das Formular übermittelt, was Sie hineinschreiben: Name (freiwillig), E-Mail-Adresse, den Text Ihrer Nachricht, das Objekt, auf das sie sich bezieht, und die Sprache, in der Sie geschrieben haben, dazu den Zeitpunkt des Eingangs. Mehr nicht — keine IP-Adresse, kein Browser-Fingerabdruck.',
+        'Die Nachrichten liegen in einer Cloudflare-D1-Datenbank (Cloudflare, Inc.), auf derselben Infrastruktur wie die Seite, und sind nur vom Betreiber mit Passwort lesbar. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und f DSGVO.',
+        'Sie werden aufbewahrt, solange es zur Beantwortung und für Anschlussfragen nötig ist, und danach gelöscht. Schreiben Sie stattdessen direkt eine E-Mail, gilt dasselbe.',
+        'Das Formular verwendet kein Captcha und lädt nichts von Drittanbietern. Gegen automatisch ausgefüllte Formulare helfen ihm allein ein unsichtbares Feld und die Verweildauer auf der Seite.',
       ]},
       { h: 'Ihre Rechte', p: [
         'Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Eine E-Mail an die im Impressum genannte Adresse genügt.',
@@ -247,7 +256,7 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
         'Deze site bestaat uit statische pagina\'s. Er worden geen cookies geplaatst, er zijn geen analyse- of trackinginstrumenten en er gaan geen gegevens naar advertentienetwerken.',
       ]},
       { h: 'Serverlogboeken', p: [
-        'De site draait op Cloudflare Pages (Cloudflare, Inc.). Zoals elke webserver registreert de infrastructuur technisch de aanvragen, waaronder een ingekort IP-adres, om werking en veiligheid te waarborgen. Rechtsgrond: art. 6 lid 1 sub f AVG (gerechtvaardigd belang bij een veilige werking).',
+        'De site draait op Cloudflare Workers (Cloudflare, Inc.). Zoals elke webserver registreert de infrastructuur technisch de aanvragen, waaronder een ingekort IP-adres, om werking en veiligheid te waarborgen. Rechtsgrond: art. 6 lid 1 sub f AVG (gerechtvaardigd belang bij een veilige werking).',
       ]},
       { h: 'Kaart', p: [
         'De kaart van het dorp wordt pas na een uitdrukkelijke klik geladen van openstreetmap.org. Daarvoor gaat er geen enkele aanvraag naar die dienst. Schakelt u de kaart in, dan wordt uw IP-adres doorgegeven aan de OpenStreetMap Foundation. Kiest u ervoor die keuze te onthouden, dan blijft dat in uw browser (localStorage) en bereikt het geen server.',
@@ -259,8 +268,11 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
       { h: 'Foto\'s van de panden', p: [
         'De foto\'s tonen gevels die zichtbaar zijn vanaf de openbare weg. Afbeeldingen van personen, kentekenplaten of privé-interieurs worden niet gepubliceerd. Betreft een foto u en wilt u verwijdering, dan volstaat een bericht.',
       ]},
-      { h: 'Contact per e-mail', p: [
-        'Schrijft u ons, dan worden uw bericht en e-mailadres bewaard zolang dat nodig is om uw vraag en eventuele vervolgvragen af te handelen. Rechtsgrond: art. 6 lid 1 sub b en f AVG.',
+      { h: 'Contactformulier en e-mail', p: [
+        'Het formulier verstuurt wat u erin schrijft: naam (optioneel), e-mailadres, de tekst van uw bericht, het pand waarop het betrekking heeft en de taal waarin u schreef, met het tijdstip van binnenkomst. Meer niet — geen IP-adres, geen browservingerafdruk.',
+        'De berichten staan in een Cloudflare D1-database (Cloudflare, Inc.), op dezelfde infrastructuur als de site, en zijn alleen met een wachtwoord door de beheerder te lezen. Rechtsgrond: art. 6 lid 1 sub b en f AVG.',
+        'Ze worden bewaard zolang dat nodig is om te antwoorden en vervolgvragen af te handelen, en daarna gewist. Schrijft u in plaats daarvan rechtstreeks een e-mail, dan geldt hetzelfde.',
+        'Het formulier gebruikt geen captcha en laadt niets van derden. Tegen automatisch ingevulde formulieren helpen alleen een onzichtbaar veld en de tijd op de pagina.',
       ]},
       { h: 'Uw rechten', p: [
         'U hebt recht op inzage, rectificatie, verwijdering, beperking van de verwerking, gegevensoverdraagbaarheid en bezwaar. Een e-mail naar het adres in het colofon volstaat.',
@@ -277,7 +289,7 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
         'Ce site est constitué de pages statiques. Il ne dépose aucun cookie, ne contient aucun outil de mesure d\'audience ou de pistage et ne transmet aucune donnée à des régies publicitaires.',
       ]},
       { h: 'Journaux du serveur', p: [
-        'Le site est hébergé par Cloudflare Pages (Cloudflare, Inc.). Comme tout serveur web, l\'infrastructure enregistre techniquement les requêtes, y compris une adresse IP tronquée, afin d\'assurer le fonctionnement et la sécurité du service. Base légale : art. 6, § 1, point f du RGPD (intérêt légitime à un fonctionnement sûr).',
+        'Le site est hébergé par Cloudflare Workers (Cloudflare, Inc.). Comme tout serveur web, l\'infrastructure enregistre techniquement les requêtes, y compris une adresse IP tronquée, afin d\'assurer le fonctionnement et la sécurité du service. Base légale : art. 6, § 1, point f du RGPD (intérêt légitime à un fonctionnement sûr).',
       ]},
       { h: 'Carte', p: [
         'La carte du village n\'est chargée depuis openstreetmap.org qu\'après un clic explicite de votre part. Auparavant, aucune requête n\'est envoyée à ce service. Si vous activez la carte, votre adresse IP est transmise à la OpenStreetMap Foundation. Si vous choisissez de mémoriser ce choix, il reste dans votre navigateur (localStorage) et n\'atteint aucun serveur.',
@@ -289,8 +301,11 @@ export const DATENSCHUTZ: Record<Sprache, Rechtstext> = {
       { h: 'Photographies des biens', p: [
         'Les photographies montrent des façades visibles depuis la voie publique. Aucune image de personnes, de plaques d\'immatriculation ou d\'intérieurs privés n\'est publiée. Si une photographie vous concerne et que vous en souhaitez le retrait, un simple message suffit.',
       ]},
-      { h: 'Contact par e-mail', p: [
-        'Si vous nous écrivez, votre message et votre adresse e-mail sont conservés le temps nécessaire au traitement de votre demande et aux questions qui pourraient suivre. Base légale : art. 6, § 1, points b et f du RGPD.',
+      { h: 'Formulaire de contact et e-mail', p: [
+        'Le formulaire transmet ce que vous y écrivez : nom (facultatif), adresse e-mail, texte du message, le bien concerné et la langue dans laquelle vous avez écrit, avec la date de réception. Rien d\'autre — ni adresse IP, ni empreinte de navigateur.',
+        'Les messages sont conservés dans une base Cloudflare D1 (Cloudflare, Inc.), sur la même infrastructure que le site, et ne sont lisibles que par l\'exploitant, avec un mot de passe. Base légale : art. 6, § 1, points b et f du RGPD.',
+        'Ils sont gardés le temps nécessaire pour répondre et traiter les questions qui suivent, puis supprimés. Si vous écrivez directement par e-mail, il en va de même.',
+        'Le formulaire n\'utilise pas de captcha et ne charge rien depuis des services tiers. Contre les envois automatiques, il ne compte que sur un champ invisible et le temps passé sur la page.',
       ]},
       { h: 'Vos droits', p: [
         'Vous disposez d\'un droit d\'accès, de rectification, d\'effacement, de limitation du traitement, de portabilité et d\'opposition. Un e-mail à l\'adresse figurant dans les mentions légales suffit.',

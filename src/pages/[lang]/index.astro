@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Basis from '../../layouts/Basis.astro';
 import Objektkachel from '../../components/Objektkachel.astro';
 import Filter from '../../components/Filter.astro';
+import Anfrageformular from '../../components/Anfrageformular.astro';
 import Karte from '../../components/Karte.astro';
 import { OBJEKTE } from '../../data/objekte';
 import { foto } from '../../data/fotos';
@@ -158,6 +159,9 @@ const fakten = [
         <li>{t('s2')}</li>
         <li>{t('s3')}</li>
       </ol>
+    </div>
+    <div class="wrap">
+      <Anfrageformular lang={lang} />
     </div>
   </section>
 </Basis>

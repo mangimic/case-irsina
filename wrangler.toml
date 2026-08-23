@@ -24,6 +24,11 @@
 name = "irsina-immobili"
 compatibility_date = "2026-08-01"
 
+# Der Worker steht nur fuer /api/* bereit; alles andere liefert Cloudflare
+# direkt aus dem Ordner unten. Ohne ihn gaebe es kein Kontaktformular und
+# keinen Editor auf der Seite.
+main = "worker/index.ts"
+
 [assets]
 # Was Astro gebaut hat. public/_headers und public/_redirects liegen danach in
 # dist/ und werden von Cloudflare ausgewertet — die Sicherheits-Header und die
@@ -32,3 +37,28 @@ directory = "./dist"
 
 # Astro legt eine eigene 404-Seite an; ohne diese Zeile kaeme Cloudflares.
 not_found_handling = "404-page"
+
+# Der Worker braucht Zugriff darauf, um unbekannte Wege an die Seite
+# weiterzureichen.
+binding = "ASSETS"
+
+[vars]
+# Wohin der Editor zurueckschreibt. Kein Geheimnis — der Token dazu schon,
+# der steht als Secret GITHUB_TOKEN im Dashboard.
+GITHUB_BESITZER = "mangimic"
+GITHUB_REPO = "case-irsina"
+GITHUB_ZWEIG = "main"
+
+# Noch NICHT eingetragen, weil es die Datenbank erst geben muss:
+#
+#   npx wrangler d1 create irsina
+#   npx wrangler d1 execute irsina --remote --file migrations/0001_nachrichten.sql
+#
+# Danach die ausgegebene database_id hier eintragen und neu bauen. Bis dahin
+# sagt das Formular sauber, dass der Speicher fehlt, statt Nachrichten zu
+# verlieren.
+#
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "irsina"
+# database_id = "..."

@@ -41,10 +41,18 @@ describe('Cloudflare-Konfiguration', () => {
     expect(wert('directory'), 'wrangler.toml braucht [assets] directory').toBe('./dist');
   });
 
-  it('braucht keinen Worker-Code — und gibt auch keinen an', () => {
-    /* Die Seite ist statisch. Ein "main" wuerde eine Datei verlangen, die es
-       nicht gibt. */
-    expect(wert('main')).toBeNull();
+  it('nennt einen Worker, den es wirklich gibt', () => {
+    /* Der Worker traegt das Kontaktformular und den Editor. Steht hier ein
+       Pfad ins Leere, bricht das Deployment ab. */
+    const main = wert('main');
+    expect(main, 'wrangler.toml braucht ein main').not.toBeNull();
+    expect(existsSync(join(WURZEL, main!)), `${main} fehlt`).toBe(true);
+  });
+
+  it('gibt dem Worker Zugriff auf die statischen Dateien', () => {
+    /* Ohne diese Bindung koennte er unbekannte Wege nicht an die Seite
+       weiterreichen. */
+    expect(TOML).toMatch(/binding\s*=\s*"ASSETS"/);
   });
 
   it('liefert die eigene 404-Seite aus', () => {

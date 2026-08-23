@@ -1,6 +1,6 @@
 ---
 import { uebersetzer } from '../i18n/texte';
-import { TYPEN, ZUSTAENDE } from '../data/schema';
+import { TYPEN, ZUSTAENDE, AUFWAND } from '../data/schema';
 import type { Sprache } from '../i18n/sprachen';
 
 interface Props { lang: Sprache; anzahl: number }
@@ -9,6 +9,7 @@ const t = uebersetzer(lang);
 
 const TYP_TEXT = { casa: 'tCasa', palazzo: 'tPalazzo', appartamento: 'tApp', rudere: 'tRudere', locale: 'tLocale' } as const;
 const ZUSTAND_TEXT = { abitabile: 'cAbit', 'da-ristrutturare': 'cRistr', ristrutturato: 'cRis', sconosciuto: 'cUnk' } as const;
+const AUFWAND_TEXT = { S: 'aufS', M: 'aufM', L: 'aufL', XL: 'aufXL' } as const;
 
 const chips = [
   { wert: 'alle', label: t('qall') },
@@ -37,6 +38,13 @@ const chips = [
     <select id="f-zustand" name="zustand">
       <option value="">{t('cAll')}</option>
       {ZUSTAENDE.map((z) => <option value={z}>{t(ZUSTAND_TEXT[z])}</option>)}
+    </select>
+  </div>
+  <div class="field sel">
+    <label for="f-aufwand">{t('aufH')}</label>
+    <select id="f-aufwand" name="aufwand">
+      <option value="">{t('aufAll')}</option>
+      {AUFWAND.map((a) => <option value={a}>{t(AUFWAND_TEXT[a])}</option>)}
     </select>
   </div>
   <div class="field sel">
@@ -76,6 +84,7 @@ const chips = [
       if (suche && !(el.dataset.suche || '').includes(suche)) return false;
       if (form.typ.value && el.dataset.typ !== form.typ.value) return false;
       if (form.zustand.value && el.dataset.zustand !== form.zustand.value) return false;
+      if (form.aufwand.value && el.dataset.aufwand !== form.aufwand.value) return false;
       if (chip === 'preis' && !el.dataset.preis) return false;
       if (chip === 'vendita' && !['vendita', 'entrambi'].includes(el.dataset.angebot)) return false;
       if (chip === 'affitto' && !['affitto', 'entrambi'].includes(el.dataset.angebot)) return false;

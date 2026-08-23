@@ -108,11 +108,30 @@ for (const rel of erwartet) {
   if (!existsSync(join(DIST, rel))) fehler.push(`Seite fehlt im Build: ${rel}`);
 }
 
-/* --- 3. Jede HTML-Seite braucht Canonical und Sprachverweise -------------- */
+/* --- 3. Jede HTML-Seite braucht Canonical und Sprachverweise --------------
+   Ausgenommen sind die beiden internen Seiten: /admin und /edit sind Werkzeug,
+   einsprachig und sollen nicht gefunden werden. Statt Sprachverweisen wird bei
+   ihnen geprueft, dass sie noindex tragen — das ist die Zusage, die dort
+   gilt. */
 const htmlSeiten = alle.filter((p) => p.endsWith('.html'));
+const INTERNE_SEITEN = ['admin/index.html', 'edit/index.html'];
+
+for (const rel of INTERNE_SEITEN) {
+  const p = join(DIST, rel);
+  if (!existsSync(p)) {
+    fehler.push(`Interne Seite fehlt im Build: ${rel}`);
+    continue;
+  }
+  const inhalt = readFileSync(p, 'utf-8');
+  if (!/name="robots"[^>]*noindex/.test(inhalt)) {
+    fehler.push(`${rel}: muss noindex tragen — sie gehoert in keine Suchmaschine.`);
+  }
+}
+
 for (const p of htmlSeiten) {
   const rel = relative(DIST, p);
   if (rel === '404.html' || rel === 'index.html') continue; // bewusst ohne
+  if (INTERNE_SEITEN.includes(rel)) continue; // eigene Regeln, siehe oben
   const inhalt = readFileSync(p, 'utf-8');
   if (!inhalt.includes('rel="canonical"')) fehler.push(`${rel}: kein canonical`);
   if (!inhalt.includes('hreflang="x-default"')) fehler.push(`${rel}: kein hreflang x-default`);
@@ -193,6 +212,7 @@ for (const url of eintraege) {
 const ERLAUBT = [
   'tile.openstreetmap.org', 'www.openstreetmap.org', 'openstreetmap.org',
   'wa.me', 'www.facebook.com', 't.me', 'twitter.com', 'www.google.com',
+  'www.instagram.com', 'www.tiktok.com',
   'schema.org', 'www.w3.org', 'case-irsina.it', 'ec.europa.eu',
 ];
 for (const p of htmlSeiten) {

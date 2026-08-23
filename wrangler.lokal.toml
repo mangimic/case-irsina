@@ -1,0 +1,33 @@
+# ── Nur zum Ausprobieren auf dem eigenen Rechner ──
+#
+#   npx wrangler dev -c wrangler.lokal.toml
+#
+# Unterschied zur echten Datei: hier steht die D1-Bindung schon drin. Die
+# database_id ist erfunden — im lokalen Betrieb legt wrangler dafuer eine
+# SQLite-Datei unter .wrangler/ an und fasst nichts in der Cloud an.
+#
+# Vorher einmal die Tabelle anlegen:
+#   npx wrangler d1 execute irsina --local -c wrangler.lokal.toml \
+#     --file migrations/0001_nachrichten.sql
+#
+# Passwort und Token gehoeren in .dev.vars (nicht eingecheckt):
+#   ADMIN_PASSWORT = "..."
+#   GITHUB_TOKEN = "..."
+name = "irsina-immobili"
+compatibility_date = "2026-08-01"
+main = "worker/index.ts"
+
+[assets]
+directory = "./dist"
+not_found_handling = "404-page"
+binding = "ASSETS"
+
+[vars]
+GITHUB_BESITZER = "mangimic"
+GITHUB_REPO = "case-irsina"
+GITHUB_ZWEIG = "main"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "irsina"
+database_id = "00000000-0000-0000-0000-000000000000"

@@ -36,7 +36,25 @@ const ziele = [
   { k: 'ml', label: t('shMail'), href: `mailto:?subject=${encodeURIComponent(t('shSubject'))}&body=${encodeURIComponent(voll)}`,
     d: 'M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 8L4.4 7.2 4 7v11h16V7l-.4.2L12 13Zm0-1.8L19.4 6H4.6L12 11.2Z' },
 ] as const;
+
+/* Kein href: ein Klick kopiert erst den Link und oeffnet dann die App. */
+const sozial = [
+  {
+    k: 'ig', label: t('shIg'), app: 'Instagram', ziel: 'https://www.instagram.com/',
+    d: 'M12 2c2.7 0 3 0 4.1.1 1.1 0 1.8.2 2.4.5.7.2 1.2.6 1.7 1.1.5.5.9 1 1.1 1.7.3.6.5 1.3.5 2.4.1 1.1.1 1.4.1 4.2s0 3.1-.1 4.2c0 1.1-.2 1.8-.5 2.4a4.6 4.6 0 0 1-1.1 1.7c-.5.5-1 .9-1.7 1.1-.6.3-1.3.5-2.4.5-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-1.1 0-1.8-.2-2.4-.5a4.6 4.6 0 0 1-1.7-1.1 4.6 4.6 0 0 1-1.1-1.7c-.3-.6-.5-1.3-.5-2.4C2 15.1 2 14.8 2 12s0-3.1.1-4.2c0-1.1.2-1.8.5-2.4.2-.7.6-1.2 1.1-1.7.5-.5 1-.9 1.7-1.1.6-.3 1.3-.5 2.4-.5C8.9 2 9.2 2 12 2Zm0 1.8c-2.7 0-3 0-4 .1-1 0-1.5.2-1.9.3-.5.2-.8.4-1.1.7-.3.3-.5.6-.7 1.1-.1.4-.3.9-.3 1.9-.1 1-.1 1.3-.1 4s0 3 .1 4c0 1 .2 1.5.3 1.9.2.5.4.8.7 1.1.3.3.6.5 1.1.7.4.1.9.3 1.9.3 1 .1 1.3.1 4 .1s3 0 4-.1c1 0 1.5-.2 1.9-.3.5-.2.8-.4 1.1-.7.3-.3.5-.6.7-1.1.1-.4.3-.9.3-1.9.1-1 .1-1.3.1-4s0-3-.1-4c0-1-.2-1.5-.3-1.9a2.9 2.9 0 0 0-.7-1.1 2.9 2.9 0 0 0-1.1-.7c-.4-.1-.9-.3-1.9-.3-1-.1-1.3-.1-4-.1Zm0 3.1a5.1 5.1 0 1 1 0 10.2 5.1 5.1 0 0 1 0-10.2Zm0 1.8a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6Zm5.3-3.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z',
+  },
+  {
+    k: 'tt', label: t('shTt'), app: 'TikTok', ziel: 'https://www.tiktok.com/',
+    d: 'M16.6 2c.3 2 1.4 3.4 3.4 3.5v2.4c-1.2.1-2.3-.3-3.5-1v6.3c0 5.9-6.4 7.7-9 3.5-1.7-2.7-.6-7.4 4.7-7.6v2.6c-.4.1-.8.2-1.2.3-1.2.4-1.9 1.2-1.7 2.5.3 2.6 5.1 3.4 4.7-1.8V2h2.6Z',
+  },
+] as const;
 ---
+{/*
+  Instagram und TikTok nehmen — anders als WhatsApp, Facebook oder Telegram —
+  keinen vorbereiteten Link entgegen; es gibt dafuer schlicht keine Adresse.
+  Der ehrliche Weg ist deshalb: Link kopieren, App oeffnen, einfuegen. Auf dem
+  Handy fuehrt der systemweite Teilen-Knopf ohnehin direkt in beide Apps.
+*/}
 <div class="share" style={hell ? 'border-top-color:rgba(255,255,255,.16)' : undefined}>
   <h2 style={hell ? 'color:#b6a794' : undefined}>{t(titelSchluessel)}</h2>
   <ul class="sh-row">
@@ -52,6 +70,22 @@ const ziele = [
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={z.d} /></svg>
           {z.label}
         </a>
+      </li>
+    ))}
+    {sozial.map((z) => (
+      <li>
+        <button
+          class={`sh js-only ${z.k}`}
+          type="button"
+          data-app={z.app}
+          data-ziel={z.ziel}
+          data-url={url}
+          data-hinweis={t('shEinfuegen', { app: z.app })}
+          style={hell ? 'background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#f2e9dc' : undefined}
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={z.d} /></svg>
+          {z.label}
+        </button>
       </li>
     ))}
     <li>
@@ -83,13 +117,32 @@ const ziele = [
 </div>
 
 <script>
-  function melden(text: string) {
+  function melden(text: string, dauer = 2200) {
     const toast = document.getElementById('toast');
     if (!toast) return;
     toast.textContent = text;
     toast.classList.add('on');
-    window.setTimeout(() => toast.classList.remove('on'), 2200);
+    window.setTimeout(() => toast.classList.remove('on'), dauer);
   }
+
+  // Instagram und TikTok: Link in die Zwischenablage, dann die App oeffnen.
+  // Ein fertiger Teilen-Link existiert bei beiden nicht, deshalb der Hinweis.
+  document.querySelectorAll<HTMLButtonElement>('.sh.ig, .sh.tt').forEach((knopf) => {
+    knopf.addEventListener('click', async () => {
+      const url = knopf.dataset.url ?? location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+        /* Laenger stehen lassen: der Hinweis ist ein ganzer Satz. */
+        melden(knopf.dataset.hinweis ?? '', 5000);
+      } catch {
+        window.prompt(knopf.dataset.hinweis ?? '', url);
+      }
+      // Erst nach dem Kopieren, sonst verliert die Seite vorher den Fokus.
+      window.setTimeout(() => {
+        window.open(knopf.dataset.ziel, '_blank', 'noopener,noreferrer');
+      }, 400);
+    });
+  });
 
   document.querySelectorAll<HTMLButtonElement>('.sh.kopieren').forEach((knopf) => {
     knopf.addEventListener('click', async () => {

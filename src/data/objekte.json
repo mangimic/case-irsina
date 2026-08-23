@@ -19,6 +19,7 @@
         "garage",
         "cantina"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": true,
@@ -50,6 +51,7 @@
       "mq": null,
       "vani": null,
       "extras": [],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -83,6 +85,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -114,6 +117,7 @@
       "mq": null,
       "vani": null,
       "extras": [],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -148,6 +152,7 @@
         "balcone",
         "portone carrabile"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -181,6 +186,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -212,6 +218,7 @@
       "mq": null,
       "vani": null,
       "extras": [],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -246,6 +253,7 @@
         "balcone",
         "portone carrabile"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -279,6 +287,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -311,6 +320,7 @@
       "mq": null,
       "vani": null,
       "extras": [],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -344,6 +354,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -377,6 +388,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -408,6 +420,7 @@
       "mq": null,
       "vani": null,
       "extras": [],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -442,6 +455,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -475,6 +489,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -508,6 +523,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -541,6 +557,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -572,6 +589,7 @@
       "mq": null,
       "vani": null,
       "extras": [],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -605,6 +623,7 @@
       "extras": [
         "balcone"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,
@@ -640,6 +659,7 @@
         "balcone",
         "garage"
       ],
+      "aufwand": null,
       "telefon": null,
       "telefon2": null,
       "telefon_unsicher": false,

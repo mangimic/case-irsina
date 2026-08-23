@@ -34,7 +34,7 @@ const { SPRACHEN, SPRACH_KUERZEL, SPRACH_NAME, HREFLANG } = await import(
   join(WURZEL, 'src/i18n/sprachen.ts')
 );
 const anzeige = await import(join(WURZEL, 'src/data/anzeige.ts'));
-const { TYPEN, ANGEBOTE, ZUSTAENDE, EXTRAS, PRUEFSTAND } = await import(
+const { TYPEN, ANGEBOTE, ZUSTAENDE, EXTRAS, PRUEFSTAND, AUFWAND } = await import(
   join(WURZEL, 'src/data/schema.ts')
 );
 const { MAIL, FAKTEN } = await import(join(WURZEL, 'src/config.ts'));
@@ -90,7 +90,9 @@ for (const lang of SPRACHEN) {
     anschrift: adresse(o, lang),
     text: beschreibung(o, lang),
     typText: anzeige.typText(o, lang),
+    aufwand: o.aufwand,
     zustandText: anzeige.zustandText(o, lang),
+    aufwandText: anzeige.aufwandText(o, lang),
     angebotText: anzeige.angebotText(o, lang),
     preisText: anzeige.preisText(o, lang),
     flaecheText: o.mq === null ? null : anzeige.flaecheText(o, lang),
@@ -117,6 +119,7 @@ for (const lang of SPRACHEN) {
   BESCHRIFTUNG[lang] = {
     typ: alsObjekt([...TYPEN], (w) => anzeige.typText({ typ: w }, lang)),
     zustand: alsObjekt([...ZUSTAENDE], (w) => anzeige.zustandText({ zustand: w }, lang)),
+    aufwand: alsObjekt([...AUFWAND], (w) => anzeige.aufwandText({ aufwand: w }, lang)),
     angebot: alsObjekt([...ANGEBOTE], (w) => anzeige.angebotText({ angebot: w }, lang)),
     extras: alsObjekt([...EXTRAS], (w) => anzeige.extraText(w, lang)),
     pruefstand: alsObjekt([...PRUEFSTAND], (w) => anzeige.pruefstandText({ pruefstand: w }, lang)),
@@ -201,6 +204,7 @@ const leafletCss = readFileSync(join(WURZEL, 'node_modules/leaflet/dist/leaflet.
    Stylesheet
    --------------------------------------------------------------------------- */
 const grundStil = readFileSync(join(WURZEL, 'src/styles/global.css'), 'utf-8');
+const editorStil = readFileSync(join(WURZEL, 'src/styles/editor.css'), 'utf-8');
 
 const prototypStil = `
 /* ---------- nur im Prototyp: Detailansicht als Overlay ---------- */
@@ -211,9 +215,7 @@ const prototypStil = `
   overflow: hidden; box-shadow: var(--shadow-lg); }
 .modal .top { position: relative; background: #151110; }
 .modal .top img { width: 100%; max-height: 62vh; object-fit: contain; }
-.x { position: absolute; right: 12px; top: 12px; width: 40px; height: 40px; border-radius: 50%;
-  border: 0; cursor: pointer; background: rgba(255,255,255,.92); font-size: 20px; line-height: 1; color: var(--ink); }
-.x:hover { background: #fff; }
+/* .x steht in src/styles/editor.css — auch der Editor auf der Seite braucht ihn. */
 .modal-langs { position: absolute; left: 12px; top: 12px; background: rgba(250,246,240,.92);
   border-color: rgba(255,255,255,.5); backdrop-filter: blur(6px); }
 .modal .in { padding: 26px clamp(20px,4vw,34px) 30px; }
@@ -277,47 +279,9 @@ body.bearbeiten .ed-detail-knopf {
   padding: 10px 18px; font-size: 14px;
 }
 
-.ed-form {
-  position: fixed; inset: 0; z-index: 200; background: rgba(20,16,13,.66);
-  backdrop-filter: blur(5px); overflow: auto; padding: 3vh 3vw;
-}
-.ed-box {
-  background: var(--card); border-radius: 16px; max-width: 820px; margin: 0 auto;
-  box-shadow: var(--shadow-lg); font-family: var(--sans);
-}
-.ed-kopf {
-  position: relative; padding: 22px clamp(20px,4vw,30px) 0;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-}
-.ed-kopf h2 { font-size: 21px; margin: 0; }
-.ed-kopf .x { position: static; width: 36px; height: 36px; background: var(--paper-2); }
-#ed-eingabe { padding: 0 clamp(20px,4vw,30px) 26px; }
-.ed-raster { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 16px 0; }
-.ed-feld { display: flex; flex-direction: column; gap: 5px; }
-.ed-feld > span { font: 600 11px/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
-.ed-feld input, .ed-feld select, .ed-feld textarea {
-  width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 9px;
-  padding: 10px 12px; font: 400 14.5px/1.35 var(--sans); color: var(--ink); resize: vertical;
-}
-.ed-feld input:focus, .ed-feld select:focus, .ed-feld textarea:focus {
-  outline: 2px solid var(--terra); outline-offset: -1px;
-}
-.ed-gruppe { border: 1px solid var(--line); border-radius: 11px; padding: 8px 16px 16px; margin: 0 0 16px; }
-.ed-gruppe legend { font: 700 11px/1 var(--sans); letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); padding: 0 6px; }
-.ed-haken { display: inline-flex; align-items: center; gap: 7px; margin: 6px 16px 6px 0; font-size: 14px; }
-.ed-notiz { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; line-height: 1.5; }
-.ed-fotos { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0 12px; }
-.ed-foto { position: relative; margin: 0; width: 110px; }
-.ed-foto img { width: 110px; height: 84px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
-.ed-foto button {
-  position: absolute; right: -6px; top: -6px; width: 24px; height: 24px; border-radius: 50%;
-  border: 0; background: var(--terra); color: #fff; cursor: pointer; font-size: 12px; line-height: 1;
-}
-.ed-foto figcaption { font-size: 11px; color: var(--ink-2); margin-top: 4px; word-break: break-all; }
-.ed-dateiwahl { display: inline-flex; cursor: pointer; }
-.ed-aktionen { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-.ed-loeschen { background: none; border-color: var(--line); color: var(--terra); margin-left: auto; }
-.ed-loeschen:hover { background: var(--terra); color: #fff; border-color: var(--terra); }
+/* Das Formular des Editors steht in src/styles/editor.css — dieselbe Datei
+   benutzt der Editor auf der veroeffentlichten Seite. */
+${editorStil}
 header.site { top: 0; }
 
 /* ---------- Karte ---------- */
@@ -378,7 +342,7 @@ const daten = {
   beschriftung: BESCHRIFTUNG,
   auswahl: {
     typ: [...TYPEN], angebot: [...ANGEBOTE], zustand: [...ZUSTAENDE],
-    extras: [...EXTRAS], pruefstand: [...PRUEFSTAND],
+    extras: [...EXTRAS], pruefstand: [...PRUEFSTAND], aufwand: [...AUFWAND],
   },
 };
 

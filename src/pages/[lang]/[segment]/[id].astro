@@ -2,11 +2,12 @@
 import { Image, getImage } from 'astro:assets';
 import Basis from '../../../layouts/Basis.astro';
 import Teilen from '../../../components/Teilen.astro';
+import Anfrageformular from '../../../components/Anfrageformular.astro';
 import Objektkachel from '../../../components/Objektkachel.astro';
 import { OBJEKTE, adresse, beschreibung } from '../../../data/objekte';
 import { fotos } from '../../../data/fotos';
 import {
-  angebotText, flaecheText, gesehenText, preisText, raeumeText, typText, zustandText, extraText,
+  angebotText, flaecheText, gesehenText, preisText, raeumeText, typText, zustandText, aufwandText, extraText,
   pruefstandText, ungeprueft,
 } from '../../../data/anzeige';
 import { uebersetzer } from '../../../i18n/texte';
@@ -100,6 +101,7 @@ const angaben = [
   { dt: t('dRef'), dd: o.id },
   { dt: t('dType'), dd: typText(o, lang) },
   { dt: t('dCond'), dd: zustandText(o, lang) },
+  { dt: t('aufH'), dd: aufwandText(o, lang) },
   { dt: t('dPrice'), dd: preisText(o, lang) },
   /* Flaeche und Raeume nur, wenn sie erhoben sind — "auf Anfrage" waere hier
      eine Behauptung: erfragen kann man sie beim Eigentuemer, nicht bei uns. */
@@ -251,14 +253,19 @@ const kartenLink =
           )}
 
           <div class="acts">
+            <a class="btn btn-o" href={kartenLink} target="_blank" rel="noopener noreferrer">{t('aMap')}</a>
+            {/* Der Weg ueber das eigene Mailprogramm bleibt — nicht jeder
+                schreibt gern in ein Formular, und ohne Netz beim Worker ist er
+                die Rueckfallebene. */}
             <a
-              class={o.telefon === null ? 'btn btn-p' : 'btn btn-o'}
+              class="btn btn-o"
               href={`mailto:${MAIL}?subject=${encodeURIComponent(anfrageBetreff)}&body=${encodeURIComponent(anfrageText)}`}
             >
               {t('askBtn')}
             </a>
-            <a class="btn btn-o" href={kartenLink} target="_blank" rel="noopener noreferrer">{t('aMap')}</a>
           </div>
+
+          <Anfrageformular lang={lang} objekt={o.id} objektTitel={o.strasse} />
         </section>
 
         <Teilen lang={lang} seite={{ art: 'objekt', id: o.id }} text={`${o.strasse} · ${o.id} — ${t('ftitle')}`} />

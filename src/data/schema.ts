@@ -4,6 +4,20 @@ import { SPRACHEN } from '../i18n/sprachen.ts';
 export const TYPEN = ['casa', 'palazzo', 'appartamento', 'rudere', 'locale'] as const;
 export const ANGEBOTE = ['vendita', 'affitto', 'entrambi'] as const;
 export const ZUSTAENDE = ['abitabile', 'da-ristrutturare', 'ristrutturato', 'sconosciuto'] as const;
+/**
+ * Wie viel Arbeit ein Haus braucht, in vier groben Stufen — bewusst grob, weil
+ * hier niemand eine Kostenschaetzung abgibt:
+ *
+ *   S   einzugsbereit bis geringer Aufwand
+ *   M   ueberschaubare Arbeiten
+ *   L   groessere Arbeiten
+ *   XL  aufwendige Arbeiten noetig
+ *
+ * null bedeutet: noch nicht eingeschaetzt. Das ist der Stand bei allen
+ * Objekten, solange niemand drin war — geraten wird hier nichts.
+ */
+export const AUFWAND = ['S', 'M', 'L', 'XL'] as const;
+
 export const EXTRAS = ['garage', 'cantina', 'balcone', 'giardino', 'terrazzo', 'portone carrabile'] as const;
 
 /**
@@ -45,6 +59,8 @@ export const objektSchema = z
     mq: z.number().int().positive().max(10_000).nullable(),
     vani: z.number().int().positive().max(100).nullable(),
     extras: z.array(z.enum(EXTRAS)),
+    /** Aufwandsstufe; null, solange sie niemand eingeschaetzt hat. */
+    aufwand: z.enum(AUFWAND).nullable().default(null),
     telefon: telefon,
     telefon2: telefon.optional().default(null),
     /** Nummer wurde von einem Foto abgelesen und ist noch nicht bestaetigt. */
@@ -68,6 +84,17 @@ export const objektSchema = z
   })
   .strict()
   .superRefine((o, ctx) => {
+    /* Eine Aufwandsstufe ist eine Aussage ueber den Innenraum. Wer sie
+       vergibt, ohne dass jemand drin war, behauptet etwas. */
+    if (o.aufwand !== null && o.pruefstand === 'unbesichtigt') {
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          `${o.id}: eine Aufwandsstufe setzt voraus, dass jemand das Haus gesehen hat. ` +
+          `Erst pruefstand auf 'eigentuemer' oder 'vermittler' setzen.`,
+        path: ['aufwand'],
+      });
+    }
     if (o.lat === null !== (o.lng === null)) {
       ctx.addIssue({
         code: 'custom',

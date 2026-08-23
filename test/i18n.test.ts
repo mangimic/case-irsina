@@ -34,7 +34,7 @@ describe('Uebersetzungen', () => {
   it('laesst keine unersetzten Platzhalter in den Texten stehen', () => {
     // Diese Texte nehmen bewusst Platzhalter entgegen; alle anderen duerfen
     // keine enthalten, sonst steht im Browser eine Zeichenfolge wie "{n}".
-    const mitPlatzhalter = ['mapPending', 'photoOf', 'edOffen', 'edStandortOk'];
+    const mitPlatzhalter = ['mapPending', 'photoOf', 'edOffen', 'edStandortOk', 'shEinfuegen'];
     for (const lang of SPRACHEN) {
       for (const [k, v] of Object.entries(TEXTE[lang])) {
         if (mitPlatzhalter.includes(k)) continue;

@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import type { OeffentlichesObjekt } from '../data/objekte';
 import { adresse, beschreibung } from '../data/objekte';
 import { foto } from '../data/fotos';
-import { kennzeichen, typText, zustandText, pruefstandText, ungeprueft } from '../data/anzeige';
+import { kennzeichen, typText, zustandText, pruefstandText, ungeprueft, aufwandText } from '../data/anzeige';
 import { uebersetzer } from '../i18n/texte';
 import { objektPfad } from '../i18n/routen';
 import type { Sprache } from '../i18n/sprachen';
@@ -19,6 +19,7 @@ const text = beschreibung(o, lang);
   data-id={o.id}
   data-typ={o.typ}
   data-zustand={o.zustand}
+  data-aufwand={o.aufwand ?? ''}
   data-angebot={o.angebot}
   data-preis={o.preis ?? ''}
   data-strasse={o.strasse}
@@ -38,6 +39,11 @@ const text = beschreibung(o, lang);
       />
       <span class="ref">{o.id}</span>
       <span class={`badge b-${o.zustand}`}>{zustandText(o, lang)}</span>
+      {/* Erscheint nur, wenn jemand das Haus gesehen und eingeschaetzt hat —
+          sonst stuende dort eine Stufe, die niemand geprueft hat. */}
+      {o.aufwand !== null && (
+        <span class={`aufwand a-${o.aufwand}`} title={aufwandText(o, lang)}>{o.aufwand}</span>
+      )}
       {/* Kein Haus wurde besichtigt — das gehoert auf jede Kachel, nicht nur
           in die Detailansicht. */}
       <span class={`pruef ${ungeprueft(o) ? 'offen' : 'bestaetigt'}`}>

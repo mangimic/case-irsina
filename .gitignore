@@ -11,3 +11,7 @@ daten-intern/*
 !daten-intern/kontakte.beispiel.json
 *.local.json
 dist-prototyp/
+
+# Passwoerter und Token fuer "wrangler dev" — nie einchecken.
+.dev.vars
+.wrangler/

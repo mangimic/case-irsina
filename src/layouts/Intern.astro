@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import '../styles/editor.css';
+
+/**
+ * Rahmen fuer die beiden internen Seiten: die Nachrichtenuebersicht und den
+ * Editor. Bewusst nicht das mehrsprachige Basis-Layout — diese Seiten sind
+ * Werkzeug, nicht Auslage: eine Sprache, kein Menue, kein Fussbereich, und
+ * unter keinen Umstaenden in einer Suchmaschine.
+ */
+interface Props {
+  titel: string;
+  /** Kurze Zeile unter der Ueberschrift. */
+  unterzeile?: string;
+}
+const { titel, unterzeile } = Astro.props;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titel} · Irsina</title>
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="same-origin" />
+  </head>
+  <body class="intern">
+    <header class="intern-kopf">
+      <div class="wrap">
+        <div>
+          <h1>{titel}</h1>
+          {unterzeile && <p>{unterzeile}</p>}
+        </div>
+        <nav class="intern-nav">
+          <a href="/admin">Nachrichten</a>
+          <a href="/edit">Objekte</a>
+          <a href="/it/">Zur Seite</a>
+          <button type="button" id="abmelden" hidden>Abmelden</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap intern-inhalt">
+      <slot />
+    </main>
+
+    <script is:inline>
+      document.addEventListener('click', async function (e) {
+        if (!e.target.matches || !e.target.matches('#abmelden')) return;
+        await fetch('/api/abmelden', { method: 'POST' });
+        location.reload();
+      });
+    </script>
+  </body>
+</html>

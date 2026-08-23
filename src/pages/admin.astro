@@ -1,0 +1,128 @@
+---
+import Intern from '../layouts/Intern.astro';
+---
+<Intern titel="Nachrichten" unterzeile="Was über das Kontaktformular hereingekommen ist.">
+  <form class="anmeldung" id="anmeldung" hidden>
+    <h2>Anmelden</h2>
+    <label class="anfrage-feld">
+      <span>Passwort</span>
+      <input type="password" name="passwort" autocomplete="current-password" required />
+    </label>
+    <button class="btn btn-p" type="submit">Anmelden</button>
+    <p class="anfrage-stand schlecht" id="anmelde-fehler" hidden></p>
+  </form>
+
+  <div id="bereich" hidden>
+    <p class="intern-stand" id="stand">Wird geladen…</p>
+    <ul class="nachrichten" id="liste"></ul>
+  </div>
+</Intern>
+
+<script is:inline>
+  (function () {
+    var anmeldung = document.getElementById('anmeldung');
+    var bereich = document.getElementById('bereich');
+    var liste = document.getElementById('liste');
+    var stand = document.getElementById('stand');
+    var abmelden = document.getElementById('abmelden');
+
+    function esc(w) {
+      return String(w == null ? '' : w).replace(/[&<>"]/g, function (z) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[z];
+      });
+    }
+
+    function zeit(iso) {
+      try {
+        return new Intl.DateTimeFormat('de', {
+          dateStyle: 'medium', timeStyle: 'short',
+        }).format(new Date(iso));
+      } catch (e) { return iso; }
+    }
+
+    function zeichnen(nachrichten) {
+      if (!nachrichten.length) {
+        stand.textContent = 'Noch keine Nachricht eingegangen.';
+        liste.innerHTML = '';
+        return;
+      }
+      var offen = nachrichten.filter(function (n) { return !n.gelesen; }).length;
+      stand.textContent = nachrichten.length + ' Nachricht' + (nachrichten.length === 1 ? '' : 'en') +
+        (offen ? ', davon ' + offen + ' ungelesen' : ', alle gelesen');
+
+      liste.innerHTML = nachrichten.map(function (n) {
+        /* Die Antwort soll in der Sprache kommen, in der gefragt wurde —
+           deshalb steht sie hier gross dran. */
+        return '<li class="nachricht' + (n.gelesen ? ' gelesen' : '') + '" data-id="' + n.id + '">' +
+          '<div class="kopf">' +
+            '<b>' + esc(n.name || '(ohne Namen)') + '</b>' +
+            '<a href="mailto:' + esc(n.email) + '">' + esc(n.email) + '</a>' +
+            (n.objekt ? '<span class="marke">' + esc(n.objekt) + '</span>' : '') +
+            (n.sprache ? '<span class="marke sprache">' + esc(n.sprache.toUpperCase()) + '</span>' : '') +
+            '<time>' + esc(zeit(n.eingegangen)) + '</time>' +
+          '</div>' +
+          '<p class="text">' + esc(n.nachricht).replace(/\n/g, '<br>') + '</p>' +
+          '<div class="aktionen">' +
+            '<a class="btn btn-o" href="mailto:' + esc(n.email) +
+              '?subject=' + encodeURIComponent('Re: Irsina' + (n.objekt ? ' — ' + n.objekt : '')) + '">Antworten</a>' +
+            '<button type="button" class="btn btn-o" data-was="' + (n.gelesen ? 'ungelesen' : 'gelesen') + '">' +
+              (n.gelesen ? 'Als ungelesen' : 'Als gelesen') + '</button>' +
+            '<button type="button" class="btn ed-loeschen" data-was="loeschen">Löschen</button>' +
+          '</div>' +
+        '</li>';
+      }).join('');
+    }
+
+    async function laden() {
+      var antwort = await fetch('/api/nachrichten');
+      if (antwort.status === 401) {
+        anmeldung.hidden = false;
+        bereich.hidden = true;
+        if (abmelden) abmelden.hidden = true;
+        return;
+      }
+      anmeldung.hidden = true;
+      bereich.hidden = false;
+      if (abmelden) abmelden.hidden = false;
+
+      var daten = await antwort.json();
+      if (!antwort.ok) {
+        stand.textContent = daten.fehler || 'Die Nachrichten sind nicht abrufbar.';
+        liste.innerHTML = '';
+        return;
+      }
+      zeichnen(daten.nachrichten || []);
+    }
+
+    anmeldung.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var meldung = document.getElementById('anmelde-fehler');
+      meldung.hidden = true;
+      var antwort = await fetch('/api/anmelden', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ passwort: anmeldung.elements.passwort.value }),
+      });
+      if (antwort.ok) { anmeldung.reset(); laden(); return; }
+      var daten = await antwort.json().catch(function () { return {}; });
+      meldung.hidden = false;
+      meldung.textContent = daten.fehler || 'Anmeldung fehlgeschlagen.';
+    });
+
+    liste.addEventListener('click', async function (e) {
+      var knopf = e.target.closest('[data-was]');
+      if (!knopf) return;
+      var was = knopf.dataset.was;
+      if (was === 'loeschen' && !window.confirm('Diese Nachricht endgültig löschen?')) return;
+      var id = Number(knopf.closest('.nachricht').dataset.id);
+      await fetch('/api/nachrichten', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: id, was: was }),
+      });
+      laden();
+    });
+
+    laden();
+  })();
+</script>

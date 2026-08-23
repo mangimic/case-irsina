@@ -265,15 +265,128 @@ section { padding: clamp(52px, 7vw, 88px) 0; }
 .sh:hover { border-color: var(--ink-2); transform: translateY(-1px); }
 .sh svg { width: 15px; height: 15px; flex: none; }
 .sh.wa { color: #128c7e; } .sh.fb { color: #1877f2; } .sh.tg { color: #229ed9; } .sh.xx { color: #000; }
+.sh.ig { color: #c13584; } .sh.tt { color: #010101; }
+/* Auf dem Handy fuehrt der systemweite Dialog in jede App, die dort liegt —
+   auch in die, fuer die es keinen Teilen-Link gibt. Deshalb zuerst. */
+.sh.teilen-nativ { order: -1; border-color: var(--ink-2); }
 
 .toast {
   position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); background: var(--ink); color: #fff;
-  padding: 12px 22px; border-radius: 999px; font: 600 14px/1 var(--sans); z-index: 400;
-  opacity: 0; pointer-events: none; transition: .25s; box-shadow: var(--shadow-lg); max-width: 88vw; text-align: center;
+  padding: 13px 20px; border-radius: 14px; font: 600 14px/1.45 var(--sans); z-index: 400;
+  opacity: 0; pointer-events: none; transition: .25s; box-shadow: var(--shadow-lg);
+  /* Der Hinweis zu Instagram und TikTok ist ein ganzer Satz — er braucht
+     mehr Platz und Zeilenabstand als ein knappes "Link kopiert". */
+  max-width: min(30em, 88vw); text-align: center;
 }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
 /* ---------- Karte ---------- */
+/* ---------- Interne Seiten (/admin, /edit) ---------- */
+/* Werkzeug, nicht Auslage: schmaler, sachlicher, ohne Zierde. */
+body.intern { background: var(--paper-2); }
+.intern-kopf { background: var(--ink); color: #f3e9dc; padding: 16px 0; }
+.intern-kopf .wrap { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.intern-kopf h1 { font-family: var(--serif); font-size: 24px; margin: 0; color: #fff; }
+.intern-kopf p { margin: 3px 0 0; font: 400 13.5px/1.4 var(--sans); color: #bcae9c; }
+.intern-nav { display: flex; gap: 8px; flex-wrap: wrap; font-family: var(--sans); }
+.intern-nav a, .intern-nav button {
+  border: 1px solid rgba(255,255,255,.28); background: none; color: inherit; border-radius: 999px;
+  padding: 7px 14px; font: 600 13px/1 var(--sans); cursor: pointer; text-decoration: none;
+}
+.intern-nav a:hover, .intern-nav button:hover { background: rgba(255,255,255,.13); }
+.intern-inhalt { padding: 26px 0 60px; font-family: var(--sans); }
+.intern-stand { font-size: 14px; color: var(--ink-2); margin: 0 0 16px; }
+
+.anmeldung {
+  max-width: 24em; background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 24px; margin: 30px 0;
+}
+.anmeldung h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 14px; }
+
+.nachrichten { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.nachricht {
+  background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--terra);
+  border-radius: 12px; padding: 16px 18px;
+}
+.nachricht.gelesen { border-left-color: var(--line); opacity: .72; }
+.nachricht .kopf { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; font-size: 14px; }
+.nachricht .kopf b { font-size: 15.5px; }
+.nachricht time { color: var(--ink-2); font-size: 13px; margin-left: auto; }
+.nachricht .marke {
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: 999px;
+  padding: 2px 9px; font: 700 11px/1.6 var(--sans); letter-spacing: .04em;
+}
+.nachricht .marke.sprache { background: var(--ink); color: #fff; border-color: var(--ink); }
+.nachricht .text { margin: 12px 0 14px; font-size: 15px; line-height: 1.6; white-space: pre-wrap; }
+.nachricht .aktionen { display: flex; gap: 9px; flex-wrap: wrap; }
+.nachricht .aktionen .btn { padding: 7px 14px; font-size: 13px; }
+
+/* ---------- Editor auf der Seite ---------- */
+.ed-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.ed-zeile {
+  display: flex; align-items: center; gap: 14px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 11px; padding: 10px 14px;
+}
+.ed-zeile img { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; flex: none; }
+.ed-zeile .wer { flex: 1; min-width: 0; }
+.ed-zeile .wer b { display: block; font-size: 15px; }
+.ed-zeile .wer span { font-size: 13px; color: var(--ink-2); }
+.ed-zeile .kennung {
+  font: 700 12px/1 var(--sans); background: var(--ink); color: #fff;
+  border-radius: 999px; padding: 5px 10px; flex: none;
+}
+.ed-werkzeug { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 0 20px; }
+.ed-werkzeug .btn { padding: 8px 15px; font-size: 13.5px; }
+
+/* ---------- Anfrageformular ---------- */
+.anfrage {
+  border: 1px solid var(--line); border-radius: var(--r); background: var(--paper-2);
+  padding: clamp(20px, 3vw, 30px); margin: 26px 0; font-family: var(--sans);
+}
+.anfrage h3 { font-family: var(--serif); font-size: clamp(19px, 2.4vw, 23px); margin: 0 0 6px; }
+.anfrage-lead { color: var(--ink-2); font-size: 15px; margin: 0 0 18px; }
+.anfrage-objekt {
+  font-size: 14px; color: var(--ink-2); margin: 0 0 16px;
+  padding: 9px 13px; border-radius: 9px; background: var(--card); border: 1px solid var(--line);
+}
+.anfrage-objekt span { text-transform: uppercase; letter-spacing: .08em; font-size: 11px; font-weight: 700; }
+.anfrage-raster { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.anfrage-feld { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.anfrage-feld > span {
+  font: 700 11px/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2);
+}
+.anfrage-feld input, .anfrage-feld select, .anfrage-feld textarea {
+  width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 9px;
+  padding: 11px 13px; font: 400 15px/1.45 var(--sans); color: var(--ink); resize: vertical;
+}
+.anfrage-feld input:focus, .anfrage-feld select:focus, .anfrage-feld textarea:focus {
+  outline: 2px solid var(--terra); outline-offset: -1px;
+}
+.anfrage-fuss { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.anfrage-hinweis { font-size: 12.5px; line-height: 1.5; color: var(--ink-2); margin: 0; flex: 1 1 240px; }
+.anfrage-stand { margin: 16px 0 0; padding: 11px 14px; border-radius: 9px; font-size: 14.5px; }
+.anfrage-stand.gut { background: #e7f0e6; border: 1px solid #b9d3b6; color: #2f5b2c; }
+.anfrage-stand.schlecht { background: #f6e3de; border: 1px solid #dfb5aa; color: #8a2f18; }
+
+/* Das Honigtoepfchen darf nicht sichtbar sein, aber auch nicht mit
+   display:none — manche Ausfuellhilfen ueberspringen es dann. */
+.honig { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- Aufwandsstufe ---------- */
+/* Vier Stufen, von "einzugsbereit" bis "aufwendige Sanierung". Die Farbe
+   steigt mit, damit sie sich auf der Kachel ohne Lesen unterscheiden. */
+.aufwand {
+  position: absolute; right: 12px; bottom: 12px; z-index: 2;
+  display: grid; place-items: center; min-width: 32px; height: 32px; padding: 0 9px;
+  border-radius: 999px; border: 2px solid rgba(255, 255, 255, .85);
+  font: 700 12.5px/1 var(--sans); letter-spacing: .02em; color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+}
+.aufwand.a-S  { background: #3f7d52; }
+.aufwand.a-M  { background: #7a8f3c; }
+.aufwand.a-L  { background: #c0752a; }
+.aufwand.a-XL { background: #a8462c; }
+
 .karte-rahmen { position: relative; height: clamp(340px, 52vh, 560px); border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); background: var(--paper-2); }
 #karte { position: absolute; inset: 0; }
 .karte-hinweis {

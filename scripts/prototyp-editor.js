@@ -64,7 +64,7 @@
     return {
       id: naechsteKennung(), foto: [], strasse: '', civico: null,
       typ: 'casa', angebot: 'vendita', zustand: 'sconosciuto',
-      preis: null, mq: null, vani: null, extras: [],
+      preis: null, mq: null, vani: null, extras: [], aufwand: null,
       telefon: null, telefon2: null, telefon_unsicher: false,
       telefonBekannt: false, freigabe: false,
       lat: null, lng: null,
@@ -118,7 +118,7 @@
     alteKennung = neu ? null : id;
     var o = bearbeitet;
 
-    var typText = {}, zustandText = {}, angebotText = {}, pruefText = {};
+    var typText = {}, zustandText = {}, angebotText = {}, pruefText = {}, aufwandText = {};
     D.auswahl.typ.forEach(function (w) {
       typText[w] = api.t({ casa:'tCasa', palazzo:'tPalazzo', appartamento:'tApp', rudere:'tRudere', locale:'tLocale' }[w]);
     });
@@ -127,6 +127,12 @@
     });
     D.auswahl.angebot.forEach(function (w) {
       angebotText[w] = api.t({ vendita:'aVend', affitto:'aAff', entrambi:'aBoth' }[w]);
+    });
+    /* Leerer Wert zuerst: "noch nicht eingeschaetzt" ist der richtige Stand,
+       solange niemand drin war, und soll nicht erst gesucht werden muessen. */
+    aufwandText[''] = api.t('aufNd');
+    D.auswahl.aufwand.forEach(function (w) {
+      aufwandText[w] = api.t({ S: 'aufS', M: 'aufM', L: 'aufL', XL: 'aufXL' }[w]);
     });
     D.auswahl.pruefstand.forEach(function (w) {
       pruefText[w] = api.t({ unbesichtigt:'pvKurz', eigentuemer:'pvOwner', vermittler:'pvAgent' }[w]);
@@ -159,6 +165,8 @@
 
       '<fieldset class="ed-gruppe"><legend>' + api.esc(api.t('edGPruefung')) + '</legend>' +
         auswahl('pruefstand', api.t('edFStand'), D.auswahl.pruefstand, o.pruefstand, pruefText) +
+        auswahl('aufwand', api.t('aufH'), [''].concat(D.auswahl.aufwand), o.aufwand || '', aufwandText) +
+        '<p class="ed-notiz">' + api.esc(api.t('aufP')) + '</p>' +
         '<label class="ed-haken"><input type="checkbox" name="adresse_unklar"' +
           (o.adresse_unklar ? ' checked' : '') + '> ' + api.esc(api.t('addrTbd')) + '</label>' +
       '</fieldset>' +
@@ -284,6 +292,7 @@
     o.vani = zahl(wert('vani'));
     o.gesehen = (wert('gesehen') || '').trim();
     o.pruefstand = wert('pruefstand');
+    o.aufwand = wert('aufwand') || null;
     o.adresse_unklar = haken('adresse_unklar');
     o.telefon = text(wert('telefon'));
     o.telefon2 = text(wert('telefon2'));
@@ -335,7 +344,7 @@
       return {
         id: o.id, foto: o.foto, strasse: o.strasse, civico: o.civico,
         typ: o.typ, angebot: o.angebot, zustand: o.zustand,
-        preis: o.preis, mq: o.mq, vani: o.vani, extras: o.extras,
+        preis: o.preis, mq: o.mq, vani: o.vani, extras: o.extras, aufwand: o.aufwand,
         telefon: o.telefon, telefon2: o.telefon2,
         telefon_unsicher: o.telefon_unsicher, freigabe: o.freigabe,
         lat: o.lat, lng: o.lng, gesehen: o.gesehen,

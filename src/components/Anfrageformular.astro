@@ -1,0 +1,143 @@
+---
+import { uebersetzer } from '../i18n/texte';
+import { datenschutzPfad } from '../i18n/routen';
+import type { Sprache } from '../i18n/sprachen';
+
+interface Props {
+  lang: Sprache;
+  /** Kennung, wenn die Anfrage von einer Objektseite kommt. */
+  objekt?: string;
+  /** Ueberschrift der Objektseite, damit klar ist, worum es geht. */
+  objektTitel?: string;
+}
+
+const { lang, objekt, objektTitel } = Astro.props;
+const t = uebersetzer(lang);
+const datenschutz = datenschutzPfad(lang);
+---
+
+{/*
+  Das Formular schickt an /api/anfrage im Worker. Zwei Wege:
+
+  · mit JavaScript per fetch, ohne die Seite zu verlassen;
+  · ohne JavaScript ganz gewoehnlich abgeschickt — der Worker antwortet dann
+    mit einer eigenen Danke-Seite. Wer JavaScript aus hat, soll nicht vor einem
+    toten Formular stehen.
+*/}
+<form class="anfrage" method="post" action="/api/anfrage" data-anfrage>
+  <h3>{t('fmH')}</h3>
+  <p class="anfrage-lead">{t('fmP')}</p>
+
+  {objekt && (
+    <p class="anfrage-objekt">
+      <span>{t('fmObjekt')}</span> <b>{objekt}</b>{objektTitel ? ` · ${objektTitel}` : ''}
+    </p>
+  )}
+
+  <input type="hidden" name="objekt" value={objekt ?? ''} />
+  <input type="hidden" name="sprache" value={lang} />
+
+  {/*
+    Zwei stille Kontrollen gegen automatisch ausgefuellte Formulare: ein Feld,
+    das nur ein Programm ausfuellt, und die Zeit seit dem Aufbau der Seite.
+    Beide sind fuer Menschen unsichtbar und kosten sie nichts.
+  */}
+  <div class="honig" aria-hidden="true">
+    <label for="anfrage-firma">Firma</label>
+    <input id="anfrage-firma" type="text" name="firma" tabindex="-1" autocomplete="off" />
+  </div>
+  <input type="hidden" name="alter" value="0" data-alter />
+
+  <div class="anfrage-raster">
+    <label class="anfrage-feld">
+      <span>{t('fmName')}</span>
+      <input type="text" name="name" autocomplete="name" maxlength="120" />
+    </label>
+    <label class="anfrage-feld">
+      <span>{t('fmMail')} *</span>
+      <input type="email" name="email" required autocomplete="email" maxlength="200" />
+    </label>
+  </div>
+
+  <label class="anfrage-feld">
+    <span>{t('fmText')} *</span>
+    <textarea name="nachricht" rows="5" required maxlength="4000" placeholder={t('fmTextPh')}></textarea>
+  </label>
+
+  <div class="anfrage-fuss">
+    <button class="btn btn-p" type="submit" data-senden>{t('fmSenden')}</button>
+    <p class="anfrage-hinweis">
+      {t('fmDatenschutz')} <a href={datenschutz}>{t('navprivacy')}</a>
+    </p>
+  </div>
+
+  <p class="anfrage-stand" role="status" aria-live="polite" data-stand hidden></p>
+</form>
+
+<script
+  is:inline
+  define:vars={{
+    sendet: t('fmSendet'),
+    danke: t('fmDanke'),
+    fehlertext: t('fmFehler'),
+    senden: t('fmSenden'),
+  }}
+>
+  /* Ohne dieses Skript funktioniert das Formular weiterhin — dann uebernimmt
+     der Worker die Antwortseite. Mit ihm bleibt die Besucherin auf der Seite. */
+  (function () {
+    var aufgebaut = Date.now();
+
+    document.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form.matches || !form.matches('[data-anfrage]')) return;
+      e.preventDefault();
+
+      var stand = form.querySelector('[data-stand]');
+      var knopf = form.querySelector('[data-senden]');
+      var felder = form.elements;
+
+      function melden(text, art) {
+        if (!stand) return;
+        stand.hidden = false;
+        stand.textContent = text;
+        stand.className = 'anfrage-stand ' + art;
+      }
+
+      knopf.disabled = true;
+      knopf.textContent = sendet;
+
+      (async function () {
+        try {
+          var antwort = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              name: felder.name.value,
+              email: felder.email.value,
+              nachricht: felder.nachricht.value,
+              objekt: felder.objekt.value,
+              sprache: felder.sprache.value,
+              firma: felder.firma.value,
+              alter: Date.now() - aufgebaut,
+            }),
+          });
+          var daten = await antwort.json().catch(function () { return {}; });
+          if (antwort.ok) {
+            melden(danke, 'gut');
+            form.reset();
+          } else {
+            /* Der Worker sagt, was fehlt — das ist hilfreicher als ein
+               allgemeiner Satz. */
+            melden(daten && daten.fehler ? daten.fehler : fehlertext, 'schlecht');
+          }
+        } catch (e) {
+          melden(fehlertext, 'schlecht');
+        } finally {
+          knopf.disabled = false;
+          knopf.textContent = senden;
+        }
+      })();
+    });
+  })();
+</script>
