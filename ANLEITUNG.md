@@ -150,7 +150,11 @@ npm run koordinaten -- ~/Bilder/irsina-originale                # nur anzeigen
 npm run koordinaten -- ~/Bilder/irsina-originale --schreiben    # eintragen
 ```
 
-Der Ordner enthält die Originale, benannt wie in `objekte.json` (`IR-001.jpg` …).
+Der Ordner enthält die Originale, am besten benannt wie in `objekte.json` (`IR-001` …).
+Die Endung ist egal — `IR-016.HEIC` findet zu `IR-016.jpg`; gelesen werden `.jpg` `.jpeg`
+`.heic` `.heif` `.avif` `.tif` `.tiff` `.png`. Das iPhone-Format HEIC muss also nicht
+vorher umgewandelt werden. Dateien mit fremdem Namen (`IMG_9560.HEIC`) werden mit ihren
+Koordinaten angezeigt, aber nicht eingetragen — dann umbenennen und erneut laufen lassen.
 Das Skript rechnet vor dem Eintragen nach: Was weiter als 5 km von Irsina entfernt liegt,
 wird abgelehnt statt übernommen. Bei mehreren Fotos je Objekt zählt das erste; die
 weiteren werden mit ihrem Abstand angezeigt, damit auffällt, wenn sie nicht zusammenpassen.
@@ -158,12 +162,21 @@ weiteren werden mit ihrem Abstand angezeigt, damit auffällt, wenn sie nicht zus
 **Damit das klappt, müssen die Fotos unverändert ankommen:**
 
 - **Nicht über WhatsApp** an sich selbst schicken. WhatsApp löscht sämtliche Metadaten —
-  genauso Signal, Telegram (als „Foto") und die meisten Messenger. Genau das ist mit den
-  ersten zwölf Fotos passiert: sie enthalten keinerlei Metadaten mehr.
+  genauso Signal, Telegram (als „Foto") und die meisten Messenger.
+- **Nicht in ein Chatfenster hochladen.** Auch der Upload in einen Chat — diesen hier
+  eingeschlossen — kodiert die Bilder neu. Alle bisher im Projekt liegenden Fotos sind so
+  angekommen: die Originale auf dem Telefon tragen ihren Standort, die Kopien hier nicht
+  mehr. Kein Werkzeug kann das nachträglich zurückholen.
 - **iPhone:** Fotos → Teilen → oben **Optionen** → **„Alle Fotodaten"** einschalten.
-  Dann AirDrop, iCloud-Link oder Kabel.
+  Dann AirDrop, iCloud-Link oder Kabel — die Datei muss als Datei ankommen, nicht als Bild
+  in einer Nachricht.
 - **Android:** beim Teilen darf **„Standort entfernen"** nicht aktiv sein. Am sichersten
   ist auch hier das Kabel.
+
+Ob eine Datei ihren Standort noch hat, verrät sie selbst: am iPhone in der Foto-Info
+(nach oben wischen) steht unter dem Bild eine kleine Karte, wenn ein Ort gespeichert ist.
+Am Rechner zeigt `npm run koordinaten -- <ordner>` für jede Datei entweder die Zahlen
+oder „keine Koordinaten im Bild".
 
 *Aus Google Maps.* Auf die Stelle lange tippen bzw. rechtsklicken — die beiden Zahlen
 (z. B. `40.750312, 16.238104`) erscheinen und lassen sich kopieren. Erste Zahl = `lat`,

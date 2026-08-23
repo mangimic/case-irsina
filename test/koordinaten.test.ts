@@ -70,6 +70,56 @@ describe('EXIF-Koordinaten', () => {
     expect(readFileSync(kopie, 'utf-8')).toBe(inhalt);
   });
 
+  it('findet das Objekt auch bei anderer Dateiendung', () => {
+    // Vom iPhone kommen die Originale als HEIC, in objekte.json steht .jpg.
+    const eigener = mkdtempSync(join(tmpdir(), 'irsina-gps-endung-'));
+    execFileSync('python3', [HELFER, basis, join(eigener, 'IR-002.jpeg'), '40.7466', '16.2417']);
+    const kopie = join(eigener, 'objekte.json');
+    writeFileSync(kopie, readFileSync(join(WURZEL, 'src/data/objekte.json'), 'utf-8'));
+    execFileSync(
+      'node',
+      [join(WURZEL, 'scripts/koordinaten-aus-fotos.mjs'), eigener, '--ziel', kopie, '--schreiben'],
+      { encoding: 'utf-8' },
+    );
+    const objekt = JSON.parse(readFileSync(kopie, 'utf-8')).objekte.find(
+      (o: { id: string }) => o.id === 'IR-002',
+    );
+    expect(objekt.lat).toBeCloseTo(40.7466, 4);
+    expect(objekt.lng).toBeCloseTo(16.2417, 4);
+  });
+
+  it('traegt ein Foto mit fremdem Namen nicht ein', () => {
+    // IMG_9560.HEIC laesst sich keinem Objekt zuordnen — Koordinaten nur zeigen.
+    const eigener = mkdtempSync(join(tmpdir(), 'irsina-gps-fremd-'));
+    execFileSync('python3', [HELFER, basis, join(eigener, 'IMG_9560.jpg'), '40.7466', '16.2417']);
+    const kopie = join(eigener, 'objekte.json');
+    const inhalt = readFileSync(join(WURZEL, 'src/data/objekte.json'), 'utf-8');
+    writeFileSync(kopie, inhalt);
+    const ausgabe = execFileSync(
+      'node',
+      [join(WURZEL, 'scripts/koordinaten-aus-fotos.mjs'), eigener, '--ziel', kopie, '--schreiben'],
+      { encoding: 'utf-8' },
+    );
+    expect(ausgabe).toMatch(/40\.7466/);
+    expect(ausgabe).toMatch(/umbenennen/);
+    expect(readFileSync(kopie, 'utf-8')).toBe(inhalt);
+  });
+
+  it('liest auch HEIC-Dateien ein, statt sie zu uebergehen', () => {
+    // exifr kann HEIC; der Ordnerfilter darf sie nicht vorher aussortieren.
+    const quelltext = readFileSync(
+      join(WURZEL, 'scripts/koordinaten-aus-fotos.mjs'),
+      'utf-8',
+    );
+    const zeile = quelltext.match(/const ENDUNGEN = (.+);/);
+    expect(zeile).not.toBeNull();
+    const muster = new RegExp(zeile![1].replace(/^\/|\/i$/g, ''), 'i');
+    for (const name of ['IR-016.HEIC', 'IR-016.heif', 'IR-016.jpg', 'IR-016.TIF']) {
+      expect(muster.test(name), name).toBe(true);
+    }
+    expect(muster.test('IR-016.txt')).toBe(false);
+  });
+
   it('hat den Helfer zum Erzeugen der Testfotos dabei', () => {
     expect(existsSync(HELFER)).toBe(true);
   });

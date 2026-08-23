@@ -10,10 +10,16 @@
  *   node scripts/koordinaten-aus-fotos.mjs <ordner>            nur anzeigen
  *   node scripts/koordinaten-aus-fotos.mjs <ordner> --schreiben  eintragen
  *
+ * Gelesen werden .jpg .jpeg .heic .heif .avif .tif .tiff .png — iPhones legen
+ * ihre Bilder als HEIC ab, umwandeln ist also nicht noetig.
+ *
  * Mit --ziel <pfad> geht das Ergebnis in eine andere Datei statt in
  * src/data/objekte.json.
  *
- * Der Ordner enthaelt die Originale, benannt wie in objekte.json (IR-001.jpg …).
+ * Der Ordner enthaelt die Originale. Am einfachsten heissen sie wie in
+ * objekte.json (IR-001 …); die Endung ist egal, IR-016.HEIC findet zu IR-016.jpg.
+ * Dateien mit fremdem Namen (IMG_9560.HEIC) werden mit ihren Koordinaten
+ * angezeigt, aber nicht eingetragen.
  * Die Fotos in src/fotos/ tragen keine EXIF-Daten mehr — sie wurden unterwegs
  * neu kodiert. Deshalb ein eigener Ordner statt src/fotos/.
  *
@@ -81,11 +87,30 @@ const datei = JSON.parse(readFileSync(DATEN, 'utf-8'));
 
 /** Dateiname -> Objekt, damit auch IR-010a.jpg zu IR-010 findet. */
 const nachFoto = new Map();
-for (const o of datei.objekte) for (const f of o.foto) nachFoto.set(f, o);
+for (const o of datei.objekte) {
+  for (const f of o.foto) {
+    nachFoto.set(f, o);
+    // Auch ohne Endung, damit IR-016.HEIC zu IR-016.jpg findet.
+    nachFoto.set(f.replace(/\.[^.]+$/, '').toLowerCase(), o);
+  }
+}
+/** IMG_9560.HEIC heisst nicht wie das Objekt — dann zaehlt die Kennung im Namen. */
+function objektZu(name) {
+  const ohneEndung = name.replace(/\.[^.]+$/, '').toLowerCase();
+  return (
+    nachFoto.get(name) ||
+    nachFoto.get(ohneEndung) ||
+    nachFoto.get((ohneEndung.match(/ir-\d{3}[a-z]?/) || [])[0]) ||
+    null
+  );
+}
 
-const bilder = readdirSync(quelle).filter((n) => /\.jpe?g$/i.test(n)).sort();
+/** iPhones speichern HEIC, Kameras oft TIFF. exifr liest alle diese Formate. */
+const ENDUNGEN = /\.(jpe?g|heic|heif|avif|tiff?|png)$/i;
+const bilder = readdirSync(quelle).filter((n) => ENDUNGEN.test(n)).sort();
 if (!bilder.length) {
-  console.error(rot(`Keine JPEG-Dateien in ${quelle}`));
+  console.error(rot(`Keine Bilddateien in ${quelle}`));
+  console.error(grau('  Gelesen werden: .jpg .jpeg .heic .heif .avif .tif .tiff .png'));
   process.exit(1);
 }
 
@@ -95,7 +120,7 @@ const funde = new Map();   // Objekt-Kennung -> { lat, lng, quelle, genauigkeit 
 let ohne = 0;
 
 for (const name of bilder) {
-  const objekt = nachFoto.get(name);
+  const objekt = objektZu(name);
   const gps = await exifr.gps(join(quelle, name)).catch(() => null);
 
   if (!gps || typeof gps.latitude !== 'number' || typeof gps.longitude !== 'number') {
@@ -110,7 +135,7 @@ for (const name of bilder) {
   if (!objekt) {
     console.log(
       `  ${gelb('?')} ${name.padEnd(14)} ${punkt.lat}, ${punkt.lng}  ` +
-        grau('— dieser Dateiname steht in keinem Objekt'),
+        grau('— kein Objekt mit diesem Namen; Datei in IR-0xx umbenennen'),
     );
     continue;
   }
@@ -147,8 +172,10 @@ if (!funde.size) {
     rot('\n  Keine brauchbaren Koordinaten gefunden.\n') +
       grau(
         '  Meist wurden die Fotos unterwegs neu kodiert — WhatsApp und die meisten\n' +
-          '  Messenger entfernen alle Metadaten. Die Originale direkt vom Geraet holen,\n' +
-          '  am iPhone unter Teilen -> Optionen -> "Alle Fotodaten".\n',
+          '  Messenger entfernen alle Metadaten. Auch der Upload in einen Chat kodiert\n' +
+          '  die Bilder neu. Die Originale direkt vom Geraet holen: am iPhone unter\n' +
+          '  Teilen -> oben "Optionen" -> "Alle Fotodaten" einschalten, dann AirDrop,\n' +
+          '  iCloud-Link oder Kabel.\n',
       ),
   );
   process.exit(ohne === bilder.length ? 1 : 0);
