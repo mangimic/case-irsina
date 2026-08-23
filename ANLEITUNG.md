@@ -398,9 +398,11 @@ je nach Einstellung nicht speichern. Bei der eigenständigen Datei geht beides.
 Gehostet wird bei **Cloudflare Pages**, kostenlos. Danach genügt ein Link — er
 funktioniert auf jedem Handy, in jedem Browser, ohne Konto und ohne Anhang.
 
-**Das Repository bleibt dabei privat.** Cloudflare baut aus dem privaten Repo; die
-fertige Seite enthält nachweislich keine Telefonnummer (`npm run build:pruefen` bricht
-sonst ab). Es muss also nichts veröffentlicht werden außer der Seite selbst.
+**Das Repository ist öffentlich** — deshalb steht in `src/data/objekte.json` keine
+einzige ungefragte Telefonnummer, sondern nur, was freigegeben wurde. Die abgelesenen
+Nummern liegen in `daten-intern/kontakte.json`, das nicht eingecheckt wird. Cloudflare
+braucht diese Datei nicht: der Build läuft ohne sie durch, und `npm run build:pruefen`
+bricht ab, falls doch eine ungeschützte Nummer in der fertigen Seite steht.
 
 ### Einmalig einrichten (etwa zehn Minuten)
 
@@ -456,6 +458,19 @@ Rückmeldungen gesammelt werden und Impressum, Preise und Koordinaten noch fehle
 von beiden geändert, bricht `npm run build:pruefen` ab und sagt welches — halb umgestellt
 bliebe die Seite sonst unsichtbar, ohne dass jemand den Grund fände.
 
+### Das Vorschaubild
+
+`public/vorschau.jpg` erscheint, wenn jemand die **Startseite** bei WhatsApp, Facebook
+oder Telegram verschickt. Es entsteht aus einem der Objektfotos:
+
+```
+npm run vorschaubild
+```
+
+Ein anderes Foto ist eine geänderte Zeile in `scripts/vorschaubild-bauen.mjs`.
+Die **Detailseiten** brauchen das nicht — sie erzeugen ihr Vorschaubild aus dem
+eigenen Foto.
+
 ### Eigene Domain
 
 In den Projekteinstellungen unter *Custom domains* eintragen, danach `SITE_URL`
@@ -476,19 +491,16 @@ entsprechend ändern (Umgebungsvariable oder `src/config.ts`) und neu bauen.
 1. **Anschrift im Impressum.** In `src/i18n/rechtliches.ts` steht `ANSCHRIFT_FEHLT`.
    Eine Anbieterkennzeichnung braucht eine ladungsfähige Anschrift; die kann nur der
    Betreiber selbst eintragen. `npm run build:pruefen` erinnert bei jedem Build daran.
-2. **Vorschaubild.** `public/vorschau.jpg` (1200 × 630) anlegen — es erscheint, wenn
-   jemand die Startseite bei WhatsApp oder Facebook teilt. Detailseiten haben ihr
-   eigenes, automatisch erzeugtes Vorschaubild.
-3. **Koordinaten** für alle zwanzig Objekte, damit die Karte trägt. Die vorliegenden
+2. **Koordinaten** für alle zwanzig Objekte, damit die Karte trägt. Die vorliegenden
    Fotos haben ihre Metadaten unterwegs verloren — mit den Originalen vom Handy geht es
    in einem Schritt, siehe *Koordinaten holen*.
-4. **Hausnummer von IR-016** klären: die Foto-Info nennt *Corso Canio Musacchio 46*,
+3. **Hausnummer von IR-016** klären: die Foto-Info nennt *Corso Canio Musacchio 46*,
    am Gebäude selbst steht die **13** als Relief unter dem Gesims. Siehe unten.
-5. **Preise, Flächen, Zustand** erheben — die Felder sind angelegt und bleiben leer,
+4. **Preise, Flächen, Zustand** erheben — die Felder sind angelegt und bleiben leer,
    bis sie gefüllt werden.
-6. **Eigentümer ansprechen.** Das schafft Kontakt im Ort, klärt die Angaben und
+5. **Eigentümer ansprechen.** Das schafft Kontakt im Ort, klärt die Angaben und
    ermöglicht es, Nummern mit Zustimmung freizuschalten.
-7. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
+6. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
    (siehe oben).
 
 ---

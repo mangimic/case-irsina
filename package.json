@@ -22,6 +22,7 @@
     "verify": "npm run daten:pruefen && npm run fotos:pruefen && npm run build && npm run build:pruefen && npm run test && npm run check",
     "fotos:pruefen": "node scripts/fotos-anonymisieren.mjs --pruefen",
     "fotos:anonymisieren": "node scripts/fotos-anonymisieren.mjs",
+    "vorschaubild": "node scripts/vorschaubild-bauen.mjs",
     "koordinaten": "node scripts/koordinaten-aus-fotos.mjs"
   },
   "dependencies": {
