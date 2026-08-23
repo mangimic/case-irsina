@@ -50,6 +50,9 @@ const BEREICHE = {
       { grund: 'Kfz-Kennzeichen, teilweise lesbar', left: 818, top: 782, width: 74, height: 40 },
     ],
   },
+  'IR-016.jpg': {
+    beschneiden: { grund: 'Passant am rechten Bildrand, erkennbar', right: 135 },
+  },
   'IR-009.jpg': {
     verdecken: [
       { grund: 'Kfz-Kennzeichen, lesbar', left: 345, top: 928, width: 96, height: 62 },

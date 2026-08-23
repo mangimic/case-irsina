@@ -491,6 +491,39 @@
         "nl": "Herenhuis met drie fijn bewerkte smeedijzeren balkons en stenen omlijstingen boven de ramen. Boogportaal met ijzeren bovenlicht en houten dubbele deur; op het bovenlicht zit een VENDESI-sticker waarvan de contactgegevens op de foto niet leesbaar zijn. Huisnummer 53. Ernaast een groentewinkel, links het uithangbord van een oude stoffenwinkel.",
         "fr": "Maison de maître aux trois balcons en fer forgé finement ouvragés et aux encadrements de pierre au-dessus des fenêtres. Portail cintré à imposte en fer et porte en bois à deux vantaux ; un autocollant VENDESI est apposé sur l'imposte, ses coordonnées ne sont pas lisibles sur la photographie. Numéro 53. Une primeurerie voisine et, à gauche, l'enseigne d'un ancien magasin de tissus."
       }
+    },
+    {
+      "id": "IR-016",
+      "foto": [
+        "IR-016.jpg"
+      ],
+      "strasse": "Palazzina su strada alberata",
+      "civico": "13",
+      "typ": "appartamento",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Palazzina su due livelli: piano superiore a intonaco grigio, piano terra rosa con fasce bordate. Portoncino bianco a due ante sotto un arco, con due cartelli VENDESI dietro il vetro; quello verde indica un appartamento. Civico 13 in rilievo sotto il cornicione, balcone sulla destra. Sul muro rosa restano le lettere sbiadite di una vecchia insegna dipinta.",
+        "en": "Two-storey building: grey rendered upper floor, pink ground floor with banded courses. White double door under an arch, with two VENDESI signs behind the glass; the green one names an apartment. House number 13 in relief below the cornice, balcony to the right. On the pink wall the faded letters of an old painted shop sign remain.",
+        "de": "Zweigeschossige Palazzina: Obergeschoss grau verputzt, Erdgeschoss rosa mit umlaufenden Bändern. Weiße zweiflügelige Tür unter einem Bogen, dahinter zwei VENDESI-Schilder; das grüne nennt eine Wohnung. Hausnummer 13 als Relief unter dem Gesims, rechts ein Balkon. Auf der rosa Wand stehen noch die verblassten Buchstaben eines alten gemalten Ladenschilds.",
+        "nl": "Pand van twee lagen: bovenverdieping grijs gestuct, begane grond roze met omlopende banden. Witte dubbele deur onder een boog, met twee VENDESI-borden achter het glas; het groene noemt een appartement. Huisnummer 13 in reliëf onder de kroonlijst, rechts een balkon. Op de roze muur staan nog de vervaagde letters van een oud geschilderd uithangbord.",
+        "fr": "Petit immeuble sur deux niveaux : étage enduit de gris, rez-de-chaussée rose à bandes. Porte blanche à deux vantaux sous un arc, avec deux panneaux VENDESI derrière la vitre ; le vert mentionne un appartement. Numéro 13 en relief sous la corniche, balcon à droite. Sur le mur rose subsistent les lettres effacées d'une ancienne enseigne peinte."
+      }
     }
   ]
 }
