@@ -478,9 +478,16 @@ entsprechend ändern (Umgebungsvariable oder `src/config.ts`) und neu bauen.
 
 ### Wenn der Build fehlschlägt
 
-- *„Unsupported Node version"* — im Repo liegen `.node-version` und `.nvmrc` mit `22.12.0`.
-  Greift Cloudflare sie nicht auf, unter *Environment variables* zusätzlich
-  `NODE_VERSION` = `22.12.0` setzen.
+- *`ERR_UNKNOWN_FILE_EXTENSION: Unknown file extension ".ts"`* — Cloudflare baut mit
+  einer zu alten Node-Fassung. Die Prüfskripte laden das Zod-Schema direkt aus
+  `src/data/schema.ts`; das kann Node erst **ab 22.18** ohne Zusatzschalter. Im Repo
+  liegen `.node-version` und `.nvmrc` mit `22.23.2`. Greift Cloudflare sie nicht auf,
+  unter *Settings → Environment variables* zusätzlich `NODE_VERSION` = `22.23.2` setzen
+  und neu bauen. `npm test` hält die drei Festlegungen (`.node-version`, `.nvmrc`,
+  `engines` in `package.json`) zusammen, damit sie nicht wieder auseinanderlaufen.
+- *„Unsupported engine"* bei `npm ci` — dieselbe Ursache. `.npmrc` setzt
+  `engine-strict=true`, damit npm gleich abbricht und die nötige Fassung nennt,
+  statt es nur zu erwähnen und später unverständlich zu scheitern.
 - *Die Kontrolle bricht ab* — sie nennt den Grund im Protokoll. Das ist Absicht:
   lieber kein Deployment als ein falsches.
 

@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "version": "1.0.0",
-  "description": "Case nel centro storico di Irsina — mehrsprachige statische Seite fuer die VENDESI-Angebote der Altstadt",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.18.0"
   },
+  "description": "Case nel centro storico di Irsina — mehrsprachige statische Seite fuer die VENDESI-Angebote der Altstadt",
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/daten-pruefen.mjs && astro build",
