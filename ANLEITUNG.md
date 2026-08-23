@@ -326,10 +326,12 @@ Was im Prototyp anders ist als in der fertigen Seite:
   gestrichelte Markierungen, mit einem Kasten darüber, der das ausdrücklich sagt. Sobald
   ein Objekt eine richtige Position bekommt, erscheint es als volle Markierung; die übrigen
   bleiben als Beispiel stehen. Die Legende unterscheidet beides.
-- Die Kartenkacheln lädt der Prototyp ohne Rückfrage von openstreetmap.org; die
-  veröffentlichte Seite fragt vorher. In einer Umgebung, die fremde Server sperrt
-  (etwa als Claude-Artifact), bleibt ein Raster stehen — die Markierungen liegen dann
-  immer noch richtig zueinander.
+- Die Karte steht von Anfang an mit ihren Markierungen und einem Maßstab da, aber
+  **ohne Hintergrund**: der kommt von openstreetmap.org und wird erst auf Klick geholt —
+  wie auf der veröffentlichten Seite. Vorher verlässt keine Anfrage den Browser. Wer
+  *„Auswahl merken"* ankreuzt, wird beim nächsten Mal nicht wieder gefragt. In einer
+  Umgebung, die fremde Server sperrt (etwa als Claude-Artifact), bleibt das Raster
+  stehen — die Markierungen liegen dann immer noch richtig zueinander.
 - Suchmaschinen finden nichts davon. Das ist der Zweck der fertigen Fassung, nicht dieser.
 
 Die Angaben selbst sind identisch: Preise, Zustände, Beschreibungen, der Prüfstand und
@@ -341,6 +343,10 @@ Oben im Hinweisband sitzt ein **✎**-Knopf (oder `#edit` an die Adresse hängen
 lässt sich vor Ort arbeiten — vor dem Haus stehen und die Angaben richtigstellen:
 
 - Auf jeder Kachel erscheint unten links **✎ Bearbeiten**.
+- In der geöffneten Detailansicht steht **✎ Dieses Objekt bearbeiten** ganz oben. Vor
+  Ort ist das der übliche Weg: erst das Haus aufmachen, dann berichtigen. Nach dem
+  Speichern bleibt die Ansicht offen und zeigt sofort den neuen Stand; wird die Kennung
+  geändert, folgt sie ihr.
 - **+ Neues Objekt** legt einen Eintrag an; die nächste freie Kennung wird vorgeschlagen.
 - **Aktuellen Standort übernehmen** holt die Koordinaten vom Gerät — genau das, was
   fehlt, damit die Karte trägt. Die Genauigkeit steht dabei (±x m).

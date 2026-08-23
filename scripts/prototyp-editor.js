@@ -208,7 +208,9 @@
 
   function formularSchliessen() {
     document.getElementById('ed-form').hidden = true;
-    document.body.style.overflow = '';
+    /* Wurde aus der Detailansicht heraus bearbeitet, liegt diese noch darunter
+       und braucht die Sperre weiter — sonst scrollt die Seite dahinter weg. */
+    document.body.style.overflow = api.detailOffen && api.detailOffen() ? 'hidden' : '';
     bearbeitet = null;
     alteKennung = null;
   }
@@ -317,7 +319,13 @@
     objekte.sort(function (a, c) { return a.id.localeCompare(c.id); });
 
     sichere(objekte);
+    /* Vor datenSetzen merken: das Neuzeichnen schliesst eine Detailansicht,
+       deren Kennung es nicht mehr gibt. */
+    var warOffen = api.detailOffen ? api.detailOffen() : null;
     api.datenSetzen(objekte);
+    if (warOffen && warOffen !== o.id && (warOffen === alteKennung || !alteKennung)) {
+      api.detailZeigen(o.id);
+    }
     return true;
   }
 

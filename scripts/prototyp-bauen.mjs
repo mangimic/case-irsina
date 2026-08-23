@@ -270,6 +270,13 @@ body.bearbeiten .ed-kachel-knopf {
 }
 body.bearbeiten .ed-kachel-knopf:hover { background: var(--terra); }
 
+/* In der Detailansicht sitzt derselbe Knopf oben im Text statt auf dem Bild:
+   dort wird er beim Berichtigen vor Ort zuerst gesucht. */
+body.bearbeiten .ed-detail-knopf {
+  position: static; display: inline-block; margin: 0 0 14px;
+  padding: 10px 18px; font-size: 14px;
+}
+
 .ed-form {
   position: fixed; inset: 0; z-index: 200; background: rgba(20,16,13,.66);
   backdrop-filter: blur(5px); overflow: auto; padding: 3vh 3vw;
@@ -326,6 +333,16 @@ header.site { top: 0; }
     linear-gradient(90deg, rgba(36,31,27,.055) 1px, transparent 1px);
   background-size: 44px 44px;
 }
+.karte-tor {
+  border: 1px solid var(--line); border-radius: 11px; background: var(--paper-2);
+  padding: 14px 18px; margin: 12px 0 0; font-family: var(--sans);
+}
+.karte-tor p { margin: 0 0 10px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.karte-tor .tor-knoepfe {
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin: 0;
+}
+.karte-tor label { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; cursor: pointer; }
+
 .karte-legende { display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
   font: 500 13px/1.4 var(--sans); color: var(--ink-2); margin: 12px 0 0; }
 .karte-legende span { display: inline-flex; align-items: center; gap: 7px; }

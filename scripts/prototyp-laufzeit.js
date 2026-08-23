@@ -101,6 +101,13 @@
     }).filter(Boolean);
     D.karte.anzahlErfunden = D.karte.punkte.filter(function (p) { return p.erfunden; }).length;
     zeichnen();
+    /* Wurde aus der Detailansicht heraus bearbeitet, steht dort noch der alte
+       Stand — zeichnen() erneuert nur die Liste. Ist das Objekt inzwischen
+       geloescht, geht die Ansicht zu, statt leer stehen zu bleiben. */
+    if ($('#ov').classList.contains('on') && aktuellesObjekt) {
+      if (objekt(aktuellesObjekt)) detailOeffnen(aktuellesObjekt, true);
+      else detailSchliessen();
+    }
   }
 
   /* ---- Sprache ------------------------------------------------------- */
@@ -278,6 +285,19 @@
           : '') +
         '<div class="karte-rahmen"><div id="karte" role="application" aria-label="' +
           esc(t('maph')) + '"></div></div>' +
+        /* Die Markierungen liegen von Anfang an richtig — nur der Hintergrund
+           von openstreetmap.org wird erst auf Klick geholt. Bis dahin verlaesst
+           keine Anfrage den Browser; genau das sagt auch die Datenschutzseite
+           zu. */
+        '<div class="karte-tor" id="karte-tor"' + (kachelnErlaubt() ? ' hidden' : '') + '>' +
+          '<p>' + esc(t('mapConsentP')) + '</p>' +
+          '<p class="tor-knoepfe">' +
+            '<button type="button" class="btn btn-o" id="karte-laden">' +
+              esc(t('mapConsentBtn')) + '</button>' +
+            '<label><input type="checkbox" id="karte-merken"> ' +
+              esc(t('mapConsentKeep')) + '</label>' +
+          '</p>' +
+        '</div>' +
         '<p class="karte-legende">' +
           '<span><i class="echt"></i>' + esc(t('mapEcht')) + '</span>' +
           '<span><i class="erfunden"></i>' + esc(t('mapErfunden')) + '</span>' +
@@ -310,6 +330,43 @@
 
   /* ---- Karte ---------------------------------------------------------- */
   var karte = null;
+  var kachelSchicht = null;
+  var KARTE_SCHLUESSEL = 'irsina-karte-erlaubt';
+
+  /** Merkt sich die Zustimmung nur, wenn ausdruecklich darum gebeten wurde. */
+  function kachelnErlaubt() {
+    try { return localStorage.getItem(KARTE_SCHLUESSEL) === 'ja'; } catch (e) { return false; }
+  }
+
+  function kachelnLaden() {
+    var behaelter = document.getElementById('karte');
+    var tor = document.getElementById('karte-tor');
+    if (tor) tor.hidden = true;
+    if (!karte || kachelSchicht) return;
+
+    var geladen = 0;
+    kachelSchicht = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    });
+    kachelSchicht.on('tileload', function () {
+      geladen++;
+      if (behaelter) behaelter.classList.remove('ohne-kacheln');
+    });
+    kachelSchicht.addTo(karte);
+
+    /* Kommt kein einziges Kachelbild an — kein Netz, oder eine Umgebung, die
+       fremde Server sperrt —, bleibt der ruhige Untergrund stehen. Die
+       Markierungen liegen dann immer noch richtig zueinander. */
+    window.setTimeout(function () {
+      if (geladen === 0) {
+        if (behaelter) behaelter.classList.add('ohne-kacheln');
+        if (kachelSchicht) { karte.removeLayer(kachelSchicht); kachelSchicht = null; }
+        var hinweis = document.getElementById('karte-hinweis');
+        if (hinweis) hinweis.textContent = t('mapOhneKacheln');
+      }
+    }, 2500);
+  }
 
   function karteZeichnen() {
     var behaelter = document.getElementById('karte');
@@ -319,29 +376,13 @@
        dann an einem Element, das es nicht mehr gibt. */
     if (karte) { karte.remove(); karte = null; }
 
+    kachelSchicht = null;
     karte = L.map(behaelter, { scrollWheelZoom: false, attributionControl: true })
       .setView([D.karte.zentrum.lat, D.karte.zentrum.lng], D.karte.zentrum.zoom);
 
-    var geladen = 0;
-    var kacheln = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    });
-    kacheln.on('tileload', function () { geladen++; });
-    kacheln.addTo(karte);
-
-    /* Kommt kein einziges Kachelbild an — kein Netz, oder eine Umgebung, die
-       fremde Server sperrt —, bleibt ein ruhiger Untergrund stehen. Die
-       Markierungen liegen dann immer noch richtig zueinander. */
-    window.setTimeout(function () {
-      if (geladen === 0) {
-        behaelter.classList.add('ohne-kacheln');
-        karte.removeLayer(kacheln);
-        var hinweis = document.getElementById('karte-hinweis');
-        if (hinweis) hinweis.textContent = t('mapOhneKacheln');
-      }
-    }, 2500);
-
+    /* Ohne Hintergrund, aber mit Massstab: die Markierungen sind schon jetzt
+       zueinander richtig zu lesen. */
+    behaelter.classList.add('ohne-kacheln');
     L.control.scale({ imperial: false }).addTo(karte);
 
     var punkte = [];
@@ -372,6 +413,7 @@
     });
 
     if (punkte.length > 1) karte.fitBounds(punkte, { padding: [46, 46] });
+    if (kachelnErlaubt()) kachelnLaden();
   }
 
   /* ---- Teilen --------------------------------------------------------- */
@@ -466,6 +508,11 @@
         '</nav>' +
       '</div>' + galerie +
       '<div class="in">' +
+        /* Derselbe Knopf wie auf der Kachel, damit der Editor ihn ohne
+           Sonderfall aufsammelt. Vor Ort wird meist erst das Haus geoeffnet
+           und dann berichtigt — nicht umgekehrt. */
+        '<button type="button" class="ed-kachel-knopf ed-detail-knopf" data-id="' + o.id + '">' +
+          esc(t('edDetail')) + '</button>' +
         '<p class="eyebrow">' + esc(o.angebotText) + ' · ' + o.id + '</p>' +
         '<h2 id="modal-titel">' + esc(o.strasse) + '</h2>' +
         (o.civico || o.adresseUnklar
@@ -594,6 +641,15 @@
 
     if (el.id === 'zu') { e.preventDefault(); detailSchliessen(); return; }
 
+    if (el.id === 'karte-laden') {
+      var merken = document.getElementById('karte-merken');
+      if (merken && merken.checked) {
+        try { localStorage.setItem(KARTE_SCHLUESSEL, 'ja'); } catch (err) { /* gesperrt */ }
+      }
+      kachelnLaden();
+      return;
+    }
+
     if (el.dataset.thumb !== undefined) {
       e.preventDefault();
       var o = objekt(aktuellesObjekt);
@@ -652,6 +708,12 @@
     ansichtBauen: ansichtBauen,
     extraText: function (e) { return D.beschriftung[LANG].extras[e] || e; },
     sprache: function () { return LANG; },
+    /** Kennung des offenen Objekts, sonst null — der Editor braucht sie, um
+        nach einer Umbenennung die richtige Ansicht wieder zu zeigen. */
+    detailOffen: function () {
+      return $('#ov').classList.contains('on') ? aktuellesObjekt : null;
+    },
+    detailZeigen: function (id) { if (id) detailOeffnen(id, true); else detailSchliessen(); },
   };
 
   /* ---- Start ---------------------------------------------------------- */
