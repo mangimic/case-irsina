@@ -470,14 +470,16 @@ entsprechend ändern (Umgebungsvariable oder `src/config.ts`) und neu bauen.
 2. **Vorschaubild.** `public/vorschau.jpg` (1200 × 630) anlegen — es erscheint, wenn
    jemand die Startseite bei WhatsApp oder Facebook teilt. Detailseiten haben ihr
    eigenes, automatisch erzeugtes Vorschaubild.
-3. **Koordinaten** für die elf Objekte, damit die Karte trägt. Die vorliegenden Fotos
-   haben ihre Metadaten unterwegs verloren — mit den Originalen vom Handy geht es in
-   einem Schritt, siehe *Koordinaten holen*.
-4. **Preise, Flächen, Zustand** erheben — die Felder sind angelegt und bleiben leer,
+3. **Koordinaten** für alle sechzehn Objekte, damit die Karte trägt. Die vorliegenden
+   Fotos haben ihre Metadaten unterwegs verloren — mit den Originalen vom Handy geht es
+   in einem Schritt, siehe *Koordinaten holen*.
+4. **Hausnummer von IR-016** klären: die Foto-Info nennt *Corso Canio Musacchio 46*,
+   am Gebäude selbst steht die **13** als Relief unter dem Gesims. Siehe unten.
+5. **Preise, Flächen, Zustand** erheben — die Felder sind angelegt und bleiben leer,
    bis sie gefüllt werden.
-5. **Eigentümer ansprechen.** Das schafft Kontakt im Ort, klärt die Angaben und
+6. **Eigentümer ansprechen.** Das schafft Kontakt im Ort, klärt die Angaben und
    ermöglicht es, Nummern mit Zustimmung freizuschalten.
-6. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
+7. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
    (siehe oben).
 
 ---
@@ -531,5 +533,16 @@ Aus Straßenschildern im Bild gesichert:
 Die Straßennamen dieser vier sind auf den Fotos nicht zu sehen — sie tragen deshalb
 beschreibende Bezeichnungen und `adresse_unklar: true`. Auch der Erfassungsmonat ist
 geschätzt (`2026-08`): die Fotos hatten keine Metadaten mehr.
+
+**IR-016 (einzeln nachgereicht):**
+
+Straße aus der **Foto-Info des Originals** auf dem Telefon: *Corso Canio Musacchio,
+75022 Irsina MT*. Diese Adresse hat das Telefon selbst aus den GPS-Daten des Bildes
+zurückgerechnet — sie ist damit belastbarer als eine Schätzung, aber sie bezeichnet die
+Stelle, an der fotografiert wurde, nicht zwingend das Haus davor.
+
+Die Hausnummern widersprechen sich: die Foto-Info sagt **46**, am Gebäude steht die
+**13** als Relief unter dem Gesims. Im Datensatz steht die **13** — sie ist im Bild zu
+sehen. `adresse_unklar` bleibt deshalb `true`, bis jemand vor Ort nachsieht.
 
 Alles Übrige — genaue Adressen, Preise, Flächen, Zustand — ist noch zu erheben.
