@@ -49,16 +49,9 @@ GITHUB_BESITZER = "mangimic"
 GITHUB_REPO = "case-irsina"
 GITHUB_ZWEIG = "main"
 
-# Noch NICHT eingetragen, weil es die Datenbank erst geben muss:
-#
-#   npx wrangler d1 create irsina
-#   npx wrangler d1 execute irsina --remote --file migrations/0001_nachrichten.sql
-#
-# Danach die ausgegebene database_id hier eintragen und neu bauen. Bis dahin
-# sagt das Formular sauber, dass der Speicher fehlt, statt Nachrichten zu
-# verlieren.
-#
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "irsina"
-# database_id = "..."
+# Die Nachrichten aus dem Kontaktformular. Die Tabelle steht in
+# migrations/0001_nachrichten.sql.
+[[d1_databases]]
+binding = "DB"
+database_name = "irsina"
+database_id = "73305bf9-df2c-4012-912f-df6cf76b4497"
