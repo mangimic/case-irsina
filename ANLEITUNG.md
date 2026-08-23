@@ -395,8 +395,16 @@ je nach Einstellung nicht speichern. Bei der eigenständigen Datei geht beides.
 
 ## Die Seite online stellen
 
-Gehostet wird bei **Cloudflare Pages**, kostenlos. Danach genügt ein Link — er
-funktioniert auf jedem Handy, in jedem Browser, ohne Konto und ohne Anhang.
+Gehostet wird bei **Cloudflare**, kostenlos, als **Worker mit statischen Dateien**
+(Workers Static Assets). Danach genügt ein Link — er funktioniert auf jedem Handy, in
+jedem Browser, ohne Konto und ohne Anhang.
+
+> Cloudflare hat zwei Wege für so eine Seite: das ältere *Pages* und das neuere
+> *Workers*. Dieses Projekt ist auf **Workers** eingerichtet. Der Unterschied steckt in
+> `wrangler.toml`: Workers braucht `[assets] directory`, Pages `pages_build_output_dir`.
+> **Beides zusammen bricht das Deployment ab** — genau daran ist der erste Versuch
+> gescheitert (`Missing entry-point to Worker script or to assets directory`).
+> `npm test` hält die Datei jetzt bei dem, was der Build erzeugt.
 
 **Das Repository ist öffentlich** — deshalb steht in `src/data/objekte.json` keine
 einzige ungefragte Telefonnummer, sondern nur, was freigegeben wurde. Die abgelesenen
@@ -406,37 +414,42 @@ bricht ab, falls doch eine ungeschützte Nummer in der fertigen Seite steht.
 
 ### Einmalig einrichten (etwa zehn Minuten)
 
-1. https://dash.cloudflare.com → **Workers & Pages** → **Create** → **Pages** →
-   **Connect to Git** → GitHub verbinden → Repo `mangimic/case-irsina` wählen.
+1. https://dash.cloudflare.com → **Workers & Pages** → **Create** → **Import a
+   repository** → GitHub verbinden → Repo `mangimic/case-irsina` wählen.
 
 2. Build-Einstellungen:
 
    | Feld | Wert |
    |---|---|
-   | Framework preset | *None* |
    | Build command | `npm run build && npm run build:pruefen` |
-   | Build output directory | `dist` |
+   | Deploy command | `npx wrangler deploy` |
    | Production branch | `main` |
 
    Ein *Root directory* muss **nicht** gesetzt werden — das Projekt liegt in der
-   Wurzel des Repositorys.
+   Wurzel des Repositorys. Wo die fertigen Dateien liegen, steht in `wrangler.toml`
+   (`[assets] directory = "./dist"`) und nicht im Dashboard.
 
    Der Build-Befehl enthält bewusst auch die Kontrolle: findet sie eine ungeschützte
    Telefonnummer, eine fehlende Seite oder einen fehlenden Prüfhinweis, **schlägt das
    Deployment fehl, statt etwas Falsches zu veröffentlichen.**
 
-3. **Save and Deploy.** Nach zwei bis drei Minuten läuft die Seite unter
-   `https://<projektname>.pages.dev`.
+3. **Der Name muss übereinstimmen.** In `wrangler.toml` steht
+   `name = "irsina-immobili"`. Heißt der Worker im Dashboard anders, legt `wrangler
+   deploy` beim Deployen einen **zweiten** Worker unter diesem Namen an. Entweder den
+   Worker umbenennen oder die Zeile anpassen.
 
-4. **Die Adresse eintragen** — sonst zeigen die Teilen-Knöpfe ins Leere.
-   Im Pages-Projekt unter **Settings → Environment variables → Production**:
+4. **Deploy.** Nach zwei bis drei Minuten läuft die Seite unter
+   `https://<name>.<konto>.workers.dev`.
+
+5. **Die Adresse eintragen** — sonst zeigen die Teilen-Knöpfe ins Leere.
+   Im Worker unter **Settings → Variables and Secrets**:
 
    | Variable | Wert |
    |---|---|
-   | `SITE_URL` | die tatsächliche Adresse, z. B. `https://irsina-immobili.pages.dev` |
+   | `SITE_URL` | die tatsächliche Adresse, z. B. `https://irsina-immobili.mangimic.workers.dev` |
 
-   Danach **Deployments → Retry deployment**, damit sie greift. Ohne diesen Schritt
-   verweisen geteilte Objektlinks weiterhin auf `case-irsina.it`, das es nicht gibt.
+   Danach einmal neu bauen, damit sie greift. Ohne diesen Schritt verweisen geteilte
+   Objektlinks weiterhin auf `case-irsina.it`, das es noch nicht gibt.
 
 Ab jetzt baut jeder Push die Seite neu.
 
@@ -473,8 +486,11 @@ eigenen Foto.
 
 ### Eigene Domain
 
-In den Projekteinstellungen unter *Custom domains* eintragen, danach `SITE_URL`
-entsprechend ändern (Umgebungsvariable oder `src/config.ts`) und neu bauen.
+Im Worker unter **Settings → Domains & Routes → Add → Custom domain** eintragen.
+Danach die Umgebungsvariable `SITE_URL` **löschen** — ohne sie gilt der eingebaute
+Wert `https://case-irsina.it` aus `src/config.ts`, und der ist dann der richtige.
+Einmal neu bauen, fertig: canonical, hreflang, Sitemap, JSON-LD und die
+Teilen-Knöpfe ziehen alle daraus.
 
 ### Wenn der Build fehlschlägt
 
@@ -488,6 +504,9 @@ entsprechend ändern (Umgebungsvariable oder `src/config.ts`) und neu bauen.
 - *„Unsupported engine"* bei `npm ci` — dieselbe Ursache. `.npmrc` setzt
   `engine-strict=true`, damit npm gleich abbricht und die nötige Fassung nennt,
   statt es nur zu erwähnen und später unverständlich zu scheitern.
+- *`Missing entry-point to Worker script or to assets directory`* — `wrangler.toml`
+  enthält Pages-Angaben (`pages_build_output_dir`) statt `[assets] directory`.
+  `npm test` fängt das ab.
 - *Die Kontrolle bricht ab* — sie nennt den Grund im Protokoll. Das ist Absicht:
   lieber kein Deployment als ein falsches.
 

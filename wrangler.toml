@@ -1,22 +1,34 @@
-# ── Cloudflare Pages: Irsina · Case nel centro storico ──
+# ── Cloudflare: Irsina · Case nel centro storico ──
 #
-# Das Projekt liegt in der Wurzel dieses Repositorys — ein Root directory muss
-# im Dashboard NICHT gesetzt werden. Beim Anlegen genuegt:
+# Deployt als Worker mit statischen Dateien (Workers Static Assets). Es gibt
+# keinen Worker-Code — nur den Ordner dist/, den Astro baut; deshalb steht hier
+# kein "main", sondern allein [assets].
 #
-#   Build command:              npm run build && npm run build:pruefen
-#   Build output directory:     dist
+# Im Dashboard beim Verbinden mit Git:
+#
+#   Build command:   npm run build && npm run build:pruefen
+#   Deploy command:  npx wrangler deploy
 #
 # Der Build-Befehl enthaelt bewusst die Kontrolle: findet sie eine ungeschuetzte
 # Telefonnummer, eine fehlende Seite oder einen fehlenden Pruefhinweis, schlaegt
 # das Deployment fehl, statt etwas Falsches zu veroeffentlichen.
 #
-# Zusaetzlich unter Settings -> Environment variables setzen:
-#   SITE_URL = https://<projektname>.pages.dev
-# Ohne sie zeigen die Teilen-Knoepfe auf die noch nicht existierende Domain.
+# Zusaetzlich unter Settings -> Variables and Secrets setzen:
+#   SITE_URL = https://<adresse-der-seite>
+# Ohne sie zeigen die Teilen-Knoepfe auf case-irsina.it, solange es die Domain
+# noch nicht gibt.
 #
-# Cloudflare liest dann diese Datei. Die Sicherheits-Header und die
-# Weiterleitungen stehen in public/_headers und public/_redirects und werden
-# beim Build nach dist/ kopiert.
+# WICHTIG: "name" muss dem Namen des Workers im Dashboard entsprechen. Steht
+# hier ein anderer, legt wrangler beim Deployen einen zweiten Worker an.
+
 name = "irsina-immobili"
 compatibility_date = "2026-08-01"
-pages_build_output_dir = "dist"
+
+[assets]
+# Was Astro gebaut hat. public/_headers und public/_redirects liegen danach in
+# dist/ und werden von Cloudflare ausgewertet — die Sicherheits-Header und die
+# Weiterleitungen gelten also weiterhin.
+directory = "./dist"
+
+# Astro legt eine eigene 404-Seite an; ohne diese Zeile kaeme Cloudflares.
+not_found_handling = "404-page"
