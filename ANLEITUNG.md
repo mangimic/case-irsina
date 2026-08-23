@@ -273,11 +273,14 @@ der mit dem Haus nichts zu tun hat, oder ein Kfz-Kennzeichen wird lesbar. Beides
 personenbezogenes Datum und gehört nicht auf eine öffentliche Seite — die
 Datenschutzerklärung des Projekts sagt genau das zu.
 
-Betroffen waren zwei der ersten elf Fotos:
+Betroffen waren bisher vier Fotos:
 
 - **IR-009** — eine Passantin war klar erkennbar, dazu ein lesbares Kennzeichen.
   Das Bild ist am rechten Rand beschnitten, das Kennzeichen verpixelt.
 - **IR-003** — ein teilweise lesbares Kennzeichen, verpixelt.
+- **IR-016** — ein Passant am rechten Bildrand, erkennbar. Rand beschnitten.
+- **IR-019** — drei parkende Autos, alle drei Kennzeichen voll lesbar. Alle drei
+  verpixelt.
 
 Gemacht hat das `scripts/fotos-anonymisieren.mjs`. Die Bereiche stehen **im Skript**,
 nicht in einem Bildbearbeitungsprogramm: so ist nachvollziehbar, was warum verdeckt
@@ -476,7 +479,7 @@ entsprechend ändern (Umgebungsvariable oder `src/config.ts`) und neu bauen.
 2. **Vorschaubild.** `public/vorschau.jpg` (1200 × 630) anlegen — es erscheint, wenn
    jemand die Startseite bei WhatsApp oder Facebook teilt. Detailseiten haben ihr
    eigenes, automatisch erzeugtes Vorschaubild.
-3. **Koordinaten** für alle sechzehn Objekte, damit die Karte trägt. Die vorliegenden
+3. **Koordinaten** für alle zwanzig Objekte, damit die Karte trägt. Die vorliegenden
    Fotos haben ihre Metadaten unterwegs verloren — mit den Originalen vom Handy geht es
    in einem Schritt, siehe *Koordinaten holen*.
 4. **Hausnummer von IR-016** klären: die Foto-Info nennt *Corso Canio Musacchio 46*,
@@ -550,5 +553,27 @@ Stelle, an der fotografiert wurde, nicht zwingend das Haus davor.
 Die Hausnummern widersprechen sich: die Foto-Info sagt **46**, am Gebäude steht die
 **13** als Relief unter dem Gesims. Im Datensatz steht die **13** — sie ist im Bild zu
 sehen. `adresse_unklar` bleibt deshalb `true`, bis jemand vor Ort nachsieht.
+
+**Vierter Satz Fotos (IR-017 bis IR-020):**
+
+- **IR-017** — lachsrosa Haus an einer gepflasterten Gasse, **zwei** Schilder an zwei
+  Fenstern: eines handgemalt rot mit Telefonnummer (in `daten-intern/kontakte.json`, als
+  unsicher markiert — die Gitterstäbe verdecken einen Teil der Ziffern), eines gedruckt
+  und nicht mehr lesbar. Hausnummern **4** und **2** auf derselben Fassade; im Datensatz
+  steht die 4, weil sie neben der Haustür sitzt.
+- **IR-018** — ockerfarbenes Eckhaus, Hausnummer **7**, Schild auf der Haustür geklebt.
+  Die Kontaktzeilen darunter sind verblasst und wurden deshalb **nicht** erfasst.
+- **IR-019** — Palazzo mit vier Rundbogenfenstern unter dem Dach. Das Straßenschild im
+  Bild beginnt mit *„Largo San G…"* — der Rest ist auf dem Foto zu klein (die Tafel ist
+  im Original nur rund 70 Bildpunkte breit). Deshalb steht dort weiter ein beschreibender
+  Name; der Anfang ist ein guter Anhaltspunkt für die Suche vor Ort. Auf dem Foto waren
+  **drei Kfz-Kennzeichen voll lesbar** — sie sind verpixelt, siehe *Personen und
+  Kennzeichen*.
+- **IR-020** — gelbes Haus mit rot-weißem Rautenfries, zwei Fotos. Schild gedruckt mit
+  zwei handschriftlichen Nummern, beide gut lesbar, beide in `daten-intern/kontakte.json`.
+  Die Hausnummer **26** im Bild gehört dem **Nachbarhaus**, nicht diesem.
+
+Auch bei diesen vier hatten die Fotos keine Metadaten mehr — Erfassungsmonat geschätzt
+(`2026-08`), Straßennamen bis auf den Anfang von IR-019 unbekannt.
 
 Alles Übrige — genaue Adressen, Preise, Flächen, Zustand — ist noch zu erheben.

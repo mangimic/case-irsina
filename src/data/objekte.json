@@ -524,6 +524,138 @@
         "nl": "Pand van twee lagen: bovenverdieping grijs gestuct, begane grond roze met omlopende banden. Witte dubbele deur onder een boog, met twee VENDESI-borden achter het glas; het groene noemt een appartement. Huisnummer 13 in reliëf onder de kroonlijst, rechts een balkon. Op de roze muur staan nog de vervaagde letters van een oud geschilderd uithangbord.",
         "fr": "Petit immeuble sur deux niveaux : étage enduit de gris, rez-de-chaussée rose à bandes. Porte blanche à deux vantaux sous un arc, avec deux panneaux VENDESI derrière la vitre ; le vert mentionne un appartement. Numéro 13 en relief sous la corniche, balcon à droite. Sur le mur rose subsistent les lettres effacées d'une ancienne enseigne peinte."
       }
+    },
+    {
+      "id": "IR-017",
+      "foto": [
+        "IR-017.jpg"
+      ],
+      "strasse": "Casa rosa su vicolo lastricato",
+      "civico": "4",
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa a due piani intonacata di rosa salmone, su un vicolo lastricato. Due portefinestre con ringhiera in ferro battuto: su quella di sinistra un cartello VENDESI dipinto a mano in rosso con un numero di telefono, su quella di destra un secondo cartello stampato il cui testo non è più leggibile. Civico 4 accanto al portoncino marrone, civico 2 all'altro capo della facciata. Al piano strada l'intonaco è caduto e affiora la pietra; sulla destra un ampio portone verde e una finestrella con inferriata. Lampione in ferro battuto sul muro.",
+        "en": "Two-storey house rendered in salmon pink, on a paved lane. Two French windows with wrought-iron railings: the left one carries a hand-painted red VENDESI sign with a telephone number, the right one a second, printed sign whose text is no longer legible. House number 4 beside the brown door, number 2 at the far end of the facade. At street level the render has come away and the bare stone shows; to the right a wide green door and a barred cellar window. A wrought-iron lantern on the wall.",
+        "de": "Zweigeschossiges Haus mit lachsrosa Putz an einer gepflasterten Gasse. Zwei Fenstertüren mit schmiedeeisernen Gittern: am linken ein handgemaltes rotes VENDESI-Schild mit Telefonnummer, am rechten ein zweites, gedrucktes Schild, dessen Text nicht mehr zu lesen ist. Hausnummer 4 neben der braunen Tür, Hausnummer 2 am anderen Ende der Fassade. Im Erdgeschoss ist der Putz abgefallen, der nackte Stein liegt frei; rechts ein breites grünes Tor und ein vergittertes Kellerfenster. An der Wand eine schmiedeeiserne Laterne.",
+        "nl": "Huis van twee lagen met zalmroze pleisterwerk aan een geplaveide steeg. Twee openslaande vensters met smeedijzeren hekjes: op het linker een met de hand geschilderd rood VENDESI-bord met telefoonnummer, op het rechter een tweede, gedrukt bord waarvan de tekst niet meer leesbaar is. Huisnummer 4 naast de bruine deur, nummer 2 aan het andere eind van de gevel. Op straatniveau is het pleisterwerk eraf gevallen en ligt de steen bloot; rechts een brede groene poort en een getralied kelderraam. Een smeedijzeren lantaarn aan de muur.",
+        "fr": "Maison à deux niveaux enduite de rose saumon, dans une ruelle pavée. Deux portes-fenêtres à garde-corps en fer forgé : à gauche un panneau VENDESI peint à la main en rouge avec un numéro de téléphone, à droite un second panneau imprimé dont le texte n'est plus lisible. Numéro 4 à côté de la porte brune, numéro 2 à l'autre bout de la façade. Au rez-de-chaussée l'enduit est tombé et la pierre nue apparaît ; à droite un large portail vert et une fenêtre de cave grillagée. Une lanterne en fer forgé sur le mur."
+      }
+    },
+    {
+      "id": "IR-018",
+      "foto": [
+        "IR-018.jpg"
+      ],
+      "strasse": "Casa d'angolo su due vicoli",
+      "civico": "7",
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Piccola casa d'angolo su due livelli, all'incrocio di due vicoli, con intonaco ocra molto consumato. Cartello VENDESI applicato sul portoncino marrone; le righe con i recapiti sotto la scritta sono sbiadite e illeggibili. Civico 7 sopra la porta. Accanto, al piano strada, un portone in legno rosso; al piano superiore una sola finestra. Tetto piano con parapetto.",
+        "en": "Small two-storey corner house where two lanes meet, its ochre render badly weathered. A VENDESI sign is taped to the brown front door; the contact lines beneath the wording have faded and cannot be read. House number 7 above the door. Beside it, at street level, a red wooden door; a single window on the upper floor. Flat roof with a parapet.",
+        "de": "Kleines zweigeschossiges Eckhaus an der Kreuzung zweier Gassen, der ockerfarbene Putz stark verwittert. Auf der braunen Haustür klebt ein VENDESI-Schild; die Kontaktzeilen darunter sind verblasst und nicht mehr zu lesen. Hausnummer 7 über der Tür. Daneben im Erdgeschoss ein rotes Holztor, im Obergeschoss ein einzelnes Fenster. Flachdach mit Brüstung.",
+        "nl": "Klein hoekhuis van twee lagen op het kruispunt van twee steegjes, het okerkleurige pleisterwerk sterk verweerd. Op de bruine voordeur zit een VENDESI-bord geplakt; de contactregels eronder zijn vervaagd en onleesbaar. Huisnummer 7 boven de deur. Ernaast op straatniveau een rode houten poort, op de bovenverdieping één enkel raam. Plat dak met borstwering.",
+        "fr": "Petite maison d'angle à deux niveaux, au croisement de deux ruelles, l'enduit ocre très usé. Un panneau VENDESI est collé sur la porte d'entrée brune ; les lignes de contact en dessous sont effacées et illisibles. Numéro 7 au-dessus de la porte. À côté, au rez-de-chaussée, un portail en bois rouge ; à l'étage une seule fenêtre. Toit plat avec parapet."
+      }
+    },
+    {
+      "id": "IR-019",
+      "foto": [
+        "IR-019.jpg"
+      ],
+      "strasse": "Palazzo con loggia ad archi",
+      "civico": null,
+      "typ": "palazzo",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Palazzo su tre livelli con una loggia sotto il tetto: quattro finestre a tutto sesto in fila. Al primo piano un balcone con ringhiera in ferro e piante in vaso; sulla portafinestra un cartello VENDESI stampato, il recapito sotto è troppo piccolo per essere letto nella foto. Al piano strada un portoncino e una finestra. Sulla sinistra un arco carraio conduce oltre. La targa stradale sul muro comincia con «Largo San G…» ma non si legge fino in fondo.",
+        "en": "Three-storey palazzo with a loggia under the roof: four round-arched windows in a row. On the first floor a balcony with an iron railing and potted plants; a printed VENDESI sign hangs on the French window, the contact beneath it too small to read in the photograph. At street level a door and a window. To the left an archway leads onward. The street plate on the wall begins «Largo San G…» but cannot be read to the end.",
+        "de": "Dreigeschossiger Palazzo mit einer Loggia unter dem Dach: vier Rundbogenfenster in einer Reihe. Im ersten Obergeschoss ein Balkon mit Eisengitter und Topfpflanzen; an der Fenstertür hängt ein gedrucktes VENDESI-Schild, der Kontakt darunter ist auf dem Foto zu klein zum Lesen. Im Erdgeschoss eine Tür und ein Fenster. Links führt ein Torbogen weiter. Das Straßenschild an der Wand beginnt mit «Largo San G…», ist aber nicht bis zum Ende zu entziffern.",
+        "nl": "Palazzo van drie lagen met een loggia onder het dak: vier rondboogvensters op een rij. Op de eerste verdieping een balkon met ijzeren hek en potplanten; op het balkondeurraam hangt een gedrukt VENDESI-bord, het contact eronder is op de foto te klein om te lezen. Op straatniveau een deur en een raam. Links voert een poortboog verder. Het straatnaambordje aan de muur begint met «Largo San G…» maar is niet tot het eind te lezen.",
+        "fr": "Palazzo de trois niveaux avec une loggia sous le toit : quatre fenêtres en plein cintre alignées. Au premier étage un balcon à garde-corps en fer et plantes en pot ; sur la porte-fenêtre un panneau VENDESI imprimé, le contact en dessous trop petit pour être lu sur la photo. Au rez-de-chaussée une porte et une fenêtre. À gauche, un passage voûté mène plus loin. La plaque de rue sur le mur commence par « Largo San G… » mais ne se lit pas jusqu'au bout."
+      }
+    },
+    {
+      "id": "IR-020",
+      "foto": [
+        "IR-020a.jpg",
+        "IR-020b.jpg"
+      ],
+      "strasse": "Casa gialla con fascia a rombi",
+      "civico": null,
+      "typ": "casa",
+      "angebot": "vendita",
+      "zustand": "sconosciuto",
+      "preis": null,
+      "mq": null,
+      "vani": null,
+      "extras": [
+        "balcone",
+        "garage"
+      ],
+      "telefon": null,
+      "telefon2": null,
+      "telefon_unsicher": false,
+      "freigabe": false,
+      "lat": null,
+      "lng": null,
+      "gesehen": "2026-08",
+      "adresse_unklar": true,
+      "pruefstand": "unbesichtigt",
+      "text": {
+        "it": "Casa a due piani intonacata di giallo, con una fascia a rombi rossi e bianchi sotto il tetto. Due portefinestre con ringhiera in ferro e avvolgibili; su quella di sinistra un cartello VENDESI con due recapiti scritti a mano. Al piano strada un ampio portone metallico a quattro ante, largo quanto un garage. Zoccolo in cemento grezzo; sul tetto una terrazza con ringhiera. La casa accanto porta il civico 26.",
+        "en": "Two-storey house rendered in yellow, with a band of red-and-white diamonds below the roof. Two French windows with iron railings and roller shutters; the left one carries a VENDESI sign with two hand-written contact numbers. At street level a wide four-leaf metal door, as broad as a garage. Bare concrete plinth; a railed terrace on the roof. The house next door bears number 26.",
+        "de": "Zweigeschossiges Haus mit gelbem Putz und einem rot-weißen Rautenfries unter dem Dach. Zwei Fenstertüren mit Eisengittern und Rollläden; am linken ein VENDESI-Schild mit zwei handschriftlichen Kontaktnummern. Im Erdgeschoss ein breites vierflügeliges Metalltor, so breit wie eine Garage. Sockel aus rohem Beton; auf dem Dach eine Terrasse mit Geländer. Das Nachbarhaus trägt die Hausnummer 26.",
+        "nl": "Huis van twee lagen met geel pleisterwerk en een rood-witte ruitfries onder het dak. Twee openslaande vensters met ijzeren hekjes en rolluiken; op het linker een VENDESI-bord met twee met de hand geschreven contactnummers. Op straatniveau een brede metalen poort met vier delen, zo breed als een garage. Plint van ruw beton; op het dak een terras met balustrade. Het buurhuis draagt nummer 26.",
+        "fr": "Maison à deux niveaux enduite de jaune, avec une frise de losanges rouges et blancs sous le toit. Deux portes-fenêtres à garde-corps en fer et volets roulants ; celle de gauche porte un panneau VENDESI avec deux numéros de contact écrits à la main. Au rez-de-chaussée un large portail métallique à quatre battants, aussi large qu'un garage. Soubassement en béton brut ; sur le toit une terrasse avec garde-corps. La maison voisine porte le numéro 26."
+      }
     }
   ]
 }
