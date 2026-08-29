@@ -13,7 +13,7 @@
 # Passwort und Token gehoeren in .dev.vars (nicht eingecheckt):
 #   ADMIN_PASSWORT = "..."
 #   GITHUB_TOKEN = "..."
-name = "irsina-immobili"
+name = "case-irsina"
 compatibility_date = "2026-08-01"
 main = "worker/index.ts"
 

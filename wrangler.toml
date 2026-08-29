@@ -19,9 +19,13 @@
 # noch nicht gibt.
 #
 # WICHTIG: "name" muss dem Namen des Workers im Dashboard entsprechen. Steht
-# hier ein anderer, legt wrangler beim Deployen einen zweiten Worker an.
+# hier ein anderer, legt wrangler beim Deployen einen ZWEITEN Worker unter
+# diesem Namen an — das Deployment meldet Erfolg, aber unter der bekannten
+# Adresse laeuft weiter der alte Stand. Genau das ist einmal passiert: hier
+# stand "irsina-immobili", der Worker heisst "case-irsina", und /api/* landete
+# deshalb auf der 404-Seite statt beim Worker.
 
-name = "irsina-immobili"
+name = "case-irsina"
 compatibility_date = "2026-08-01"
 
 # Der Worker steht nur fuer /api/* bereit; alles andere liefert Cloudflare

@@ -55,6 +55,15 @@ describe('Cloudflare-Konfiguration', () => {
     expect(TOML).toMatch(/binding\s*=\s*"ASSETS"/);
   });
 
+  it('nennt in beiden Konfigurationen denselben Worker', () => {
+    /* Weichen sie ab, deployt wrangler in einen zweiten Worker: das Deployment
+       meldet Erfolg, unter der bekannten Adresse laeuft aber der alte Stand. */
+    const lokal = readFileSync(join(WURZEL, 'wrangler.lokal.toml'), 'utf-8');
+    const nameAus = (inhalt: string) => inhalt.match(/^\s*name\s*=\s*"([^"]+)"/m)?.[1];
+    expect(wert('name')).toBe('case-irsina');
+    expect(nameAus(lokal)).toBe(wert('name'));
+  });
+
   it('liefert die eigene 404-Seite aus', () => {
     expect(TOML).toMatch(/not_found_handling\s*=\s*"404-page"/);
   });
