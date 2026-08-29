@@ -642,6 +642,40 @@ GITHUB_TOKEN = "..."
 
 ---
 
+## Fünf Bilder und ein Grundriss je Objekt
+
+Das ist das Ziel für jedes Haus. `npm run daten:pruefen` sagt bei jedem Lauf, wie weit
+es noch ist — objektweise:
+
+```
+~ IR-020: 2 von 5 Fotos — es fehlen noch 3.
+~ IR-020: kein Grundriss hinterlegt.
+```
+
+**Fotos.** Bis zu fünf, benannt `IR-020.jpg`, `IR-020b.jpg`, `IR-020c.jpg` … Mehr als
+fünf lässt das Schema nicht zu: jedes Bild wird beim Bauen in mehreren Größen und zwei
+Formaten erzeugt, und zwanzig Aufnahmen eines Hauses sieht sich niemand an.
+
+**Grundriss.** Genau einer, benannt `IR-020-grundriss.jpg` (oder `.png` — gezeichnet
+wird selten mit der Kamera). Er steht **nicht** in der Galerie, sondern als eigener
+Abschnitt unter der Beschreibung: vollständig gezeigt statt auf ein einheitliches
+Seitenverhältnis beschnitten, sonst fehlt genau die Ecke, die interessiert. Ein Klick
+öffnet ihn groß.
+
+**Der einfachste Weg, beides zu ergänzen,** ist der Editor auf der Seite: `/edit` →
+Objekt öffnen → Fotos und Grundriss hochladen. Die Bilder werden im Browser verkleinert
+(Fotos auf 1400 px, der Grundriss auf 2000 px — dort steht Schrift, die lesbar bleiben
+soll) und direkt ins Repository gelegt. Beim fünften Foto verschwindet der Knopf.
+
+Von Hand geht es genauso: Datei nach `src/fotos/` legen, Namen in `objekte.json`
+eintragen, `npm run build`.
+
+> **Vor dem Hochladen ansehen.** Auf einem Grundriss stehen manchmal Namen, Anschriften
+> oder Aktenzeichen. Beides — Fotos wie Grundrisse — durchsehen, wie unter *Personen und
+> Kennzeichen auf den Fotos* beschrieben.
+
+---
+
 ## Aufwand: S, M, L, XL
 
 Neben dem Zustand trägt jedes Objekt eine Stufe, wie viel Arbeit es braucht:
@@ -696,6 +730,8 @@ Attrappe. Der Weg ist deshalb:
    ermöglicht es, Nummern mit Zustimmung freizuschalten.
 7. **Neue Fotos** vor der Aufnahme in die Seite auf Personen und Kennzeichen durchsehen
    (siehe oben).
+8. **Fünf Bilder und ein Grundriss je Objekt** — derzeit hat kein Objekt beides. Der
+   Datencheck zählt bei jedem Lauf mit, was fehlt.
 
 ---
 

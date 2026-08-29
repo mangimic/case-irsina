@@ -5,7 +5,7 @@ import Teilen from '../../../components/Teilen.astro';
 import Anfrageformular from '../../../components/Anfrageformular.astro';
 import Objektkachel from '../../../components/Objektkachel.astro';
 import { OBJEKTE, adresse, beschreibung } from '../../../data/objekte';
-import { fotos } from '../../../data/fotos';
+import { fotos, grundriss } from '../../../data/fotos';
 import {
   angebotText, flaecheText, gesehenText, preisText, raeumeText, typText, zustandText, aufwandText, extraText,
   pruefstandText, ungeprueft,
@@ -29,6 +29,7 @@ const { objekt: o } = Astro.props;
 const t = uebersetzer(lang);
 
 const bilder = fotos(o);
+const plan = grundriss(o);
 const text = beschreibung(o, lang);
 const anschrift = adresse(o, lang);
 const titel = `${o.strasse} · ${o.id} — ${t('detailAt')}`;
@@ -199,6 +200,27 @@ const kartenLink =
         <div class="prose" style="margin-top:26px">
           <p>{text}</p>
         </div>
+
+        {/* Der Grundriss steht bewusst ausserhalb der Galerie: er wird
+            vollstaendig gezeigt, nicht auf ein einheitliches Seitenverhaeltnis
+            beschnitten — sonst fehlt genau die Ecke, die interessiert. */}
+        {plan && (
+          <section class="grundriss" aria-labelledby="grundriss-h">
+            <h2 id="grundriss-h">{t('grH')}</h2>
+            <a href={plan.src} target="_blank" rel="noopener noreferrer">
+              <Image
+                src={plan}
+                alt={t('grAlt', { ref: o.id })}
+                widths={[600, 1200]}
+                sizes="(min-width: 900px) 600px, 92vw"
+                format="webp"
+                quality={82}
+                loading="lazy"
+              />
+            </a>
+            <p class="grundriss-fuss">{t('grP')}</p>
+          </section>
+        )}
 
         {/* Der wichtigste Satz der ganzen Seite: niemand war drin. */}
         <aside class={`pruefhinweis ${ungeprueft(o) ? 'offen' : 'bestaetigt'}`}>

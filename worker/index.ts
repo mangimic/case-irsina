@@ -282,14 +282,16 @@ async function fotoZeigen(adresse: URL, env: Umgebung): Promise<Response> {
   const e = githubEinstellungen(env);
   if (!e) return fehler(503, 'Der Zugang zum Repository ist noch nicht eingerichtet.');
   const name = adresse.searchParams.get('name') || '';
-  if (!/^IR-\d{3}[a-z]?\.jpe?g$/i.test(name)) return fehler(400, 'Unbekannter Dateiname.');
+  if (!/^IR-\d{3}([a-z]|-grundriss)?\.(jpe?g|png)$/i.test(name)) {
+    return fehler(400, 'Unbekannter Dateiname.');
+  }
 
   const roh = `https://raw.githubusercontent.com/${e.besitzer}/${e.repo}/${e.zweig}/src/fotos/${name}`;
   const antwort = await fetch(roh, { headers: { 'user-agent': 'case-irsina-worker' } });
   if (!antwort.ok) return fehler(404, `${name} liegt nicht im Repository.`);
   return new Response(antwort.body, {
     headers: {
-      'content-type': 'image/jpeg',
+      'content-type': /\.png$/i.test(name) ? 'image/png' : 'image/jpeg',
       'cache-control': 'private, max-age=60',
       'x-robots-tag': 'noindex, nofollow',
     },
@@ -302,8 +304,13 @@ async function fotoAnlegen(anfrage: Request, env: Umgebung): Promise<Response> {
   if (!e.token) return fehler(503, 'Zum Hochladen fehlt das Secret GITHUB_TOKEN.');
 
   const { name, inhalt } = (await anfrage.json()) as { name?: string; inhalt?: string };
-  if (typeof name !== 'string' || !/^IR-\d{3}[a-z]?\.jpe?g$/i.test(name)) {
-    return fehler(400, 'Der Dateiname muss der Form IR-021.jpg folgen.');
+  /* Zwei erlaubte Formen: ein Foto (IR-021.jpg, IR-021b.jpg) und der Grundriss
+     (IR-021-grundriss.jpg oder .png). Alles andere waere ein Weg, beliebige
+     Dateien ins Repository zu legen. */
+  const ISTFOTO = /^IR-\d{3}[a-z]?\.jpe?g$/i;
+  const ISTGRUNDRISS = /^IR-\d{3}-grundriss\.(jpe?g|png)$/i;
+  if (typeof name !== 'string' || !(ISTFOTO.test(name) || ISTGRUNDRISS.test(name))) {
+    return fehler(400, 'Der Dateiname muss IR-021.jpg oder IR-021-grundriss.jpg heissen.');
   }
   if (typeof inhalt !== 'string' || inhalt === '') return fehler(400, 'Kein Bild empfangen.');
 

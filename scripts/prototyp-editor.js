@@ -62,7 +62,7 @@
   function leeresObjekt() {
     var heute = new Date();
     return {
-      id: naechsteKennung(), foto: [], strasse: '', civico: null,
+      id: naechsteKennung(), foto: [], grundriss: null, strasse: '', civico: null,
       typ: 'casa', angebot: 'vendita', zustand: 'sconosciuto',
       preis: null, mq: null, vani: null, extras: [], aufwand: null,
       telefon: null, telefon2: null, telefon_unsicher: false,
@@ -342,7 +342,8 @@
   function alsJson() {
     var raus = objekte.map(function (o) {
       return {
-        id: o.id, foto: o.foto, strasse: o.strasse, civico: o.civico,
+        id: o.id, foto: o.foto, grundriss: o.grundriss || null,
+        strasse: o.strasse, civico: o.civico,
         typ: o.typ, angebot: o.angebot, zustand: o.zustand,
         preis: o.preis, mq: o.mq, vani: o.vani, extras: o.extras, aufwand: o.aufwand,
         telefon: o.telefon, telefon2: o.telefon2,

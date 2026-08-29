@@ -7,6 +7,7 @@
       "foto": [
         "IR-001.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico",
       "civico": "5",
       "typ": "casa",
@@ -42,6 +43,7 @@
       "foto": [
         "IR-002.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico",
       "civico": null,
       "typ": "casa",
@@ -74,6 +76,7 @@
       "foto": [
         "IR-003.jpg"
       ],
+      "grundriss": null,
       "strasse": "Largo Domenico Mangieri",
       "civico": null,
       "typ": "casa",
@@ -108,6 +111,7 @@
       "foto": [
         "IR-004.jpg"
       ],
+      "grundriss": null,
       "strasse": "Borgo Antico · vicolo",
       "civico": "8/9",
       "typ": "casa",
@@ -140,6 +144,7 @@
       "foto": [
         "IR-005.jpg"
       ],
+      "grundriss": null,
       "strasse": "Angolo Via Zara",
       "civico": null,
       "typ": "palazzo",
@@ -175,6 +180,7 @@
       "foto": [
         "IR-006.jpg"
       ],
+      "grundriss": null,
       "strasse": "Vicolo nel centro storico",
       "civico": null,
       "typ": "casa",
@@ -209,6 +215,7 @@
       "foto": [
         "IR-007.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico",
       "civico": null,
       "typ": "casa",
@@ -241,6 +248,7 @@
       "foto": [
         "IR-008.jpg"
       ],
+      "grundriss": null,
       "strasse": "Largo San Martino",
       "civico": null,
       "typ": "casa",
@@ -276,6 +284,7 @@
       "foto": [
         "IR-009.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico",
       "civico": null,
       "typ": "casa",
@@ -311,6 +320,7 @@
         "IR-010a.jpg",
         "IR-010b.jpg"
       ],
+      "grundriss": null,
       "strasse": "II Vico San Martino",
       "civico": null,
       "typ": "locale",
@@ -343,6 +353,7 @@
       "foto": [
         "IR-011.jpg"
       ],
+      "grundriss": null,
       "strasse": "Largo San Nicola",
       "civico": null,
       "typ": "casa",
@@ -377,6 +388,7 @@
       "foto": [
         "IR-012.jpg"
       ],
+      "grundriss": null,
       "strasse": "Vicolo nel centro storico",
       "civico": null,
       "typ": "casa",
@@ -411,6 +423,7 @@
       "foto": [
         "IR-013.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico · ex falegnameria",
       "civico": null,
       "typ": "palazzo",
@@ -444,6 +457,7 @@
         "IR-014a.jpg",
         "IR-014b.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico",
       "civico": "13",
       "typ": "casa",
@@ -478,6 +492,7 @@
       "foto": [
         "IR-015.jpg"
       ],
+      "grundriss": null,
       "strasse": "Centro storico · presso la frutteria",
       "civico": "53",
       "typ": "palazzo",
@@ -512,6 +527,7 @@
       "foto": [
         "IR-016.jpg"
       ],
+      "grundriss": null,
       "strasse": "Corso Canio Musacchio",
       "civico": "13",
       "typ": "appartamento",
@@ -546,6 +562,7 @@
       "foto": [
         "IR-017.jpg"
       ],
+      "grundriss": null,
       "strasse": "Casa rosa su vicolo lastricato",
       "civico": "4",
       "typ": "casa",
@@ -580,6 +597,7 @@
       "foto": [
         "IR-018.jpg"
       ],
+      "grundriss": null,
       "strasse": "Casa d'angolo su due vicoli",
       "civico": "7",
       "typ": "casa",
@@ -612,6 +630,7 @@
       "foto": [
         "IR-019.jpg"
       ],
+      "grundriss": null,
       "strasse": "Palazzo con loggia ad archi",
       "civico": null,
       "typ": "palazzo",
@@ -647,6 +666,7 @@
         "IR-020a.jpg",
         "IR-020b.jpg"
       ],
+      "grundriss": null,
       "strasse": "Casa gialla con fascia a rombi",
       "civico": null,
       "typ": "casa",

@@ -338,6 +338,16 @@ body.intern { background: var(--paper-2); }
 .ed-werkzeug { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 0 20px; }
 .ed-werkzeug .btn { padding: 8px 15px; font-size: 13.5px; }
 
+/* ---------- Grundriss ---------- */
+/* Vollstaendig zeigen, nicht beschneiden: bei einem Grundriss ist der Rand
+   genauso wichtig wie die Mitte. */
+.grundriss { margin: 30px 0 0; }
+.grundriss h2 { font-size: 19px; margin: 0 0 12px; }
+.grundriss a { display: block; border: 1px solid var(--line); border-radius: var(--r);
+  background: #fff; padding: 12px; }
+.grundriss img { width: 100%; height: auto; display: block; }
+.grundriss-fuss { font-family: var(--sans); font-size: 13px; color: var(--ink-2); margin: 9px 0 0; }
+
 /* ---------- Anfrageformular ---------- */
 .anfrage {
   border: 1px solid var(--line); border-radius: var(--r); background: var(--paper-2);

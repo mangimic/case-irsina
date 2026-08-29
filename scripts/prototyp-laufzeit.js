@@ -65,6 +65,7 @@
     return {
       id: o.id, foto: o.foto, typ: o.typ, zustand: o.zustand, angebot: o.angebot,
       aufwand: o.aufwand == null ? null : o.aufwand,
+      grundriss: o.grundriss == null ? null : o.grundriss,
       preis: o.preis, strasse: o.strasse, civico: o.civico,
       adresseUnklar: o.adresse_unklar, pruefstand: o.pruefstand,
       telefon: o.telefon, telefonUnsicher: o.telefon_unsicher,
@@ -538,6 +539,13 @@
         (o.extras.length
           ? '<dl class="dl"><div style="grid-column:1/-1"><dt>' + esc(t('dExtras')) +
             '</dt><dd>' + esc(o.extras.join(' · ')) + '</dd></div></dl>'
+          : '') +
+        (o.grundriss && D.fotos[o.grundriss]
+          ? '<section class="grundriss"><h3>' + esc(t('grH')) + '</h3>' +
+            '<a href="' + D.fotos[o.grundriss] + '" target="_blank" rel="noopener noreferrer">' +
+            '<img src="' + D.fotos[o.grundriss] + '" alt="' +
+            esc(t('grAlt', { ref: o.id })) + '" loading="lazy"></a>' +
+            '<p class="grundriss-fuss">' + esc(t('grP')) + '</p></section>'
           : '') +
         '<aside class="pruefhinweis ' + (o.pruefstand === 'unbesichtigt' ? 'offen' : 'bestaetigt') + '">' +
           '<h3>' + esc(o.pruefstand === 'unbesichtigt' ? t('pvH') : o.pruefstandText) + '</h3>' +

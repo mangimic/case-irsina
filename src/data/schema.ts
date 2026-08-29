@@ -47,8 +47,25 @@ export const objektSchema = z
   .object({
     /** Eindeutige Kennung, erscheint auf Karte, Kachel und in der URL. */
     id: z.string().regex(/^IR-\d{3}$/, 'Kennung muss der Form IR-001 folgen'),
-    /** Dateinamen aus src/fotos/. Mindestens eines. */
-    foto: z.array(z.string().regex(/^IR-\d{3}[a-z]?\.jpe?g$/i)).min(1),
+    /**
+     * Dateinamen aus src/fotos/. Mindestens eines, hoechstens fuenf.
+     *
+     * Die Obergrenze ist keine Schikane: fuenf Bilder zeigen ein Haus, zwanzig
+     * ermueden, und jedes Foto wird beim Bauen in sieben Groessen und zwei
+     * Formaten erzeugt.
+     */
+    foto: z.array(z.string().regex(/^IR-\d{3}[a-z]?\.jpe?g$/i)).min(1).max(5),
+    /**
+     * Grundriss, falls einer vorliegt: IR-001-grundriss.jpg oder .png.
+     *
+     * Getrennt von den Fotos, weil er anders gezeigt wird — nicht in der
+     * Galerie, sondern als eigener Abschnitt, vollstaendig statt beschnitten.
+     */
+    grundriss: z
+      .string()
+      .regex(/^IR-\d{3}-grundriss\.(jpe?g|png)$/i, 'Grundriss muss IR-001-grundriss.jpg heissen')
+      .nullable()
+      .default(null),
     strasse: z.string().trim().min(1),
     civico: z.string().trim().min(1).nullable(),
     typ: z.enum(TYPEN),

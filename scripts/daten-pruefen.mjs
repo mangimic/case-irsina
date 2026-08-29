@@ -52,6 +52,9 @@ for (const o of objekte) {
 }
 
 /* Jedes genannte Foto muss auch wirklich in src/fotos/ liegen. */
+/* Wunschbild je Objekt: fuenf Aufnahmen und ein Grundriss. */
+const ZIEL_FOTOS = 5;
+
 const fotoOrdner = join(WURZEL, 'src/fotos');
 const vorhanden = existsSync(fotoOrdner) ? new Set(readdirSync(fotoOrdner)) : new Set();
 const benutzt = new Set();
@@ -60,9 +63,15 @@ for (const o of objekte) {
     benutzt.add(name);
     if (!vorhanden.has(name)) fehler.push(`${o.id}: Foto "${name}" fehlt in src/fotos/.`);
   }
+  if (o.grundriss) {
+    benutzt.add(o.grundriss);
+    if (!vorhanden.has(o.grundriss)) {
+      fehler.push(`${o.id}: Grundriss "${o.grundriss}" fehlt in src/fotos/.`);
+    }
+  }
 }
 for (const datei of vorhanden) {
-  if (/\.jpe?g$/i.test(datei) && !benutzt.has(datei)) {
+  if (/\.(jpe?g|png)$/i.test(datei) && !benutzt.has(datei)) {
     warnungen.push(`src/fotos/${datei} wird von keinem Objekt verwendet.`);
   }
 }
@@ -71,6 +80,15 @@ for (const datei of vorhanden) {
 for (const o of objekte) {
   if (o.lat === null) warnungen.push(`${o.id}: noch keine Koordinaten — erscheint nicht auf der Karte.`);
   if (o.preis === null) warnungen.push(`${o.id}: kein Preis hinterlegt.`);
+  /* Ziel sind fuenf Bilder und ein Grundriss je Objekt. Die Luecke steht hier,
+     damit sie nicht in Vergessenheit geraet. */
+  const fehlende = ZIEL_FOTOS - (o.foto?.length ?? 0);
+  if (fehlende > 0) {
+    warnungen.push(
+      `${o.id}: ${o.foto?.length ?? 0} von ${ZIEL_FOTOS} Fotos — es fehlen noch ${fehlende}.`,
+    );
+  }
+  if (!o.grundriss) warnungen.push(`${o.id}: kein Grundriss hinterlegt.`);
   if (o.telefon && !o.freigabe) {
     warnungen.push(`${o.id}: Telefonnummer erfasst, aber nicht freigegeben — wird nicht veroeffentlicht.`);
   }

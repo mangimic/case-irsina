@@ -54,7 +54,9 @@ const QUALITAET = 68;
    --------------------------------------------------------------------------- */
 const fotoDaten = {};
 for (const o of OBJEKTE) {
-  for (const name of o.foto) {
+  /* Der Grundriss kommt mit: vor Ort ist er oft das Erste, wonach gefragt
+     wird — und der Prototyp laeuft auch ohne Netz. */
+  for (const name of [...o.foto, o.grundriss].filter(Boolean)) {
     if (fotoDaten[name]) continue;
     const puffer = await sharp(join(WURZEL, 'src/fotos', name))
       .rotate()
@@ -91,6 +93,7 @@ for (const lang of SPRACHEN) {
     text: beschreibung(o, lang),
     typText: anzeige.typText(o, lang),
     aufwand: o.aufwand,
+    grundriss: o.grundriss,
     zustandText: anzeige.zustandText(o, lang),
     aufwandText: anzeige.aufwandText(o, lang),
     angebotText: anzeige.angebotText(o, lang),

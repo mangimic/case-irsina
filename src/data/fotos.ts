@@ -8,9 +8,12 @@ import type { OeffentlichesObjekt } from './objekte.ts';
  * So bleiben die Daten selbst aus jedem gewoehnlichen Node-Skript nutzbar —
  * etwa aus scripts/prototyp-bauen.mjs.
  */
-const FOTO_MODULE = import.meta.glob<{ default: ImageMetadata }>('../fotos/*.{jpg,jpeg,JPG,JPEG}', {
-  eager: true,
-});
+/* Grundrisse liegen als PNG genauso oft vor wie als JPEG — gezeichnet wird
+   selten mit der Kamera. */
+const FOTO_MODULE = import.meta.glob<{ default: ImageMetadata }>(
+  '../fotos/*.{jpg,jpeg,JPG,JPEG,png,PNG}',
+  { eager: true },
+);
 
 /** Dateiname aus objekte.json -> von Astro optimierbares Bild. */
 const FOTOS = new Map<string, ImageMetadata>(
@@ -29,4 +32,9 @@ export function foto(name: string): ImageMetadata {
 
 export function fotos(o: OeffentlichesObjekt): ImageMetadata[] {
   return o.foto.map(foto);
+}
+
+/** Grundriss des Objekts, sofern einer hinterlegt ist. */
+export function grundriss(o: OeffentlichesObjekt): ImageMetadata | null {
+  return o.grundriss === null ? null : foto(o.grundriss);
 }

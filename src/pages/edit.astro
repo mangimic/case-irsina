@@ -103,6 +103,8 @@ const auswahl = {
           '<span class="kennung">' + esc(o.id) + '</span>' +
           '<span class="wer"><b>' + esc(o.strasse) + (o.civico ? ' ' + esc(o.civico) : '') + '</b>' +
           '<span>' + esc(o.typ) + ' · ' + esc(o.zustand) +
+          ' · ' + o.foto.length + '/5 Fotos' +
+          (o.grundriss ? ' · Grundriss' : '') +
           (o.aufwand ? ' · Aufwand ' + esc(o.aufwand) : '') +
           (o.lat == null ? ' · ohne Koordinaten' : '') + '</span></span>' +
           '<button class="btn btn-o" type="button" data-bearbeiten="' + esc(o.id) + '">Bearbeiten</button>' +
@@ -134,7 +136,7 @@ const auswahl = {
       A.sprachen.forEach(function (s) { text[s.code] = ''; });
       return {
         id: 'IR-' + String(hoechste + 1).padStart(3, '0'),
-        foto: [], strasse: '', civico: null, typ: 'casa', angebot: 'vendita',
+        foto: [], grundriss: null, strasse: '', civico: null, typ: 'casa', angebot: 'vendita',
         zustand: 'sconosciuto', preis: null, mq: null, vani: null, extras: [],
         aufwand: null, telefon: null, telefon2: null, telefon_unsicher: false,
         freigabe: false, lat: null, lng: null,
@@ -206,11 +208,22 @@ const auswahl = {
           '<span class="ed-notiz" id="standort-stand"></span>' +
         '</fieldset>' +
 
-        '<fieldset class="ed-gruppe"><legend>Fotos</legend>' +
+        '<fieldset class="ed-gruppe"><legend>Fotos (Ziel: 5)</legend>' +
           '<div class="ed-fotos" id="fotos"></div>' +
-          '<label class="btn btn-o ed-dateiwahl">+ Foto hinzufügen' +
+          '<label class="btn btn-o ed-dateiwahl" id="foto-wahl">+ Foto hinzufügen' +
             '<input type="file" accept="image/*" capture="environment" id="datei" hidden></label>' +
           '<span class="ed-notiz" id="foto-stand"></span>' +
+        '</fieldset>' +
+
+        '<fieldset class="ed-gruppe"><legend>Grundriss</legend>' +
+          '<div class="ed-fotos" id="grundriss"></div>' +
+          '<label class="btn btn-o ed-dateiwahl">' +
+            (o.grundriss ? 'Grundriss ersetzen' : '+ Grundriss hinzufügen') +
+            '<input type="file" accept="image/*" id="datei-grundriss" hidden></label>' +
+          '<span class="ed-notiz" id="grundriss-stand"></span>' +
+          '<p class="ed-notiz">Ein Bild des Grundrisses (Foto oder Scan). Er wird ' +
+            'vollständig gezeigt, nicht beschnitten. Vorher ansehen: Namen und ' +
+            'Anschriften anderer Personen gehören nicht auf die Seite.</p>' +
         '</fieldset>' +
 
         '<fieldset class="ed-gruppe"><legend>Beschreibung</legend>' +
@@ -242,15 +255,34 @@ const auswahl = {
       alteKennung = null;
     }
 
+    function vorschau(name, knopf) {
+      return '<figure class="ed-foto"><img src="/api/foto?name=' + encodeURIComponent(name) +
+        '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' + knopf +
+        '<figcaption>' + esc(name) + '</figcaption></figure>';
+    }
+
     function fotosZeichnen() {
       var behaelter = document.getElementById('fotos');
       if (!behaelter || !bearbeitet) return;
       behaelter.innerHTML = bearbeitet.foto.map(function (name, i) {
-        return '<figure class="ed-foto"><img src="/api/foto?name=' + encodeURIComponent(name) +
-          '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
-          '<button type="button" data-foto-weg="' + i + '" aria-label="Entfernen">✕</button>' +
-          '<figcaption>' + esc(name) + '</figcaption></figure>';
+        return vorschau(name, '<button type="button" data-foto-weg="' + i + '" aria-label="Entfernen">✕</button>');
       }).join('') || '<p class="ed-notiz">Noch kein Foto. Ohne Foto lässt sich der Eintrag nicht speichern.</p>';
+
+      /* Fünf ist die Obergrenze des Schemas — der Knopf verschwindet, statt
+         beim Speichern abgewiesen zu werden. */
+      var wahl = document.getElementById('foto-wahl');
+      if (wahl) wahl.hidden = bearbeitet.foto.length >= 5;
+      var stand = document.getElementById('foto-stand');
+      if (stand && !stand.textContent) {
+        stand.textContent = bearbeitet.foto.length + ' von 5';
+      }
+
+      var gr = document.getElementById('grundriss');
+      if (gr) {
+        gr.innerHTML = bearbeitet.grundriss
+          ? vorschau(bearbeitet.grundriss, '<button type="button" data-grundriss-weg aria-label="Entfernen">✕</button>')
+          : '<p class="ed-notiz">Noch kein Grundriss.</p>';
+      }
     }
 
     /* ---- Speichern ------------------------------------------------------ */
@@ -342,6 +374,12 @@ const auswahl = {
       var weg = el.closest && el.closest('[data-foto-weg]');
       if (weg) { bearbeitet.foto.splice(Number(weg.dataset.fotoWeg), 1); fotosZeichnen(); return; }
 
+      if (el.closest && el.closest('[data-grundriss-weg]')) {
+        bearbeitet.grundriss = null;
+        fotosZeichnen();
+        return;
+      }
+
       if (el.closest && el.closest('[data-standort]')) {
         var s = document.getElementById('standort-stand');
         if (!navigator.geolocation) { s.textContent = 'Dieses Gerät gibt den Standort nicht her.'; return; }
@@ -376,45 +414,69 @@ const auswahl = {
       speichern(ev.target);
     });
 
-    /* Fotos werden vor dem Hochladen verkleinert: ein Handybild hat schnell
-       4 MB, und im Repository liegen die anderen bei 1400 px. */
-    document.addEventListener('change', function (ev) {
-      if (ev.target.id !== 'datei' || !bearbeitet) return;
-      var datei = ev.target.files && ev.target.files[0];
-      ev.target.value = '';
-      if (!datei) return;
-      var s = document.getElementById('foto-stand');
-      s.textContent = 'Wird verkleinert…';
-
+    /* Bilder werden vor dem Hochladen verkleinert: ein Handybild hat schnell
+       4 MB, und im Repository liegen die anderen bei 1400 px. Der Grundriss
+       darf groesser sein — auf ihm steht Schrift, die lesbar bleiben soll. */
+    function hochladen(datei, name, breite, gueteMelder, fertig) {
+      gueteMelder.textContent = 'Wird verkleinert…';
       var leser = new FileReader();
       leser.onload = function () {
         var bild = new Image();
         bild.onload = async function () {
-          var max = 1400;
           var b = bild.width, h = bild.height;
-          if (b > max || h > max) { var f = Math.min(max / b, max / h); b = Math.round(b * f); h = Math.round(h * f); }
+          if (b > breite || h > breite) {
+            var f = Math.min(breite / b, breite / h);
+            b = Math.round(b * f); h = Math.round(h * f);
+          }
           var flaeche = document.createElement('canvas');
           flaeche.width = b; flaeche.height = h;
-          flaeche.getContext('2d').drawImage(bild, 0, 0, b, h);
-          var datenUrl = flaeche.toDataURL('image/jpeg', 0.82);
+          var stift = flaeche.getContext('2d');
+          /* Weisser Grund: ein Grundriss mit durchsichtigem Hintergrund wuerde
+             sonst als JPEG schwarz. */
+          stift.fillStyle = '#fff';
+          stift.fillRect(0, 0, b, h);
+          stift.drawImage(bild, 0, 0, b, h);
+          var datenUrl = flaeche.toDataURL('image/jpeg', 0.85);
 
-          var buchstabe = bearbeitet.foto.length ? String.fromCharCode(96 + bearbeitet.foto.length + 1) : '';
-          var name = bearbeitet.id + buchstabe + '.jpg';
-          s.textContent = 'Wird hochgeladen…';
+          gueteMelder.textContent = 'Wird hochgeladen…';
           var antwort = await fetch('/api/foto', {
             method: 'PUT', headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ name: name, inhalt: datenUrl.split(',')[1] }),
           });
           var daten = await antwort.json().catch(function () { return {}; });
-          if (!antwort.ok) { s.textContent = daten.fehler || 'Nicht hochgeladen.'; return; }
-          bearbeitet.foto.push(name);
-          fotosZeichnen();
-          s.textContent = name + ' liegt jetzt im Repository. Zum Übernehmen unten speichern.';
+          if (!antwort.ok) { gueteMelder.textContent = daten.fehler || 'Nicht hochgeladen.'; return; }
+          fertig(name);
+          gueteMelder.textContent = name + ' liegt jetzt im Repository. Zum Übernehmen unten speichern.';
         };
-        bild.onerror = function () { s.textContent = 'Das Bild ließ sich nicht lesen.'; };
+        bild.onerror = function () { gueteMelder.textContent = 'Das Bild ließ sich nicht lesen.'; };
         bild.src = leser.result;
       };
       leser.readAsDataURL(datei);
+    }
+
+    document.addEventListener('change', function (ev) {
+      if (!bearbeitet) return;
+      var datei = ev.target.files && ev.target.files[0];
+      if (!datei) return;
+
+      if (ev.target.id === 'datei') {
+        ev.target.value = '';
+        if (bearbeitet.foto.length >= 5) return;
+        var buchstabe = bearbeitet.foto.length ? String.fromCharCode(96 + bearbeitet.foto.length + 1) : '';
+        hochladen(datei, bearbeitet.id + buchstabe + '.jpg', 1400,
+          document.getElementById('foto-stand'),
+          function (name) { bearbeitet.foto.push(name); fotosZeichnen(); });
+        return;
+      }
+
+      if (ev.target.id === 'datei-grundriss') {
+        ev.target.value = '';
+        /* Mehr Bildpunkte als bei den Fotos: auf einem Grundriss stehen Masse,
+           die sonst nicht mehr zu lesen sind. */
+        hochladen(datei, bearbeitet.id + '-grundriss.jpg', 2000,
+          document.getElementById('grundriss-stand'),
+          function (name) { bearbeitet.grundriss = name; fotosZeichnen(); });
+      }
     });
 
     laden();
