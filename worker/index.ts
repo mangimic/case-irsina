@@ -18,6 +18,7 @@ import { dateiSchema } from '../src/data/schema.ts';
 import { angemeldet, passwortStimmt, plaetzchenBauen, plaetzchenLoeschen } from './anmeldung.ts';
 import { dateiLesen, dateiSchreiben, neueDatei, type GithubEinstellungen } from './github.ts';
 import { fehler, json } from './antwort.ts';
+import { benachrichtigen, kopieSenden, type MailEinstellungen } from './mail.ts';
 import type { D1Database } from './d1.ts';
 
 export interface Umgebung {
@@ -29,6 +30,16 @@ export interface Umgebung {
   GITHUB_BESITZER?: string;
   GITHUB_REPO?: string;
   GITHUB_ZWEIG?: string;
+  /** Erst gesetzt, wenn der Versand eingerichtet ist. Ohne diese drei wird
+      gespeichert, aber nichts verschickt. */
+  RESEND_TOKEN?: string;
+  MAIL_VON?: string;
+  MAIL_AN?: string;
+}
+
+function mailEinstellungen(env: Umgebung): MailEinstellungen | null {
+  if (!env.RESEND_TOKEN || !env.MAIL_VON || !env.MAIL_AN) return null;
+  return { token: env.RESEND_TOKEN, von: env.MAIL_VON, an: env.MAIL_AN };
 }
 
 const DATEN_PFAD = 'src/data/objekte.json';
@@ -131,12 +142,36 @@ async function anfrageVerarbeiten(
     );
   }
 
-  await env.DB.prepare(
-    `INSERT INTO nachrichten (name, email, nachricht, objekt, sprache, eingegangen)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(name || null, email, nachricht, objekt || null, sprache || null, new Date().toISOString())
-    .run();
+  const kopie = koerper.kopie === true || koerper.kopie === 'on' || koerper.kopie === '1';
+  const eingegangen = new Date().toISOString();
+
+  try {
+    await env.DB.prepare(
+      `INSERT INTO nachrichten (name, email, nachricht, objekt, sprache, eingegangen, kopie)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    )
+      .bind(name || null, email, nachricht, objekt || null, sprache || null, eingegangen, kopie ? 1 : 0)
+      .run();
+  } catch {
+    /* Aeltere Tabellen haben die Spalte kopie noch nicht. Die Anfrage ist
+       wichtiger als der Vermerk — also ohne sie speichern. */
+    await env.DB.prepare(
+      `INSERT INTO nachrichten (name, email, nachricht, objekt, sprache, eingegangen)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+    )
+      .bind(name || null, email, nachricht, objekt || null, sprache || null, eingegangen)
+      .run();
+  }
+
+  /* Ab hier liegt die Nachricht sicher. Was beim Versand schiefgeht, darf sie
+     nicht mehr gefaehrden — deshalb kein await auf den Fehlerfall und kein
+     Fehlerschluss nach aussen. */
+  const post = mailEinstellungen(env);
+  if (post) {
+    const inhalt = { name, email, text: nachricht, objekt, sprache };
+    await benachrichtigen(post, inhalt).catch(() => {});
+    if (kopie) await kopieSenden(post, inhalt).catch(() => {});
+  }
 
   return json({ ok: true });
 }

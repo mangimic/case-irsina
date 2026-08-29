@@ -1,6 +1,7 @@
 ---
 import { uebersetzer } from '../i18n/texte';
 import { datenschutzPfad } from '../i18n/routen';
+import { KOPIE_MOEGLICH } from '../config';
 import type { Sprache } from '../i18n/sprachen';
 
 interface Props {
@@ -24,7 +25,7 @@ const datenschutz = datenschutzPfad(lang);
     mit einer eigenen Danke-Seite. Wer JavaScript aus hat, soll nicht vor einem
     toten Formular stehen.
 */}
-<form class="anfrage" method="post" action="/api/anfrage" data-anfrage>
+<form class="anfrage" id="anfrage" method="post" action="/api/anfrage" data-anfrage>
   <h3>{t('fmH')}</h3>
   <p class="anfrage-lead">{t('fmP')}</p>
 
@@ -63,6 +64,13 @@ const datenschutz = datenschutzPfad(lang);
     <span>{t('fmText')} *</span>
     <textarea name="nachricht" rows="5" required maxlength="4000" placeholder={t('fmTextPh')}></textarea>
   </label>
+
+  {KOPIE_MOEGLICH && (
+    <label class="anfrage-haken">
+      <input type="checkbox" name="kopie" value="1" />
+      <span>{t('fmKopie')}</span>
+    </label>
+  )}
 
   <div class="anfrage-fuss">
     <button class="btn btn-p" type="submit" data-senden>{t('fmSenden')}</button>
@@ -119,6 +127,7 @@ const datenschutz = datenschutzPfad(lang);
               objekt: felder.objekt.value,
               sprache: felder.sprache.value,
               firma: felder.firma.value,
+          kopie: Boolean(felder.kopie && felder.kopie.checked),
               alter: Date.now() - aufgebaut,
             }),
           });

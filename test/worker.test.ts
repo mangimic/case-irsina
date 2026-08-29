@@ -145,6 +145,117 @@ describe('Kontaktformular', () => {
   });
 });
 
+describe('Kopie an die Absenderin', () => {
+  /** Faengt die Aufrufe an Resend ab, damit nichts wirklich verschickt wird. */
+  function versandStelle(antwort: () => Response) {
+    const gesendet: Record<string, unknown>[] = [];
+    const echt = globalThis.fetch;
+    globalThis.fetch = (async (ziel: string | URL | Request, optionen?: RequestInit) => {
+      const adresse = typeof ziel === 'string' ? ziel : ziel.toString();
+      if (!adresse.includes('api.resend.com')) return echt(ziel as never, optionen);
+      gesendet.push(JSON.parse(String(optionen?.body)));
+      return antwort();
+    }) as typeof fetch;
+    return { gesendet, aufraeumen: () => { globalThis.fetch = echt; } };
+  }
+
+  const post = { RESEND_TOKEN: 'nicht-echt', MAIL_VON: 'Irsina <info@case-irsina.it>', MAIL_AN: 'michele@example.com' };
+
+  it('verschickt nichts, solange der Versand nicht eingerichtet ist', async () => {
+    const stelle = versandStelle(() => new Response('{}', { status: 200 }));
+    try {
+      const antwort = await worker.fetch(
+        jsonAnfrage('/api/anfrage', {
+          email: 'a@b.de', nachricht: 'Bitte eine Kopie.', kopie: true, alter: 9000,
+        }),
+        umgebung(),
+      );
+      expect(antwort.status).toBe(200);
+      expect(stelle.gesendet).toHaveLength(0);
+    } finally { stelle.aufraeumen(); }
+  });
+
+  it('benachrichtigt den Betreiber, sobald er eingerichtet ist', async () => {
+    const stelle = versandStelle(() => new Response('{}', { status: 200 }));
+    try {
+      await worker.fetch(
+        jsonAnfrage('/api/anfrage', {
+          name: 'Anna', email: 'anna@example.com', nachricht: 'Ist IR-017 noch frei?',
+          objekt: 'IR-017', sprache: 'de', alter: 9000,
+        }),
+        umgebung(post),
+      );
+      expect(stelle.gesendet).toHaveLength(1);
+      const mail = stelle.gesendet[0]!;
+      expect(mail.to).toEqual(['michele@example.com']);
+      expect(mail.reply_to, 'Antworten geht direkt an die Absenderin').toBe('anna@example.com');
+      expect(String(mail.text)).toContain('Ist IR-017 noch frei?');
+    } finally { stelle.aufraeumen(); }
+  });
+
+  it('schickt die Kopie nur, wenn sie angekreuzt wurde', async () => {
+    const stelle = versandStelle(() => new Response('{}', { status: 200 }));
+    try {
+      await worker.fetch(
+        jsonAnfrage('/api/anfrage', {
+          email: 'anna@example.com', nachricht: 'Mit Kopie bitte.', sprache: 'de',
+          kopie: true, alter: 9000,
+        }),
+        umgebung(post),
+      );
+      expect(stelle.gesendet).toHaveLength(2);
+      const kopie = stelle.gesendet.find((m) => Array.isArray(m.to) && (m.to as string[])[0] === 'anna@example.com');
+      expect(kopie, 'eine Kopie an die Absenderin').toBeTruthy();
+      expect(String(kopie!.subject)).toMatch(/Kopie Ihrer Anfrage/);
+      expect(String(kopie!.text)).toContain('Mit Kopie bitte.');
+    } finally { stelle.aufraeumen(); }
+  });
+
+  it('schreibt die Kopie in der Sprache der Anfrage', async () => {
+    const stelle = versandStelle(() => new Response('{}', { status: 200 }));
+    try {
+      await worker.fetch(
+        jsonAnfrage('/api/anfrage', {
+          email: 'bruno@example.com', nachricht: 'Sono interessato.', sprache: 'it',
+          kopie: true, alter: 9000,
+        }),
+        umgebung(post),
+      );
+      const kopie = stelle.gesendet.find((m) => (m.to as string[])[0] === 'bruno@example.com');
+      expect(String(kopie!.subject)).toMatch(/Copia della vostra richiesta/);
+    } finally { stelle.aufraeumen(); }
+  });
+
+  it('verliert die Anfrage nicht, wenn der Versand ausfaellt', async () => {
+    /* Das Wichtigste an dieser Stelle: gespeichert ist gespeichert. */
+    const stelle = versandStelle(() => new Response('kaputt', { status: 500 }));
+    try {
+      const env = umgebung(post);
+      const antwort = await worker.fetch(
+        jsonAnfrage('/api/anfrage', {
+          email: 'a@b.de', nachricht: 'Der Versand faellt gleich aus.', kopie: true, alter: 9000,
+        }),
+        env,
+      );
+      expect(antwort.status).toBe(200);
+      expect((env as unknown as { DB: ReturnType<typeof datenbank> }).DB.laeufe).toHaveLength(1);
+    } finally { stelle.aufraeumen(); }
+  });
+
+  it('vermerkt den Wunsch in der Datenbank', async () => {
+    const env = umgebung();
+    await worker.fetch(
+      jsonAnfrage('/api/anfrage', {
+        email: 'a@b.de', nachricht: 'Kopie erwuenscht.', kopie: true, alter: 9000,
+      }),
+      env,
+    );
+    const lauf = (env as unknown as { DB: ReturnType<typeof datenbank> }).DB.laeufe[0]!;
+    expect(lauf.sql).toContain('kopie');
+    expect(lauf.werte[lauf.werte.length - 1]).toBe(1);
+  });
+});
+
 describe('Anmeldung', () => {
   it('laesst ohne Plaetzchen niemanden an die Nachrichten', async () => {
     const antwort = await worker.fetch(anfrage('/api/nachrichten'), umgebung());

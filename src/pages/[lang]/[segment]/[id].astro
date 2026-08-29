@@ -13,7 +13,7 @@ import {
 import { uebersetzer } from '../../../i18n/texte';
 import { SPRACHEN, type Sprache } from '../../../i18n/sprachen';
 import { SEGMENT, objektPfad, startPfad } from '../../../i18n/routen';
-import { MAIL, SITE_URL } from '../../../config';
+import { SITE_URL } from '../../../config';
 
 export function getStaticPaths() {
   return SPRACHEN.flatMap((lang) =>
@@ -94,8 +94,6 @@ const jsonLd = {
     : {}),
 };
 
-const anfrageBetreff = `${t('shSubject')} — ${o.id} (${o.strasse})`;
-const anfrageText = `${o.id} · ${anschrift}\n${new URL(objektPfad(lang, o.id), SITE_URL).href}\n\n`;
 
 const angaben = [
   { dt: t('dRef'), dd: o.id },
@@ -111,9 +109,9 @@ const angaben = [
   { dt: t('pvH'), dd: pruefstandText(o, lang) },
 ];
 
-const bestaetigungsMail =
-  `mailto:${MAIL}?subject=${encodeURIComponent(`${t('pvBitteBtn')} — ${o.id} (${o.strasse})`)}` +
-  `&body=${encodeURIComponent(`${o.id} · ${anschrift}\n${new URL(objektPfad(lang, o.id), SITE_URL).href}\n\n`)}`;
+/* Alle Wege fuehren zum Formular auf derselben Seite: eine Anfrage soll
+   nachvollziehbar ankommen und nicht in einem Postfach verschwinden. */
+const zumFormular = '#anfrage';
 
 const kartenLink =
   o.lat !== null && o.lng !== null
@@ -209,7 +207,7 @@ const kartenLink =
           {ungeprueft(o) && (
             <>
               <p class="bitte">{t('pvBitte')}</p>
-              <p><a class="btn btn-o" href={bestaetigungsMail}>{t('pvBitteBtn')}</a></p>
+              <p><a class="btn btn-o" href={zumFormular}>{t('pvBitteBtn')}</a></p>
             </>
           )}
         </aside>
@@ -254,15 +252,6 @@ const kartenLink =
 
           <div class="acts">
             <a class="btn btn-o" href={kartenLink} target="_blank" rel="noopener noreferrer">{t('aMap')}</a>
-            {/* Der Weg ueber das eigene Mailprogramm bleibt — nicht jeder
-                schreibt gern in ein Formular, und ohne Netz beim Worker ist er
-                die Rueckfallebene. */}
-            <a
-              class="btn btn-o"
-              href={`mailto:${MAIL}?subject=${encodeURIComponent(anfrageBetreff)}&body=${encodeURIComponent(anfrageText)}`}
-            >
-              {t('askBtn')}
-            </a>
           </div>
 
           <Anfrageformular lang={lang} objekt={o.id} objektTitel={o.strasse} />

@@ -362,6 +362,11 @@ body.intern { background: var(--paper-2); }
 .anfrage-feld input:focus, .anfrage-feld select:focus, .anfrage-feld textarea:focus {
   outline: 2px solid var(--terra); outline-offset: -1px;
 }
+.anfrage-haken {
+  display: flex; gap: 9px; align-items: flex-start; margin: 0 0 16px;
+  font-size: 14.5px; line-height: 1.45; cursor: pointer;
+}
+.anfrage-haken input { margin-top: 2px; flex: none; }
 .anfrage-fuss { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 .anfrage-hinweis { font-size: 12.5px; line-height: 1.5; color: var(--ink-2); margin: 0; flex: 1 1 240px; }
 .anfrage-stand { margin: 16px 0 0; padding: 11px 14px; border-radius: 9px; font-size: 14.5px; }

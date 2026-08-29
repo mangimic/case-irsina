@@ -522,6 +522,11 @@ keiner Suchmaschine (`noindex`, dazu ein Eintrag in `robots.txt`).
 | `/admin` | Was über das Kontaktformular hereinkam: lesen, beantworten, als gelesen markieren, löschen. |
 | `/edit` | Die Objekte bearbeiten. Speichern legt einen **Commit im Repository** an; die Seite baut neu und ist nach ein bis zwei Minuten aktuell. |
 
+Anfragen laufen **ausschließlich über das Formular** — die Seiten bieten keinen
+`mailto:`-Knopf mehr an. So kommt jede Anfrage nachvollziehbar an, statt in einem
+Postfach zu verschwinden. Die E-Mail-Adresse steht weiterhin im Impressum, wo sie
+Pflicht ist.
+
 Der Editor ist damit etwas anderes als der im Prototyp: dort bleibt eine Änderung im
 Browser und muss später von Hand übernommen werden. Hier geht sie direkt in die Seite.
 Vor dem Haus stehen, korrigieren, **Aktuellen Standort übernehmen**, speichern — fertig.
@@ -583,6 +588,40 @@ sagt beim Speichern aber, dass der Zugang fehlt.
 > **Wer den Token hat, kann in das Repository schreiben.** Deshalb nur *Contents* und
 > nur dieses eine Repository. Er liegt als Cloudflare-Secret und ist danach auch im
 > Dashboard nicht mehr lesbar.
+
+#### Kopie an die Absenderin (optional)
+
+Das Formular kann anbieten, der Absenderin eine Kopie ihrer Nachricht zu schicken.
+Dafür muss die Seite E-Mails **versenden** können — die Datenbank allein kann das nicht.
+
+Nötig sind ein Konto bei **resend.com** (kostenlos bis 3.000 Mails/Monat), eine dort
+bestätigte Absenderdomain und drei Werte im Worker:
+
+| Secret / Variable | Beispiel |
+|---|---|
+| `RESEND_TOKEN` | der API-Schlüssel von Resend (als **Secret**) |
+| `MAIL_VON` | `Irsina <info@case-irsina.it>` — die Domain muss bei Resend bestätigt sein |
+| `MAIL_AN` | deine Adresse, dorthin geht die Benachrichtigung |
+
+Danach in `src/config.ts` `KOPIE_MOEGLICH` auf `true` setzen — erst dann erscheint das
+Kästchen. Solange es `false` ist, wird es gar nicht angezeigt: ein Haken, der nichts
+bewirkt, wäre ein gebrochenes Versprechen.
+
+Zwei Dinge sind dabei bewusst so gebaut:
+
+- **Der Versand kann die Anfrage nicht mehr gefährden.** Gespeichert wird zuerst;
+  scheitert danach eine Mail, bleibt die Nachricht trotzdem in der Datenbank.
+- **Du bekommst ohnehin eine Benachrichtigung**, sobald der Versand steht — auch ohne
+  dass jemand eine Kopie anfordert. Antworten geht direkt an die Absenderin.
+
+Den Vermerk, wer eine Kopie wollte, hält eine zusätzliche Spalte:
+
+```
+npx wrangler d1 execute irsina --remote --file migrations/0002_kopie.sql
+```
+
+Nicht zwingend — fehlt die Spalte, speichert der Worker ohne den Vermerk, statt die
+Anfrage zu verlieren.
 
 #### Auf dem eigenen Rechner ausprobieren
 

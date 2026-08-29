@@ -47,6 +47,15 @@ export const BETREIBER = 'Michele Mangieri';
  */
 export const SUCHMASCHINEN_ERLAUBT = false;
 
+/**
+ * Ob das Formular eine Kopie an die Absenderin anbieten darf.
+ *
+ * Dafuer muss im Worker ein Versand eingerichtet sein (RESEND_TOKEN, MAIL_VON,
+ * MAIL_AN). Solange das fehlt, bleibt das Kaestchen aus — ein Haken, der nichts
+ * bewirkt, waere ein gebrochenes Versprechen.
+ */
+export const KOPIE_MOEGLICH = false;
+
 /** Vorschaubild fuer Facebook, WhatsApp und Co. Relativ zu SITE_URL. */
 export const OG_IMAGE = '/vorschau.jpg';
 

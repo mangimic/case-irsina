@@ -1,6 +1,6 @@
 ---
 import { uebersetzer } from '../i18n/texte';
-import { MAIL, BETREIBER } from '../config';
+import { BETREIBER } from '../config';
 import { type Sprache } from '../i18n/sprachen';
 import { startPfad, impressumPfad, datenschutzPfad, type SeitenArt } from '../i18n/routen';
 import Teilen from './Teilen.astro';
@@ -23,7 +23,10 @@ const jahr = new Date().getFullYear();
           <li><a href={startPfad(lang)}>{t('home')}</a></li>
           <li><a href={impressumPfad(lang)}>{t('navlegal')}</a></li>
           <li><a href={datenschutzPfad(lang)}>{t('navprivacy')}</a></li>
-          <li><a href={`mailto:${MAIL}`}>{t('ownbtn')}</a></li>
+          {/* Zum Formular auf der Startseite statt ins Mailprogramm: eine
+              Anfrage soll nachvollziehbar ankommen. Die Adresse selbst steht
+              weiterhin im Impressum — dort ist sie Pflicht. */}
+          <li><a href={`${startPfad(lang)}#anfrage`}>{t('ownbtn')}</a></li>
         </ul>
       </div>
     </div>

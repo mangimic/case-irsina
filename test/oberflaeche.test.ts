@@ -37,6 +37,31 @@ describe('Kontaktformular auf der Seite', () => {
     expect(lies('src/pages/[lang]/index.astro')).toMatch(/<Anfrageformular/);
   });
 
+  it('ist der einzige Weg — die Seiten bieten kein mailto mehr an', () => {
+    /* Eine Anfrage soll nachvollziehbar ankommen und nicht in einem Postfach
+       verschwinden. Ausgenommen: das Impressum, dort ist die Adresse Pflicht,
+       und "Seite per E-Mail teilen", was etwas anderes ist. */
+    for (const datei of [
+      'src/pages/[lang]/[segment]/[id].astro',
+      'src/pages/[lang]/index.astro',
+      'src/components/Fuss.astro',
+    ]) {
+      expect(lies(datei), datei).not.toMatch(/mailto:\$\{MAIL\}/);
+    }
+    expect(lies('src/pages/[lang]/[seite].astro'), 'Impressum behaelt die Adresse')
+      .toMatch(/mailto:\$\{MAIL\}/);
+  });
+
+  it('bietet die Kopie nur an, wenn sie auch verschickt werden kann', () => {
+    /* Ein Haken, der nichts bewirkt, waere ein gebrochenes Versprechen. */
+    const formular2 = lies('src/components/Anfrageformular.astro');
+    expect(formular2).toMatch(/KOPIE_MOEGLICH && \(/);
+    expect(lies('src/config.ts')).toMatch(/export const KOPIE_MOEGLICH/);
+    for (const lang of SPRACHEN) {
+      expect((TEXTE[lang] as Record<string, string>).fmKopie, lang).toBeTruthy();
+    }
+  });
+
   it('darf laut Sicherheitsregeln an die eigene Herkunft abschicken', () => {
     /* Stand hier noch form-action 'none', ginge der Weg ohne JavaScript nicht. */
     expect(lies('public/_headers')).toMatch(/form-action 'self'/);

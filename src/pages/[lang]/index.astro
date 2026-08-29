@@ -10,7 +10,7 @@ import { foto } from '../../data/fotos';
 import { uebersetzer } from '../../i18n/texte';
 import { SPRACHEN, type Sprache } from '../../i18n/sprachen';
 import { objektPfad } from '../../i18n/routen';
-import { MAIL, SITE_URL, FAKTEN } from '../../config';
+import { SITE_URL, FAKTEN } from '../../config';
 
 export function getStaticPaths() {
   return SPRACHEN.map((lang) => ({ params: { lang } }));
@@ -149,9 +149,7 @@ const fakten = [
         <h2>{t('ownh')}</h2>
         <p style="color:var(--ink-2)">{t('ownp')}</p>
         <p>
-          <a class="btn btn-p" href={`mailto:${MAIL}?subject=${encodeURIComponent(t('shSubject'))}`}>
-            {t('ownbtn')}
-          </a>
+          <a class="btn btn-p" href="#anfrage">{t('ownbtn')}</a>
         </p>
       </div>
       <ol class="steps">
